@@ -115,14 +115,9 @@ head(boston_deaths_tbl)
 
 Notice that two variables have been added: 
 
-(1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level, but still using the many `geo-unit`s and variation in exposures and outcomes and the sub-geo-unit-grp level. So for example, if you are working with counties and towns, and choose county, town level exposures and outcomes will be used to estimate county-level results (and results for individual towns will not be output). So these become just like extra days of data, just with different underlying populations
+(1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level.
 
 and (2) a variable `keep` describing the presence of group-level outcomes. at a minimum this removes any empty strata so the variances are correctly scaled (and you can increase this floor if you'd like)
-
-Note also that `make_outcome_table` has some options which we will introduce here but explore further later:
-```{r bonus_outcome}
-
-```
 
 ### Basic DLNM (manual walkthrough)
 
@@ -133,6 +128,7 @@ Here are the libraries we'll need to run a conditional poisson model.
 library(dlnm)
 library(gnm)
 library(ggplot2)
+library(data.table)
 ```
 
 Here are the inputs to define the crossbasis matrix. We use a default of `ns` so that the behavior at the the tails of the distribution is linear.
@@ -152,7 +148,8 @@ arglag <- list(fun = lag_fun, knots = logknots(maxlag, nk = nk))
 
 Limit the columns of the exposure matrix to be just the ones up to `maxlag`:
 ```{r create_cb}
-x_mat <- boston_exposure_mat[, c('tmax_C', paste0('Templag',1:maxlag))]
+xcols <- c('tmax_C', paste0('explag',1:maxlag))
+x_mat <- boston_exposure_mat[, ..xcols]
 
 cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 ```
@@ -160,14 +157,14 @@ cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 Now run the model
 ```{r run_model}
 m_sub <- gnm(daily_deaths ~ cb,
-             data = boston_deaths_comb,
+             data = boston_deaths_tbl,
              family = quasipoisson,
              eliminate = factor(strata),
              subset = keep == 1)
 summary(m_sub)
 ```
 
-Notice that the dispersion parameter is `1.726851` -- this is part of how the quasipoisson model works and is used to re-scale the variance covariance matrix.
+Notice that the dispersion parameter is `8.009799` (quite high! but again, these are simulated data) -- this is part of how the quasipoisson model works and is used to re-scale the variance covariance matrix.
 
 Next get the crosspred outputs correctly centered at the minimum RR
 ```{r crosspred}
@@ -198,18 +195,18 @@ Finally, do some basic checks of the math using other utility functions to estim
 
 First to check the dispersion
 ```{r compute_dispersion}
-dispersion <- calc_dispersion(y = boston_deaths$daily_deaths, 
+dispersion <- calc_dispersion(y = boston_deaths_tbl$daily_deaths, 
                 X = cb, 
-                stratum_vector = boston_deaths$strata, 
+                stratum_vector = boston_deaths_tbl$strata, 
                 beta = coef(m_sub))
 dispersion
 ```
 
 Next to check vcov
 ```{r compute_vcov}
-vcov_beta <- calc_vcov(y = boston_deaths$daily_deaths, 
+vcov_beta <- calc_vcov(y = boston_deaths_tbl$daily_deaths, 
                 X = cb, 
-                stratum_vector = boston_deaths$strata, 
+                stratum_vector = boston_deaths_tbl$strata, 
                 beta = coef(m_sub))
 
 # update with the dipserion parameter
@@ -226,13 +223,39 @@ all.equal(t1, t2, tolerance = 1e-8)
 
 ### Basic DLNM (using `cityHeatHealth` functions in `R`)
 
-The functionality above is what is encapsulated in the `single_run` function. We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
+The functionality above is what is encapsulated in the `single_run` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
 
-```{r single_zone, fig.height=3, fig.width=5}
+We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
 
+```{r single_zone}
+# create exposure matrix
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
+
+# create outcome table
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
+
+# run the model
 m1 <- single_run(exposure_matrix = boston_exposure_mat, 
-                  outcomes = boston_deaths)
+                  outcomes = boston_deaths_tbl)
 
+```
+
+And plot
+```{r single_plot, fig.height=3, fig.width=5}
 plot_cp = data.frame(
     x = m1$predvar,
     RR = m1$allRRfit,
@@ -247,6 +270,8 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
   geom_line() + xlab("Tmax (degC)")
 
 ```
+
+
 
 ### Basic DLNM (using STAN)
 

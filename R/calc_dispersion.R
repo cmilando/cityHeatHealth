@@ -19,7 +19,7 @@ calc_dispersion <- function(y, X, beta, stratum_vector) {
 
   # replace stratum_vector with counts
   n_strata <- length(unique(stratum_vector))
-  stratum_vector <- as.numeric(factor(boston_deaths$strata, labels = 1:n_strata))
+  stratum_vector <- as.numeric(factor(stratum_vector, labels = 1:n_strata))
 
   # sum observed and predicted counts per stratum
   sum_y_stratum    = rep(0, n_strata)

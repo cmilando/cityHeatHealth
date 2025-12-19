@@ -2,11 +2,6 @@
 #'
 #'
 #' @import data.table
-#' @importFrom dplyr group_by
-#' @importFrom dplyr mutate
-#' @importFrom dplyr summarize
-#' @importFrom dplyr left_join
-#' @importFrom dplyr join_by
 #' @importFrom dlnm crossbasis
 #' @importFrom dlnm crosspred
 #' @importFrom gnm gnm
@@ -21,7 +16,7 @@
 #' @export
 #'
 #' @examples
-single_run <- function(exposure_matrix, outcomes,
+single_run <- function(exposure_matrix, outcomes_tbl,
                         argvar = NULL, arglag = NULL, maxlag = NULL) {
 
   ## ******************
@@ -39,14 +34,16 @@ single_run <- function(exposure_matrix, outcomes,
 
   warning("check geo_unit is the same for both")
 
-  stop("outcome has a factor, thats a problem")
+  warning("outcome has a factor, thats a problem")
 
   if(is.null(maxlag)) {
     maxlag = 5
   }
 
+  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
+
   if(is.null(argvar)) {
-    x_knots = quantile(exposure_matrix$tmax_C, probs = c(0.5, 0.9))
+    x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = c(0.5, 0.9))
     argvar <- list(fun = 'ns', knots = x_knots)
   }
 
@@ -54,17 +51,17 @@ single_run <- function(exposure_matrix, outcomes,
     arglag <- list(fun = 'ns', knots = dlnm::logknots(maxlag, nk = 2))
   }
 
-  ## keep only the columns you need
-  x_mat <- exposure_matrix[, c('tmax_C', paste0('Templag',1:maxlag))]
+  ## get the columns you need
+  xcols <- c(exposure_col, paste0('explag',1:maxlag))
+  x_mat <- exposure_matrix[, ..xcols]
 
-  ## create the crossbasis
   cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 
 
   ## ******************************************
   ## if using GNM, you get COEF and VCOV as part of the model objects
   m_sub <- gnm(daily_deaths ~ cb,
-               data = outcomes_comb,
+               data = outcomes_tbl,
                family = quasipoisson,
                eliminate = factor(strata),
                subset = keep == 1)
@@ -77,7 +74,7 @@ single_run <- function(exposure_matrix, outcomes,
                   coef = m_coef,
                   vcov = m_vcov,
                   model.link = "log",
-                  cen = mean(exposure_matrix$tmax_C),
+                  cen = mean(exposure_matrix[, get(exposure_col)]),
                   by = 0.1)
 
   cen = cp$predvar[which.min(cp$allRRfit)]

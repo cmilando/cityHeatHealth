@@ -6,7 +6,7 @@
 #' @param warm_season_months the warm season months for this region, default is Northern Hemisphere's
 #' May through September (5 through 9)
 #' @param maxgaps the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)
-#' @param n_lags the number of lags for the exposure variable (default is 8)
+#' @param maxlag the number of lags for the exposure variable (default is 5)
 #' @param grp_level whether to summarize to the group level or not (default)
 #' @import data.table
 #' @importFrom tidyr expand_grid
@@ -19,7 +19,7 @@
 make_exposure_matrix <- function(data, column_mapping,
                                  warm_season_months = 5:9,
                                  maxgap = 5,
-                                 n_lags = 8,
+                                 maxlag = 5,
                                  grp_level = FALSE) {
 
   # validation block
@@ -28,7 +28,7 @@ make_exposure_matrix <- function(data, column_mapping,
   stopifnot(all(warm_season_months %in% 1:12) &
               length(warm_season_months) == length(unique(warm_season_months)))
   stopifnot(length(maxgap) == 1 & maxgap %in% 1:10)
-  stopifnot(length(n_lags) == 1 & n_lags %in% 1:10)
+  stopifnot(length(maxlag) == 1 & maxlag %in% 1:10)
   stopifnot(length(grp_level) == 1 & grp_level %in% c(T, F))
 
   # column types
@@ -217,7 +217,7 @@ make_exposure_matrix <- function(data, column_mapping,
     setDT(x)
 
     # Now expand to get lags
-    for (k in seq_len(n_lags)) {
+    for (k in seq_len(maxlag)) {
       lag_name <- paste0("explag", k)
       x[, (lag_name) := shift(get(exposure_col), k)]
     }
