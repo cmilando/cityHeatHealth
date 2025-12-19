@@ -61,12 +61,32 @@ boston_exposure_mat[72:77,]
 
 Its probably a good idea to see if there is any systematic bias in the missingness (i.e., are the data "missing at random") but for the purposes of this tutorial we'll assume that they are (which is true since these are simulated data!).
 
+It may also be a good idea to check that the exposure values generally look like you
+expect them to look (e.g., with some summary statistics), just to make sure you don't need to do any cleaning earlier.
+
+```{r exp_summary}
+summary(boston_exposure_mat$tmax_C)
+```
+
+For a time-series of daily maximum temperatures in warm-season months in Boston MA, looks good!
+
 ### Outcome data
-Next let's investigate the deaths dataset
+
+Next let's investigate the deaths dataset - you can see that this has town level daily deaths with by category for age group (0-17, 18-64, and 65+) as well as a binary-coded sex variable.
+
 ```{r load_deaths} 
 boston_deaths   <- subset(ma_deaths, TOWN20 == 'BOSTON')
 head(boston_deaths)
 ```
+
+As with the exposure dataset, there may be some days that are missing data, and we want to aggregate these data across the factors we aren't using and to the correct spatial unit for this analysis. The `collapse_outcomes` function accomplishes these goals:
+
+```{r collapse_outcomes}
+
+
+```
+
+
 
 ### Basic DLNM (manual walkthrough)
 

@@ -9,7 +9,7 @@ single_zone(
   outcomes,
   argvar = NULL,
   arglag = NULL,
-  maxlag = 5
+  maxlag = NULL
 )
 }
 \arguments{

@@ -2,10 +2,20 @@
 % Please edit documentation in R/exposure.R
 \name{make_exposure_matrix}
 \alias{make_exposure_matrix}
-\title{Scripts to clean the exposure data}
+\title{Script to clean the exposure data}
 \usage{
 make_exposure_matrix(data, warm_season_months = 5:9)
 }
+\arguments{
+\item{data}{a dataset of exposures}
+
+\item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's 5 through 9}
+}
 \description{
 things to be aware of
+\itemize{
+\item there may be missing data, so fill in with na.approx
+\item you need to include the full year so you can do xbasis matrix
+\item you may need to know the mapping so you can average up
+}
 }

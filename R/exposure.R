@@ -1,15 +1,16 @@
-#' Scripts to clean the exposure data
+#' Script to clean the exposure data
 #'
 #' things to be aware of
-# - there may be missing data, so fill in with na.approx
-# - you need to include the full year so you can do xbasis matrix
-# - you may need to know the mapping so you can average up
-#' @param data
+#' - there may be missing data, so fill in with na.approx
+#' - you need to include the full year so you can do xbasis matrix
+#' - you may need to know the mapping so you can average up
+#'
+#' @param data a dataset of exposures
+#' @param warm_season_months the warm season months for this region, default is Northern Hemisphere's 5 through 9
 #' @importFrom dplyr lag
-#' @importFrom dplyr expand_grid
 #' @importFrom dplyr left_join
 #' @importFrom dplyr join_by
-#' @importFrom dplyr expand_grid
+#' @importFrom tidyr expand_grid
 #' @importFrom zoo na.approx
 #' @importFrom lubridate month
 #' @importFrom lubridate year
@@ -58,6 +59,7 @@ make_exposure_matrix <- function(data, warm_season_months = 5:9) {
 
   # need to fill in NA values
   exposure1_l <- split(xgrid, f = xgrid$TOWN20)
+  length(exposure1_l)
 
   exposure2_l <- vector("list", length(exposure1_l))
 
@@ -69,31 +71,32 @@ make_exposure_matrix <- function(data, warm_season_months = 5:9) {
 
     # give a warning here
     if(all(ev1)) {
-      warning("all exposures for TOWN20 X were blank -- skipping")
+      warning(paste0("all exposures for TOWN20 ", x$TOWN20[1],
+                     " were blank -- skipping"))
       next
     }
 
     # fix the edge case where either the first or last one
-    i = 1
+    j = 1
     cont = F
-    while(is.na(x$tmax_C[i])) {
-      i = i+1
+    while(is.na(x$tmax_C[j])) {
+      j = j+1
       cont = T
     }
     if(cont) {
-      fillx <- x$tmax_C[i]
-      x$tmax_C[1:(i - 1)] <- fillx
+      fillx <- x$tmax_C[j]
+      x$tmax_C[1:(j - 1)] <- fillx
     }
 
-    i = nrow(x)
+    j = nrow(x)
     cont = F
-    while(is.na(x$tmax_C[i])) {
-      i = i-1
+    while(is.na(x$tmax_C[j])) {
+      j = j-1
       cont = T
     }
     if(cont) {
-      fillx <- x$tmax_C[i]
-      x$tmax_C[(i + 1):nrow(x)] <- fillx
+      fillx <- x$tmax_C[j]
+      x$tmax_C[(j + 1):nrow(x)] <- fillx
     }
 
     # this should have caught the edge cases, cause a failure if not
@@ -119,6 +122,7 @@ make_exposure_matrix <- function(data, warm_season_months = 5:9) {
     x$Templag8 <- dplyr::lag(x$tmax_C, 8)
 
     exposure2_l[[i]] <- x
+
   }
 
   # rbind them all together

@@ -10,6 +10,7 @@ A data frame with one row per date and town and the following variables:
 \item{date}{Date. Calendar date of the observation.}
 \item{tmax_C}{Numeric. Daily maximum air temperature in degrees Celsius.}
 \item{TOWN20}{Character. Name of the Massachusetts town associated with the temperature observation.}
+\item{COUNTY20}{Character. Name of the Massachusetts county associated with TOWN20.}
 }
 }
 \description{
