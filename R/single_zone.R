@@ -1,5 +1,7 @@
 #' Run a conditional poisson model for a single zone
-
+#'
+#'
+#' @import data.table
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom dplyr summarize
@@ -8,9 +10,7 @@
 #' @importFrom dlnm crossbasis
 #' @importFrom dlnm crosspred
 #' @importFrom gnm gnm
-#' @importFrom lubridate month
-#' @importFrom lubridate year
-#' @importFrom lubridate wday
+#'
 #' @param exposure_matrix a matrix of exposures, with columns for lag, usually created by `make_exposure_matrix`
 #' @param outcomes a dataframe of date, and outcome
 #' @param argvar a list containing the `argvar` components for the `crossbasis`
@@ -55,9 +55,9 @@ single_zone <- function(exposure_matrix, outcomes,
   cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 
   ## create the strata
-  outcomes$dow   <- lubridate::wday(outcomes$date, label = T)
-  outcomes$month <- lubridate::month(outcomes$date, label = T)
-  outcomes$year  <- lubridate::year(outcomes$date)
+  outcomes$dow   <- wday(outcomes$date, label = T)
+  outcomes$month <- month(outcomes$date, label = T)
+  outcomes$year  <- year(outcomes$date)
 
   outcomes$strata <- paste0(outcomes$TOWN20, ":",
                             outcomes$year, ":",

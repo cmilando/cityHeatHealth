@@ -4,12 +4,21 @@
 \alias{make_exposure_matrix}
 \title{Script to clean the exposure data}
 \usage{
-make_exposure_matrix(data, warm_season_months = 5:9)
+make_exposure_matrix(
+  data,
+  column_mapping,
+  warm_season_months = 5:9,
+  maxgap = 5
+)
 }
 \arguments{
 \item{data}{a dataset of exposures}
 
+\item{column_mapping}{a named list that indicates relevant columns}
+
 \item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's 5 through 9}
+
+\item{maxgaps}{the maximum allowable gap, to be passed to zoo::na.approx}
 }
 \description{
 things to be aware of

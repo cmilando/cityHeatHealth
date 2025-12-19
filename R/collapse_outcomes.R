@@ -4,3 +4,11 @@
 #'
 #' you also need a place to define MinN? is it here or not at all, just
 #' a warning since that is what is defined later
+#'
+#'   # column types
+#' col_types <- c('date',
+#'                "exposure",
+#'                # 'factor',
+#'                # 'n_outcomes'
+#'                'geo_unit',
+#'                'geo_unit_grp')

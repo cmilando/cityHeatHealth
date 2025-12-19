@@ -43,10 +43,22 @@ boston_exposure[255:260,]
 boston_exposure[190:195,]
 ```
 
-In the next step we'll introduce a function which (a) cleans the data and (b) subsets to just warm season months (which in Boston is May through September). Its good to keep the full temperature range before this point so we can use extra data around the cutoffs to make sure the temperature matrix is full. So pass in your full temperature time-series in this step.
+In the next step we'll introduce a function which (a) cleans the data and (b) subsets to just warm season months (which in Boston is May through September). Its good to keep the full temperature range before this point so we can use extra data around the cutoffs to make sure the temperature matrix is full. 
 
+First, define the column mapping. The main geographic unit of analysis (the `geo_unit`) is called `TOWN20`, however we may also want to aggregate in some later steps to the group level, so the grouping variable (`geo_unit_grp`) is called `COUNTY20`. Providing a named list in this way avoids having to rename columns throughout the process. 
+
+```{r exp_cols}
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+```
+
+Next pass in your full temperature time-series in this step.
 ```{r convertExp}
-boston_exposure_mat <- make_exposure_matrix(boston_exposure)
+boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
 head(boston_exposure_mat)
 ```
 
@@ -101,7 +113,7 @@ library(gnm)
 library(ggplot2)
 ```
 
-Here are the inputs to define the crossbasis matrix:
+Here are the inputs to define the crossbasis matrix. We use a default of `ns` so that the behavior at the the tails of the distribution is linear.
 ```{r dlnm_other}
 arg_fun = 'ns'
 lag_fun = 'ns'
