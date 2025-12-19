@@ -11,11 +11,11 @@
 #' @importFrom lubridate month
 #' @importFrom lubridate year
 #' @importFrom lubridate wday
-#' @param exposure_matrix
-#' @param outcomes
-#' @param argvar
-#' @param arglag
-#' @param maxlag
+#' @param exposure_matrix a matrix of exposures, with columns for lag, usually created by `make_exposure_matrix`
+#' @param outcomes a dataframe of date, and outcome
+#' @param argvar a list containing the `argvar` components for the `crossbasis`
+#' @param arglag a list containing the `arglag` components for the `crossbasis`
+#' @param maxlag an integer of the maximum lag
 #'
 #' @returns
 #' @export
@@ -107,18 +107,18 @@ single_zone <- function(exposure_matrix, outcomes,
 
 #' Calculate the dispersion parameter for a quasi-poisson model
 #'
-#' @param y
-#' @param X
-#' @param beta
-#' @param stratum_vector
+#' Converted from STATA from armstrong 2014 with guidance from ChatGPT
+#'
+#' @param y a vector of outcomes
+#' @param X a matrix of predictors, typically the crossbasis output
+#' @param beta a vector of coefficients
+#' @param stratum_vector a vector describing the stratum
 #'
 #' @returns
 #' @export
 #'
 #' @examples
 calc_dispersion <- function(y, X, beta, stratum_vector) {
-
-  # converted from STATA from armstrong 2014.
 
   # get dims of X
   N = nrow(X)
@@ -169,9 +169,10 @@ calc_dispersion <- function(y, X, beta, stratum_vector) {
 #'
 #' and extended to multi-nomial case using ChatGPT, and confirmed it works.
 #'
-#' @param X
-#' @param beta
-#' @param stratum_vector
+#' @param y a vector of outcomes
+#' @param X a matrix of predictors, typically the crossbasis output
+#' @param beta a vector of coefficients
+#' @param stratum_vector a vector describing the stratum
 #' @importFrom MASS ginv
 #' @returns
 #' @export

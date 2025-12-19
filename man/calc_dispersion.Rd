@@ -7,8 +7,14 @@
 calc_dispersion(y, X, beta, stratum_vector)
 }
 \arguments{
-\item{stratum_vector}{}
+\item{y}{a vector of outcomes}
+
+\item{X}{a matrix of predictors, typically the crossbasis output}
+
+\item{beta}{a vector of coefficients}
+
+\item{stratum_vector}{a vector describing the stratum}
 }
 \description{
-Calculate the dispersion parameter for a quasi-poisson model
+Converted from STATA from armstrong 2014 with guidance from ChatGPT
 }

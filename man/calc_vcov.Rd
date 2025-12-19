@@ -6,6 +6,15 @@
 \usage{
 calc_vcov(y, X, beta, stratum_vector)
 }
+\arguments{
+\item{y}{a vector of outcomes}
+
+\item{X}{a matrix of predictors, typically the crossbasis output}
+
+\item{beta}{a vector of coefficients}
+
+\item{stratum_vector}{a vector describing the stratum}
+}
 \description{
 https://link.springer.com/article/10.1007/s11222-005-4069-4
 https://statomics.github.io/SGA2019/assets/poissonIRWLS-implemented.html#variance-covariance-matrix-of-the-model-parameters

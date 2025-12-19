@@ -13,7 +13,15 @@ single_zone(
 )
 }
 \arguments{
-\item{maxlag}{}
+\item{exposure_matrix}{a matrix of exposures, with columns for lag, usually created by \code{make_exposure_matrix}}
+
+\item{outcomes}{a dataframe of date, and outcome}
+
+\item{argvar}{a list containing the \code{argvar} components for the \code{crossbasis}}
+
+\item{arglag}{a list containing the \code{arglag} components for the \code{crossbasis}}
+
+\item{maxlag}{an integer of the maximum lag}
 }
 \description{
 Run a conditional poisson model for a single zone
