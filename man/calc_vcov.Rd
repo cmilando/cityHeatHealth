@@ -4,12 +4,12 @@
 \alias{calc_vcov}
 \title{Calculate the variance-covariance matrix of a poisson model}
 \usage{
-calc_vcov(X, beta, stratum_vector)
+calc_vcov(y, X, beta, stratum_vector)
 }
 \description{
 https://link.springer.com/article/10.1007/s11222-005-4069-4
 https://statomics.github.io/SGA2019/assets/poissonIRWLS-implemented.html#variance-covariance-matrix-of-the-model-parameters
 }
 \details{
-and extended to multi-nomial case.
+and extended to multi-nomial case using ChatGPT, and confirmed it works.
 }

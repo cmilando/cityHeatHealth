@@ -147,23 +147,29 @@ Finally, do some basic checks of the math using other utility functions to estim
 
 First to check the dispersion
 ```{r compute_dispersion}
-calc_dispersion(boston_deaths$daily_deaths, 
+dispersion <- calc_dispersion(y = boston_deaths$daily_deaths, 
                 X = cb, 
                 stratum_vector = boston_deaths$strata, 
                 beta = coef(m_sub))
+dispersion
 ```
 
 Next to check vcov
 ```{r compute_vcov}
-vcov_beta <- calc_vcov(X = cb, beta = coef(m_sub), 
-                       stratum_vector = boston_deaths$strata)
+vcov_beta <- calc_vcov(y = boston_deaths$daily_deaths, 
+                X = cb, 
+                stratum_vector = boston_deaths$strata, 
+                beta = coef(m_sub))
 
+# update with the dipserion parameter
 t1 <- vcov_beta * dispersion
+
+# check against the original model's vcov
 t2 <- vcov(m_sub)
 attributes(t2) <- NULL
 t2 <- matrix(t2, nrow = nrow(t1), ncol = ncol(t1))
-t2
 
+# should be the same
 all.equal(t1, t2, tolerance = 1e-8)
 ```
 

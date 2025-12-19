@@ -33,12 +33,12 @@ static constexpr std::array<const char*, 102> locations_array__ =
   " (in 'SB_CondPoisson', line 57, column 2 to column 27)",
   " (in 'SB_CondPoisson', line 59, column 2 to column 26)",
   " (in 'SB_CondPoisson', line 61, column 2 to column 25)",
-  " (in 'SB_CondPoisson', line 159, column 2 to column 24)",
-  " (in 'SB_CondPoisson', line 162, column 6 to column 45)",
-  " (in 'SB_CondPoisson', line 161, column 18 to line 163, column 5)",
-  " (in 'SB_CondPoisson', line 161, column 4 to line 163, column 5)",
-  " (in 'SB_CondPoisson', line 160, column 16 to line 164, column 3)",
-  " (in 'SB_CondPoisson', line 160, column 2 to line 164, column 3)",
+  " (in 'SB_CondPoisson', line 160, column 2 to column 24)",
+  " (in 'SB_CondPoisson', line 163, column 6 to column 45)",
+  " (in 'SB_CondPoisson', line 162, column 18 to line 164, column 5)",
+  " (in 'SB_CondPoisson', line 162, column 4 to line 164, column 5)",
+  " (in 'SB_CondPoisson', line 161, column 16 to line 165, column 3)",
+  " (in 'SB_CondPoisson', line 161, column 2 to line 165, column 3)",
   " (in 'SB_CondPoisson', line 67, column 2 to column 20)",
   " (in 'SB_CondPoisson', line 68, column 2 to column 19)",
   " (in 'SB_CondPoisson', line 69, column 2 to column 23)",
@@ -128,8 +128,8 @@ static constexpr std::array<const char*, 102> locations_array__ =
   " (in 'SB_CondPoisson', line 57, column 18 to column 19)",
   " (in 'SB_CondPoisson', line 61, column 9 to column 10)",
   " (in 'SB_CondPoisson', line 61, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 159, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 159, column 12 to column 13)"};
+  " (in 'SB_CondPoisson', line 160, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 160, column 12 to column 13)"};
 #include <stan_meta_header.hpp>
 class model_SB_CondPoisson final : public model_base_crtp<model_SB_CondPoisson> {
 private:
