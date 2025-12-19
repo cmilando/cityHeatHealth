@@ -86,6 +86,8 @@ NULL
 #' \describe{
 #'   \item{date}{Date. Calendar date of the observation.}
 #'   \item{daily_deaths}{Numeric. Daily deaths - SIMULATED!}
+#'   \item{age_grp}{Character. Either '0-17', '18-64' or '65+'}
+#'   \item{sex}{Character. either 'M' or 'F' in this example}
 #'   \item{TOWN20}{Character. Name of the Massachusetts town associated with the temperature observation.}
 #' }
 #'

@@ -24,18 +24,42 @@ library(cityHeatHealth)
 ```
 
 ### Exposure data
-First let's make the exposure matrix
+
+First let's make the exposure matrix for this single zone. There is a simulated exposure dataset included in the package called `ma_exposure`, which lists **daily maximum** temperatures each day in each town.
+
 ```{r load_exposure} 
 boston_exposure <- subset(ma_exposure, TOWN20 == 'BOSTON')
 head(boston_exposure)
 ```
 
-Notice how this dataset contains temperature for the whole year. This is a good starting place. In the next step we'll subset to just warm season months (which in Boston is May through September), but we'll use extra data around the cutoffs to make sure the temperature matrix is full. So pass in your full temperature time-series in this step.
+Notice how this dataset contains temperature for the whole year. This is a good starting place. 
+
+Also notice that these data are messy, as is common in environmenal data, there are both NA values and days where there are no measurements:
+```{r exp_clean}
+# Sept 17 2010 has NA data
+boston_exposure[255:260,]
+
+# July 13 2010 is missing
+boston_exposure[190:195,]
+```
+
+In the next step we'll introduce a function which (a) cleans the data and (b) subsets to just warm season months (which in Boston is May through September). Its good to keep the full temperature range before this point so we can use extra data around the cutoffs to make sure the temperature matrix is full. So pass in your full temperature time-series in this step.
 
 ```{r convertExp}
 boston_exposure_mat <- make_exposure_matrix(boston_exposure)
 head(boston_exposure_mat)
 ```
+
+You can check that the two problems we saw before -- missing data and NA data -- are gone now
+```{r exp_check}
+# Sept 17 2010 now has NA data
+boston_exposure_mat[138:142,]
+
+# July 13 2010 is now not missing
+boston_exposure_mat[72:77,]
+```
+
+Its probably a good idea to see if there is any systematic bias in the missingness (i.e., are the data "missing at random") but for the purposes of this tutorial we'll assume that they are (which is true since these are simulated data!).
 
 ### Outcome data
 Next let's investigate the deaths dataset
