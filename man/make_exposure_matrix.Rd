@@ -4,7 +4,7 @@
 \alias{make_exposure_matrix}
 \title{Scripts to clean the exposure data}
 \usage{
-make_exposure_matrix(data)
+make_exposure_matrix(data, warm_season_months = 5:9)
 }
 \description{
 things to be aware of

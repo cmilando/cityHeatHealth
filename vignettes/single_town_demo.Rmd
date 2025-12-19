@@ -1,0 +1,176 @@
+---
+title: "Heat-Health Associations in a Single Town"
+output:
+  rmarkdown::html_vignette:
+    fig.retina: 2
+    dev: svg
+vignette: >
+  %\VignetteIndexEntry{Heat-Health Associations in a Single Town}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Let's use built-in functions to examine heat-health relationships in a single geographic unit. For testing purposes, start with your largest geographic unit! 
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+### Exposure data
+First let's make the exposure matrix
+```{r load_exposure} 
+boston_exposure <- subset(ma_exposure, TOWN20 == 'BOSTON')
+head(boston_exposure)
+```
+
+Notice how this dataset contains temperature for the whole year. This is a good starting place. In the next step we'll subset to just warm season months (which in Boston is May through September), but we'll use extra data around the cutoffs to make sure the temperature matrix is full. So pass in your full temperature time-series in this step.
+
+```{r convertExp}
+boston_exposure_mat <- make_exposure_matrix(boston_exposure)
+head(boston_exposure_mat)
+```
+
+### Outcome data
+Next let's investigate the deaths dataset
+```{r load_deaths} 
+boston_deaths   <- subset(ma_deaths, TOWN20 == 'BOSTON')
+head(boston_deaths)
+```
+
+### Basic DLNM (manual walkthrough)
+
+Now, we'll walk through a basic DLNM of heat-health associations for a single zone. This assumes some basic knowledge of `library(dlnm)`.
+
+Here are the libraries we'll need to run a conditional poisson model.
+```{r dlnm_libraries, message=FALSE}
+library(dlnm)
+library(dplyr)
+library(lubridate)
+library(gnm)
+library(ggplot2)
+```
+
+Here are the inputs to define the crossbasis matrix:
+```{r dlnm_other}
+arg_fun = 'ns'
+lag_fun = 'ns'
+x_knots = quantile(boston_exposure_mat$tmax_C, probs = c(0.5, 0.9))
+maxlag = 5
+nk = 2
+```
+
+And put these into the lists for `argvar` and `arglag`:
+```{r dlmn_lists}
+argvar <- list(fun = arg_fun, knots = x_knots)
+arglag <- list(fun = lag_fun, knots = logknots(maxlag, nk = nk))
+```
+
+Limit the columns of the exposure matrix to be just the ones up to `maxlag`:
+```{r create_cb}
+x_mat <- boston_exposure_mat[, c('tmax_C', paste0('Templag',1:maxlag))]
+
+cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
+```
+
+Now create the strata. In general, the strata for a time- and- space stratified conditional poisson model are day of week, month, and year, and spatial unit
+```{r create_strata}
+boston_deaths$dow   <- lubridate::wday(boston_deaths$date, label = T)
+boston_deaths$month <- lubridate::month(boston_deaths$date, label = T)
+boston_deaths$year  <- lubridate::year(boston_deaths$date)
+
+boston_deaths$strata <- paste0(boston_deaths$TOWN20, ":", 
+                               boston_deaths$year, ":",
+                               boston_deaths$month, ":",
+                               boston_deaths$dow)
+```
+
+Importantly, you need to remove any empty strata so the variances are correctly scaled.
+```{r find_empty_strata}
+boston_deaths_agg <- boston_deaths %>%
+  group_by(strata) %>%
+  summarize(
+    .groups = 'keep',
+    total_daily_deaths = sum(daily_deaths)
+  ) %>%
+  mutate(keep = ifelse(total_daily_deaths > 0, 1, 0))
+
+boston_deaths_comb <- left_join(boston_deaths, 
+                           boston_deaths_agg, 
+                           by = join_by(strata))
+```
+
+Now run the model
+```{r run_model}
+m_sub <- gnm(daily_deaths ~ cb,
+             data = boston_deaths_comb,
+             family = quasipoisson,
+             eliminate = factor(strata),
+             subset = keep == 1)
+summary(m_sub)
+```
+
+Notice that the dispersion parameter is `1.726851` -- this is part of how the quasipoisson model works and is used to re-scale the variance covariance matrix.
+
+Next get the crosspred outputs correctly centered at the minimum RR
+```{r crosspred}
+cp <- crosspred(cb, m_sub, cen = 20, by = 0.1)
+
+cen = cp$predvar[which.min(cp$allRRfit)]
+
+cp <- crosspred(cb, m_sub, cen = cen, by = 0.1)
+```
+
+And plot
+```{r cp_plot, fig.height=3, fig.width=5}
+plot_cp = data.frame(
+    x = cp$predvar,
+    RR = cp$allRRfit,
+    RRlow = cp$allRRlow,
+    RRhigh = cp$allRRhigh
+)
+
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  geom_hline(yintercept = 1, linetype = '11') +
+  theme_classic() +
+  geom_ribbon(fill = 'grey75', alpha = 0.2) +
+  geom_line() + xlab("Tmax (degC)")
+```
+
+### Basic DLNM (using `cityHeatHealth` `R` functions)
+
+The functionality above is what is encapsulated in the `single_zone` function. We have built in defaults for argvar, arglag, and maxlag for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the disperson parameter here since this is using `gnm` under the hood.
+
+```{r single_zone, fig.height=3, fig.width=5}
+
+m1 <- single_zone(exposure_matrix = boston_exposure_mat, 
+                  outcomes = boston_deaths)
+
+plot_cp = data.frame(
+    x = m1$predvar,
+    RR = m1$allRRfit,
+    RRlow = m1$allRRlow,
+    RRhigh = m1$allRRhigh
+)
+
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  geom_hline(yintercept = 1, linetype = '11') +
+  theme_classic() +
+  geom_ribbon(fill = 'grey75', alpha = 0.2) +
+  geom_line() + xlab("Tmax (degC)")
+
+```
+
+### Basic DLNM (using STAN)
+
+Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. https://mc-stan.org/docs/2_20/functions-reference/multinomial-distribution.html
+
+```{r compute_dispersion}
+
+```

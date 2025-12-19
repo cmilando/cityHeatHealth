@@ -1,2 +1,5 @@
 .Rproj.user
 data-raw
+inst/doc
+/doc/
+/Meta/

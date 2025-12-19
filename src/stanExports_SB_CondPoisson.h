@@ -27,110 +27,109 @@ namespace model_SB_CondPoisson_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 103> locations_array__ =
+static constexpr std::array<const char*, 102> locations_array__ =
   {" (found before start of program)",
-  " (in 'SB_CondPoisson', line 68, column 2 to column 15)",
-  " (in 'SB_CondPoisson', line 69, column 2 to column 27)",
-  " (in 'SB_CondPoisson', line 71, column 2 to column 26)",
-  " (in 'SB_CondPoisson', line 74, column 2 to column 25)",
-  " (in 'SB_CondPoisson', line 187, column 2 to column 24)",
-  " (in 'SB_CondPoisson', line 191, column 6 to column 45)",
-  " (in 'SB_CondPoisson', line 190, column 18 to line 192, column 5)",
-  " (in 'SB_CondPoisson', line 190, column 4 to line 192, column 5)",
-  " (in 'SB_CondPoisson', line 189, column 16 to line 193, column 3)",
-  " (in 'SB_CondPoisson', line 189, column 2 to line 193, column 3)",
-  " (in 'SB_CondPoisson', line 81, column 2 to column 20)",
-  " (in 'SB_CondPoisson', line 82, column 2 to column 19)",
-  " (in 'SB_CondPoisson', line 83, column 2 to column 23)",
-  " (in 'SB_CondPoisson', line 104, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 104, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 104, column 2 to column 48)",
-  " (in 'SB_CondPoisson', line 108, column 13 to column 14)",
-  " (in 'SB_CondPoisson', line 108, column 2 to column 50)",
+  " (in 'SB_CondPoisson', line 56, column 2 to column 15)",
+  " (in 'SB_CondPoisson', line 57, column 2 to column 27)",
+  " (in 'SB_CondPoisson', line 59, column 2 to column 26)",
+  " (in 'SB_CondPoisson', line 61, column 2 to column 25)",
+  " (in 'SB_CondPoisson', line 159, column 2 to column 24)",
+  " (in 'SB_CondPoisson', line 162, column 6 to column 45)",
+  " (in 'SB_CondPoisson', line 161, column 18 to line 163, column 5)",
+  " (in 'SB_CondPoisson', line 161, column 4 to line 163, column 5)",
+  " (in 'SB_CondPoisson', line 160, column 16 to line 164, column 3)",
+  " (in 'SB_CondPoisson', line 160, column 2 to line 164, column 3)",
+  " (in 'SB_CondPoisson', line 67, column 2 to column 20)",
+  " (in 'SB_CondPoisson', line 68, column 2 to column 19)",
+  " (in 'SB_CondPoisson', line 69, column 2 to column 23)",
+  " (in 'SB_CondPoisson', line 89, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 89, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 89, column 2 to column 48)",
+  " (in 'SB_CondPoisson', line 92, column 13 to column 14)",
+  " (in 'SB_CondPoisson', line 92, column 2 to column 50)",
+  " (in 'SB_CondPoisson', line 98, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 98, column 11 to column 12)",
+  " (in 'SB_CondPoisson', line 98, column 2 to column 79)",
+  " (in 'SB_CondPoisson', line 102, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 102, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 102, column 2 to column 86)",
+  " (in 'SB_CondPoisson', line 104, column 2 to column 74)",
+  " (in 'SB_CondPoisson', line 110, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 110, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 110, column 2 to column 52)",
   " (in 'SB_CondPoisson', line 115, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 115, column 11 to column 12)",
-  " (in 'SB_CondPoisson', line 115, column 2 to column 79)",
-  " (in 'SB_CondPoisson', line 120, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 120, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 120, column 2 to column 86)",
-  " (in 'SB_CondPoisson', line 123, column 2 to column 74)",
-  " (in 'SB_CondPoisson', line 129, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 129, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 129, column 2 to column 52)",
-  " (in 'SB_CondPoisson', line 134, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 134, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 134, column 2 to column 21)",
-  " (in 'SB_CondPoisson', line 144, column 4 to column 50)",
-  " (in 'SB_CondPoisson', line 135, column 16 to line 145, column 3)",
-  " (in 'SB_CondPoisson', line 135, column 2 to line 145, column 3)",
-  " (in 'SB_CondPoisson', line 149, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 149, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 149, column 2 to column 45)",
-  " (in 'SB_CondPoisson', line 153, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 153, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 153, column 2 to column 50)",
-  " (in 'SB_CondPoisson', line 164, column 10 to column 23)",
-  " (in 'SB_CondPoisson', line 164, column 4 to column 72)",
-  " (in 'SB_CondPoisson', line 177, column 10 to column 74)",
-  " (in 'SB_CondPoisson', line 175, column 16 to line 178, column 10)",
-  " (in 'SB_CondPoisson', line 170, column 45 to line 175, column 10)",
-  " (in 'SB_CondPoisson', line 170, column 9 to line 178, column 10)",
-  " (in 'SB_CondPoisson', line 168, column 35 to line 180, column 8)",
-  " (in 'SB_CondPoisson', line 168, column 7 to line 180, column 8)",
-  " (in 'SB_CondPoisson', line 166, column 18 to line 181, column 5)",
-  " (in 'SB_CondPoisson', line 166, column 4 to line 181, column 5)",
-  " (in 'SB_CondPoisson', line 159, column 24 to line 182, column 3)",
-  " (in 'SB_CondPoisson', line 159, column 2 to line 182, column 3)",
+  " (in 'SB_CondPoisson', line 115, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 115, column 2 to column 21)",
+  " (in 'SB_CondPoisson', line 124, column 4 to column 50)",
+  " (in 'SB_CondPoisson', line 116, column 16 to line 125, column 3)",
+  " (in 'SB_CondPoisson', line 116, column 2 to line 125, column 3)",
+  " (in 'SB_CondPoisson', line 128, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 128, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 128, column 2 to column 45)",
+  " (in 'SB_CondPoisson', line 131, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 131, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 131, column 2 to column 50)",
+  " (in 'SB_CondPoisson', line 140, column 10 to column 23)",
+  " (in 'SB_CondPoisson', line 140, column 4 to column 72)",
+  " (in 'SB_CondPoisson', line 151, column 10 to column 74)",
+  " (in 'SB_CondPoisson', line 149, column 16 to line 152, column 10)",
+  " (in 'SB_CondPoisson', line 144, column 45 to line 149, column 10)",
+  " (in 'SB_CondPoisson', line 144, column 9 to line 152, column 10)",
+  " (in 'SB_CondPoisson', line 143, column 35 to line 153, column 8)",
+  " (in 'SB_CondPoisson', line 143, column 7 to line 153, column 8)",
+  " (in 'SB_CondPoisson', line 141, column 18 to line 154, column 5)",
+  " (in 'SB_CondPoisson', line 141, column 4 to line 154, column 5)",
+  " (in 'SB_CondPoisson', line 136, column 24 to line 155, column 3)",
+  " (in 'SB_CondPoisson', line 136, column 2 to line 155, column 3)",
   " (in 'SB_CondPoisson', line 3, column 2 to column 17)",
   " (in 'SB_CondPoisson', line 4, column 9 to column 10)",
   " (in 'SB_CondPoisson', line 4, column 12 to column 13)",
   " (in 'SB_CondPoisson', line 4, column 2 to column 20)",
+  " (in 'SB_CondPoisson', line 6, column 2 to column 17)",
   " (in 'SB_CondPoisson', line 7, column 2 to column 17)",
-  " (in 'SB_CondPoisson', line 8, column 2 to column 17)",
+  " (in 'SB_CondPoisson', line 8, column 8 to column 9)",
+  " (in 'SB_CondPoisson', line 8, column 11 to column 12)",
+  " (in 'SB_CondPoisson', line 8, column 14 to column 15)",
+  " (in 'SB_CondPoisson', line 8, column 2 to column 24)",
   " (in 'SB_CondPoisson', line 9, column 8 to column 9)",
   " (in 'SB_CondPoisson', line 9, column 11 to column 12)",
-  " (in 'SB_CondPoisson', line 9, column 14 to column 15)",
-  " (in 'SB_CondPoisson', line 9, column 2 to column 24)",
-  " (in 'SB_CondPoisson', line 10, column 8 to column 9)",
-  " (in 'SB_CondPoisson', line 10, column 11 to column 12)",
-  " (in 'SB_CondPoisson', line 10, column 2 to column 29)",
-  " (in 'SB_CondPoisson', line 16, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 16, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 16, column 2 to column 17)",
-  " (in 'SB_CondPoisson', line 17, column 2 to column 24)",
-  " (in 'SB_CondPoisson', line 18, column 2 to column 29)",
-  " (in 'SB_CondPoisson', line 19, column 8 to column 16)",
-  " (in 'SB_CondPoisson', line 19, column 18 to column 31)",
-  " (in 'SB_CondPoisson', line 19, column 2 to column 49)",
-  " (in 'SB_CondPoisson', line 20, column 8 to column 9)",
-  " (in 'SB_CondPoisson', line 20, column 2 to column 35)",
-  " (in 'SB_CondPoisson', line 23, column 2 to column 25)",
-  " (in 'SB_CondPoisson', line 33, column 13 to column 14)",
-  " (in 'SB_CondPoisson', line 33, column 2 to column 20)",
-  " (in 'SB_CondPoisson', line 36, column 4 to column 28)",
-  " (in 'SB_CondPoisson', line 35, column 16 to line 37, column 3)",
-  " (in 'SB_CondPoisson', line 35, column 2 to line 37, column 3)",
-  " (in 'SB_CondPoisson', line 49, column 8 to column 16)",
-  " (in 'SB_CondPoisson', line 49, column 2 to column 33)",
-  " (in 'SB_CondPoisson', line 52, column 7 to column 26)",
-  " (in 'SB_CondPoisson', line 54, column 35 to column 51)",
-  " (in 'SB_CondPoisson', line 54, column 9 to column 51)",
-  " (in 'SB_CondPoisson', line 53, column 33 to line 55, column 8)",
-  " (in 'SB_CondPoisson', line 53, column 7 to line 55, column 8)",
-  " (in 'SB_CondPoisson', line 56, column 6 to column 33)",
-  " (in 'SB_CondPoisson', line 51, column 23 to line 57, column 3)",
-  " (in 'SB_CondPoisson', line 51, column 2 to line 57, column 3)",
-  " (in 'SB_CondPoisson', line 59, column 8 to column 16)",
-  " (in 'SB_CondPoisson', line 59, column 2 to column 28)",
-  " (in 'SB_CondPoisson', line 61, column 4 to column 17)",
-  " (in 'SB_CondPoisson', line 60, column 23 to line 62, column 3)",
-  " (in 'SB_CondPoisson', line 60, column 2 to line 62, column 3)",
-  " (in 'SB_CondPoisson', line 68, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 69, column 18 to column 19)",
-  " (in 'SB_CondPoisson', line 74, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 74, column 12 to column 13)",
-  " (in 'SB_CondPoisson', line 187, column 9 to column 10)",
-  " (in 'SB_CondPoisson', line 187, column 12 to column 13)"};
+  " (in 'SB_CondPoisson', line 9, column 2 to column 29)",
+  " (in 'SB_CondPoisson', line 14, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 14, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 14, column 2 to column 17)",
+  " (in 'SB_CondPoisson', line 15, column 2 to column 24)",
+  " (in 'SB_CondPoisson', line 16, column 2 to column 29)",
+  " (in 'SB_CondPoisson', line 17, column 8 to column 16)",
+  " (in 'SB_CondPoisson', line 17, column 18 to column 31)",
+  " (in 'SB_CondPoisson', line 17, column 2 to column 49)",
+  " (in 'SB_CondPoisson', line 18, column 8 to column 9)",
+  " (in 'SB_CondPoisson', line 18, column 2 to column 35)",
+  " (in 'SB_CondPoisson', line 27, column 13 to column 14)",
+  " (in 'SB_CondPoisson', line 27, column 2 to column 20)",
+  " (in 'SB_CondPoisson', line 29, column 4 to column 28)",
+  " (in 'SB_CondPoisson', line 28, column 16 to line 30, column 3)",
+  " (in 'SB_CondPoisson', line 28, column 2 to line 30, column 3)",
+  " (in 'SB_CondPoisson', line 39, column 8 to column 16)",
+  " (in 'SB_CondPoisson', line 39, column 2 to column 33)",
+  " (in 'SB_CondPoisson', line 41, column 7 to column 26)",
+  " (in 'SB_CondPoisson', line 43, column 35 to column 51)",
+  " (in 'SB_CondPoisson', line 43, column 9 to column 51)",
+  " (in 'SB_CondPoisson', line 42, column 33 to line 44, column 8)",
+  " (in 'SB_CondPoisson', line 42, column 7 to line 44, column 8)",
+  " (in 'SB_CondPoisson', line 45, column 6 to column 33)",
+  " (in 'SB_CondPoisson', line 40, column 23 to line 46, column 3)",
+  " (in 'SB_CondPoisson', line 40, column 2 to line 46, column 3)",
+  " (in 'SB_CondPoisson', line 48, column 8 to column 16)",
+  " (in 'SB_CondPoisson', line 48, column 2 to column 28)",
+  " (in 'SB_CondPoisson', line 50, column 4 to column 17)",
+  " (in 'SB_CondPoisson', line 49, column 23 to line 51, column 3)",
+  " (in 'SB_CondPoisson', line 49, column 2 to line 51, column 3)",
+  " (in 'SB_CondPoisson', line 56, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 57, column 18 to column 19)",
+  " (in 'SB_CondPoisson', line 61, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 61, column 12 to column 13)",
+  " (in 'SB_CondPoisson', line 159, column 9 to column 10)",
+  " (in 'SB_CondPoisson', line 159, column 12 to column 13)"};
 #include <stan_meta_header.hpp>
 class model_SB_CondPoisson final : public model_base_crtp<model_SB_CondPoisson> {
 private:
@@ -145,7 +144,6 @@ private:
   int max_in_strata;
   std::vector<std::vector<int>> S_condensed;
   std::vector<int> stratum_id;
-  int grainsize;
   Eigen::Matrix<double,1,-1> n_a_data__;
   std::vector<int> strata_len;
   std::vector<int> dummy;
@@ -384,75 +382,66 @@ public:
       stan::math::check_greater_or_equal(function__, "stratum_id",
         stratum_id, 0);
       current_statement__ = 76;
-      context__.validate_dims("data initialization", "grainsize", "int",
-        std::vector<size_t>{});
-      grainsize = std::numeric_limits<int>::min();
-      current_statement__ = 76;
-      grainsize = context__.vals_i("grainsize")[(1 - 1)];
-      current_statement__ = 76;
-      stan::math::check_greater_or_equal(function__, "grainsize", grainsize,
-        1);
-      current_statement__ = 77;
       stan::math::validate_non_negative_index("n_a", "J", J);
-      current_statement__ = 78;
+      current_statement__ = 77;
       n_a_data__ = Eigen::Matrix<double,1,-1>::Constant(J,
                      std::numeric_limits<double>::quiet_NaN());
       new (&n_a) Eigen::Map<Eigen::Matrix<double,1,-1>>(n_a_data__.data(), J);
-      current_statement__ = 81;
+      current_statement__ = 80;
       for (int j = 1; j <= J; ++j) {
-        current_statement__ = 79;
+        current_statement__ = 78;
         stan::model::assign(n_a,
           stan::math::sum(
             stan::model::rvalue(Jmat, "Jmat", stan::model::index_uni(j),
               stan::model::index_omni())), "assigning variable n_a",
           stan::model::index_uni(j));
       }
-      current_statement__ = 82;
+      current_statement__ = 81;
       stan::math::validate_non_negative_index("strata_len", "n_strata",
         n_strata);
-      current_statement__ = 83;
+      current_statement__ = 82;
       strata_len = std::vector<int>(n_strata,
                      std::numeric_limits<int>::min());
-      current_statement__ = 91;
+      current_statement__ = 90;
       for (int n = 1; n <= n_strata; ++n) {
         int k_not_zero = std::numeric_limits<int>::min();
-        current_statement__ = 84;
+        current_statement__ = 83;
         k_not_zero = 0;
-        current_statement__ = 88;
+        current_statement__ = 87;
         for (int k = 1; k <= max_in_strata; ++k) {
-          current_statement__ = 86;
+          current_statement__ = 85;
           if (stan::math::logical_gt(
                 stan::model::rvalue(S_condensed, "S_condensed",
                   stan::model::index_uni(n), stan::model::index_uni(k)), 0)) {
-            current_statement__ = 85;
+            current_statement__ = 84;
             k_not_zero = (k_not_zero + 1);
           }
         }
-        current_statement__ = 89;
+        current_statement__ = 88;
         stan::model::assign(strata_len, k_not_zero,
           "assigning variable strata_len", stan::model::index_uni(n));
       }
-      current_statement__ = 92;
+      current_statement__ = 91;
       stan::math::validate_non_negative_index("dummy", "n_strata", n_strata);
-      current_statement__ = 93;
+      current_statement__ = 92;
       dummy = std::vector<int>(n_strata, std::numeric_limits<int>::min());
-      current_statement__ = 96;
+      current_statement__ = 95;
       for (int n = 1; n <= n_strata; ++n) {
-        current_statement__ = 94;
+        current_statement__ = 93;
         stan::model::assign(dummy, n, "assigning variable dummy",
           stan::model::index_uni(n));
       }
-      current_statement__ = 97;
+      current_statement__ = 96;
       stan::math::validate_non_negative_index("mu", "K", K);
-      current_statement__ = 98;
+      current_statement__ = 97;
       stan::math::validate_non_negative_index("sigma", "K", K);
-      current_statement__ = 99;
+      current_statement__ = 98;
       stan::math::validate_non_negative_index("beta_star", "K", K);
-      current_statement__ = 100;
+      current_statement__ = 99;
       stan::math::validate_non_negative_index("beta_star", "J", J);
-      current_statement__ = 101;
+      current_statement__ = 100;
       stan::math::validate_non_negative_index("beta_out", "K", K);
-      current_statement__ = 102;
+      current_statement__ = 101;
       stan::math::validate_non_negative_index("beta_out", "J", J);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);

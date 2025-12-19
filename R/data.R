@@ -56,7 +56,7 @@ NULL
 
 #' Daily Maximum Temperature Exposure by Town
 #'
-#' A dataset containing _fictional_ daily maximum temperature measurements linked to
+#' A SIMULATED dataset containing _fictional_ daily maximum temperature measurements linked to
 #' Massachusetts towns. Each row represents a single day–town observation
 #' with the corresponding maximum temperature in degrees Celsius.
 #'
@@ -73,6 +73,28 @@ NULL
 #' \code{TOWN20}.
 #'
 #' @name ma_exposure
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Daily Deaths by Town
+#'
+#' A SIMULATED dataset containing _fictional_ daily deaths linked to
+#' Massachusetts towns. Each row represents a single day–town observation.
+#'
+#' @format A data frame with one row per date and town and the following variables:
+#' \describe{
+#'   \item{date}{Date. Calendar date of the observation.}
+#'   \item{daily_deaths}{Numeric. Daily deaths - SIMULATED!}
+#'   \item{TOWN20}{Character. Name of the Massachusetts town associated with the temperature observation.}
+#' }
+#'
+#' @details
+#' This dataset is typically used for environmental exposure assessment and
+#' can be joined to town-level geographic or demographic datasets using
+#' \code{TOWN20}.
+#'
+#' @name ma_deaths
 #' @docType data
 #' @keywords datasets
 NULL
