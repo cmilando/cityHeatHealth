@@ -18,10 +18,13 @@
 #' @examples
 make_exposure_matrix <- function(data, column_mapping,
                                  warm_season_months = 5:9,
-                                 maxgap = 5, n_lags = 8,
+                                 maxgap = 5,
+                                 n_lags = 8,
                                  grp_level = FALSE) {
 
   # validation block
+  # set some arbitrary limits on these but users could always make a local
+  # copy and override if they really want to
   stopifnot(all(warm_season_months %in% 1:12) &
               length(warm_season_months) == length(unique(warm_season_months)))
   stopifnot(length(maxgap) == 1 & maxgap %in% 1:10)
@@ -44,13 +47,13 @@ make_exposure_matrix <- function(data, column_mapping,
   # get years from data
   setDT(data)
   date_col <- column_mapping$date
-  years <- sort(unique(data[, year(get(date_col))]))
+  years   <- sort(unique(data[, year(get(date_col))]))
 
   # make the skeleton you need later
   # this is one of the first key stumbling blocks
   get_dt <- function(yy) {
-    st = lubridate::make_date(yy, 1, 1)
-    ed = lubridate::make_date(yy, 12, 31)
+    st = make_date(yy, 1, 1)
+    ed = make_date(yy, 12, 31)
     dt = seq.Date(st, ed, by = 'day')
     return(dt)
   }
@@ -74,6 +77,13 @@ make_exposure_matrix <- function(data, column_mapping,
   )
 
   town_mapping <- unique(data[, ..geo_cols])
+
+  # i think here, if any geo_unit appears more than once
+  # this should enforce
+  if(length(unique_areas) != nrow(town_mapping)) {
+    stop("need to enforce that there is a 1:1 mapping of geo_unit to geo_unit_grp.
+         That is, a single geo_unit cannot belong to more than one geo_unit_grp")
+  }
 
   # old tidyverse code
   # xgrid <- left_join(xgrid, town_mapping,
@@ -108,14 +118,13 @@ make_exposure_matrix <- function(data, column_mapping,
   ]
 
   # ******
-  # need to fill in NA values
+  # Loop 1: need to fill in NA values
   exposure1_l <- split(xgrid, f = xgrid[, get(join_col)])
   length(exposure1_l)
 
   exposure_col <- column_mapping$exposure
   exposure2_l <- vector("list", length(exposure1_l))
 
-  # ******
   for(i in 1:length(exposure1_l)) {
 
     x <- exposure1_l[[i]]
@@ -168,7 +177,8 @@ make_exposure_matrix <- function(data, column_mapping,
     # fill in any NAs using zoo::na.approx
     x[, (exposure_col) := zoo::na.approx(get(exposure_col),maxgap = maxgap)]
     if(any(is.na(x[, get(exposure_col)])))
-      stop("zoo::na.approx() was not able to remove all NAs")
+      stop(paste0("zoo::na.approx() was not able to remove all NAs in ",
+                  x[1, get(join_col)]))
 
     exposure2_l[[i]] <- x
   }
@@ -200,8 +210,7 @@ make_exposure_matrix <- function(data, column_mapping,
 
   }
 
-
-  # *** Loop 2, because you could in theory summarize in-between to the grp_level
+  # *** Loop 2, get lags
   for(i in 1:length(exposure2_l)) {
 
     x <-  exposure2_l[[i]]

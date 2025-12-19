@@ -2,7 +2,7 @@
 % Please edit documentation in R/exposure.R
 \name{make_exposure_matrix}
 \alias{make_exposure_matrix}
-\title{Script to clean the exposure data}
+\title{Function to clean and prepare the exposure data matrix}
 \usage{
 make_exposure_matrix(
   data,
@@ -16,20 +16,21 @@ make_exposure_matrix(
 \arguments{
 \item{data}{a dataset of exposures}
 
-\item{column_mapping}{a named list that indicates relevant columns. for the exposure
-data table, this needs to be one of: c('date', "exposure", 'geo_unit', 'geo_unit_grp')}
+\item{column_mapping}{a named list that indicates relevant columns in \code{data}. for the exposure
+data table, these need to be one of: c('date', "exposure", 'geo_unit', 'geo_unit_grp')}
 
-\item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's 5 through 9}
+\item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's
+May through September (5 through 9)}
 
 \item{n_lags}{the number of lags for the exposure variable (default is 8)}
 
 \item{grp_level}{whether to summarize to the group level or not (default)}
 
-\item{maxgaps}{the maximum allowable gap, to be passed to zoo::na.approx (default is 5)}
+\item{maxgaps}{the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)}
 }
 \value{
 a data.table of class("exposure")
 }
 \description{
-Script to clean the exposure data
+Function to clean and prepare the exposure data matrix
 }

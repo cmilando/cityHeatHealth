@@ -1,4 +1,4 @@
-#' Run a conditional poisson model for a single zone
+#' Run a conditional poisson model for a set of parameters
 #'
 #'
 #' @import data.table
@@ -21,7 +21,7 @@
 #' @export
 #'
 #' @examples
-single_zone <- function(exposure_matrix, outcomes,
+single_run <- function(exposure_matrix, outcomes,
                         argvar = NULL, arglag = NULL, maxlag = NULL) {
 
   ## ******************
@@ -34,6 +34,12 @@ single_zone <- function(exposure_matrix, outcomes,
   ##   and area unit. this is the default unless you really want to
   ##   do things differently
   ## ******************
+
+  warning("check that both inputs are the right class of variables")
+
+  warning("check geo_unit is the same for both")
+
+  stop("outcome has a factor, thats a problem")
 
   if(is.null(maxlag)) {
     maxlag = 5
@@ -54,27 +60,6 @@ single_zone <- function(exposure_matrix, outcomes,
   ## create the crossbasis
   cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 
-  ## create the strata
-  outcomes$dow   <- wday(outcomes$date, label = T)
-  outcomes$month <- month(outcomes$date, label = T)
-  outcomes$year  <- year(outcomes$date)
-
-  outcomes$strata <- paste0(outcomes$TOWN20, ":",
-                            outcomes$year, ":",
-                            outcomes$month, ":",
-                            outcomes$dow)
-
-  ## get rid of 0 strata
-  ## you make sure there are no empty strata
-  outcomes_agg <- outcomes %>%
-    group_by(strata) %>%
-    summarize(
-      .groups = 'keep',
-      total_daily_deaths = sum(daily_deaths)
-    ) %>%
-    mutate(keep = ifelse(total_daily_deaths > 0, 1, 0))
-
-  outcomes_comb <- left_join(outcomes, outcomes_agg, by = join_by(strata))
 
   ## ******************************************
   ## if using GNM, you get COEF and VCOV as part of the model objects

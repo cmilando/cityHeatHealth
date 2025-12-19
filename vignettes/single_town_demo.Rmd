@@ -74,7 +74,7 @@ boston_exposure_mat[72:77,]
 Its probably a good idea to see if there is any systematic bias in the missingness (i.e., are the data "missing at random") but for the purposes of this tutorial we'll assume that they are (which is true since these are simulated data!).
 
 It may also be a good idea to check that the exposure values generally look like you
-expect them to look (e.g., with some summary statistics), just to make sure you don't need to do any cleaning earlier.
+expect them to look (e.g., with some summary statistics), just to make sure you don't need to do anys additional pre-processing (e.g., if there are location-specific wildly high or low temperatures, this script as is will not catch those).
 
 ```{r exp_summary}
 summary(boston_exposure_mat$tmax_C)
@@ -91,40 +91,34 @@ boston_deaths   <- subset(ma_deaths, TOWN20 == 'BOSTON')
 head(boston_deaths)
 ```
 
-As with the exposure dataset, there may be some days that are missing data, and we want to aggregate these data across the factors we aren't using and to the correct spatial unit for this analysis. The `collapse_outcomes` function accomplishes these goals:
+Starts with defining the outcome columns:
 
-```{r collapse_outcomes}
-
-
+```{r outcome_columns}
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20",
+  'strata_unit' = 'TOWN20'
+)
 ```
 
-Now create the strata. In general, the strata for a time- and- space stratified conditional poisson model are day of week, month, and year, and spatial unit
-```{r create_strata}
-boston_deaths$dow   <- lubridate::wday(boston_deaths$date, label = T)
-boston_deaths$month <- lubridate::month(boston_deaths$date, label = T)
-boston_deaths$year  <- lubridate::year(boston_deaths$date)
+Notice that we have several columns of `factors` -- right now we will sum up within these groups, but we will introduce functionality later to run models across multiple factors.   
 
-boston_deaths$strata <- paste0(boston_deaths$TOWN20, ":", 
-                               boston_deaths$year, ":",
-                               boston_deaths$month, ":",
-                               boston_deaths$dow)
+As with the exposure dataset, there may be some days that are missing data, and we want to aggregate these data across the factors we aren't using and to the correct spatial unit for this analysis. The `make_outcome_table` function accomplishes these goals, 
+
+```{r make_outcome_table}
+boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
+head(boston_deaths_tbl)
 ```
 
-Importantly, you need to remove any empty strata so the variances are correctly scaled.
-```{r find_empty_strata}
-boston_deaths_agg <- boston_deaths %>%
-  group_by(strata) %>%
-  summarize(
-    .groups = 'keep',
-    total_daily_deaths = sum(daily_deaths)
-  ) %>%
-  mutate(keep = ifelse(total_daily_deaths > 0, 1, 0))
+Notice that two variables have been added: 
 
-boston_deaths_comb <- left_join(boston_deaths, 
-                           boston_deaths_agg, 
-                           by = join_by(strata))
-```
+(1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level, but still using the many `geo-unit`s and variation in exposures and outcomes and the sub-geo-unit-grp level. So for example, if you are working with counties and towns, and choose county, town level exposures and outcomes will be used to estimate county-level results (and results for individual towns will not be output):
 
+and (2) a variable `keep` describing the presence of group-level outcomes. at a minimum this removes any empty strata so the variances are correctly scaled (and you can increase this floor if you'd like)
 
 ### Basic DLNM (manual walkthrough)
 
@@ -226,13 +220,13 @@ t2 <- matrix(t2, nrow = nrow(t1), ncol = ncol(t1))
 all.equal(t1, t2, tolerance = 1e-8)
 ```
 
-### Basic DLNM (using `cityHeatHealth` `R` functions)
+### Basic DLNM (using `cityHeatHealth` functions in `R`)
 
-The functionality above is what is encapsulated in the `single_zone` function. We have built in defaults for argvar, arglag, and maxlag for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the disperson parameter here since this is using `gnm` under the hood.
+The functionality above is what is encapsulated in the `single_run` function. We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
 
 ```{r single_zone, fig.height=3, fig.width=5}
 
-m1 <- single_zone(exposure_matrix = boston_exposure_mat, 
+m1 <- single_run(exposure_matrix = boston_exposure_mat, 
                   outcomes = boston_deaths)
 
 plot_cp = data.frame(
