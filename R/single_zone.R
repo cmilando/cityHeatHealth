@@ -162,4 +162,73 @@ calc_dispersion <- function(y, X, beta, stratum_vector) {
 
 }
 
+#' Calculate the variance-covariance matrix of a poisson model
+#'
+#' https://link.springer.com/article/10.1007/s11222-005-4069-4
+#' https://statomics.github.io/SGA2019/assets/poissonIRWLS-implemented.html#variance-covariance-matrix-of-the-model-parameters
+#'
+#' and extended to multi-nomial case.
+#'
+#' @param X
+#' @param beta
+#' @param stratum_vector
+#' @importFrom MASS ginv
+#' @returns
+#' @export
+#'
+#' @examples
+calc_vcov <- function(X, beta, stratum_vector) {
+  # X      : n x p design matrix (no stratum intercepts)
+  # beta   : length-p coefficient vector
+  # strata : length-n vector defining conditioning strata
+
+  # --- basic checks ----------------------------------------------------------
+  stopifnot(
+    is.matrix(X),
+    length(y) == nrow(X),
+    length(beta) == ncol(X),
+    length(stratum_vector) == nrow(X)
+  )
+
+  # Recode strata as consecutive integers 1, ..., S
+  n_strata <- length(unique(stratum_vector))
+  stratum_vector <- as.numeric(factor(stratum_vector, labels = 1:n_strata))
+
+  # Initialize Fisher information matrix
+  p <- ncol(X)
+  I <- matrix(0, p, p)
+
+  # Loop over strata
+  for (s in seq_len(n_strata)) {
+
+    # Indices for stratum s
+    idx <- which(stratum_vector == s)
+
+    # Skip degenerate strata
+    if (length(idx) <= 1) next
+
+    # Design matrix for stratum s
+    Xs <- X[idx, , drop = FALSE]
+
+    # Linear predictor
+    eta <- as.vector(Xs %*% beta)
+
+    # Multinomial probabilities
+    ps <- exp(eta)
+    ps <- ps / sum(ps)
+
+    # Total count in stratum s
+    Ns <- sum(y[idx])
+
+    # Multinomial covariance matrix
+    Ws <- diag(ps) - tcrossprod(ps)
+
+    # Fisher information contribution
+    I <- I + Ns * crossprod(Xs, Ws %*% Xs)
+  }
+
+  # Invert Fisher information to obtain vcov
+  return(ginv(I))
+}
+
 

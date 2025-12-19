@@ -143,6 +143,30 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
   geom_line() + xlab("Tmax (degC)")
 ```
 
+Finally, do some basic checks of the math using other utility functions to estimate the dispersion parameters and the variance-covariance matrix. Both of these functions will be useful once we are no longer using R functions to estimate the model.
+
+First to check the dispersion
+```{r compute_dispersion}
+calc_dispersion(boston_deaths$daily_deaths, 
+                X = cb, 
+                stratum_vector = boston_deaths$strata, 
+                beta = coef(m_sub))
+```
+
+Next to check vcov
+```{r compute_vcov}
+vcov_beta <- calc_vcov(X = cb, beta = coef(m_sub), 
+                       stratum_vector = boston_deaths$strata)
+
+t1 <- vcov_beta * dispersion
+t2 <- vcov(m_sub)
+attributes(t2) <- NULL
+t2 <- matrix(t2, nrow = nrow(t1), ncol = ncol(t1))
+t2
+
+all.equal(t1, t2, tolerance = 1e-8)
+```
+
 ### Basic DLNM (using `cityHeatHealth` `R` functions)
 
 The functionality above is what is encapsulated in the `single_zone` function. We have built in defaults for argvar, arglag, and maxlag for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the disperson parameter here since this is using `gnm` under the hood.
@@ -171,6 +195,5 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
 
 Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. https://mc-stan.org/docs/2_20/functions-reference/multinomial-distribution.html
 
-```{r compute_dispersion}
 
-```
+
