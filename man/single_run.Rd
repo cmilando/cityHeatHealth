@@ -6,22 +6,23 @@
 \usage{
 single_run(
   exposure_matrix,
-  outcomes,
+  outcomes_tbl,
   argvar = NULL,
   arglag = NULL,
-  maxlag = NULL
+  maxlag = NULL,
+  min_n = 50
 )
 }
 \arguments{
 \item{exposure_matrix}{a matrix of exposures, with columns for lag, usually created by \code{make_exposure_matrix}}
-
-\item{outcomes}{a dataframe of date, and outcome}
 
 \item{argvar}{a list containing the \code{argvar} components for the \code{crossbasis}}
 
 \item{arglag}{a list containing the \code{arglag} components for the \code{crossbasis}}
 
 \item{maxlag}{an integer of the maximum lag}
+
+\item{outcomes}{a data.table of outcomes, created by \code{make_outcome_table}}
 }
 \description{
 Run a conditional poisson model for a set of parameters

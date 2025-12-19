@@ -5,9 +5,8 @@
 #' @importFrom dlnm crossbasis
 #' @importFrom dlnm crosspred
 #' @importFrom gnm gnm
-#'
 #' @param exposure_matrix a matrix of exposures, with columns for lag, usually created by `make_exposure_matrix`
-#' @param outcomes a dataframe of date, and outcome
+#' @param outcomes a data.table of outcomes, created by `make_outcome_table`
 #' @param argvar a list containing the `argvar` components for the `crossbasis`
 #' @param arglag a list containing the `arglag` components for the `crossbasis`
 #' @param maxlag an integer of the maximum lag
@@ -17,7 +16,8 @@
 #'
 #' @examples
 single_run <- function(exposure_matrix, outcomes_tbl,
-                        argvar = NULL, arglag = NULL, maxlag = NULL) {
+                        argvar = NULL, arglag = NULL, maxlag = NULL,
+                       min_n = 50) {
 
   ## ******************
   ## TODO
@@ -32,15 +32,24 @@ single_run <- function(exposure_matrix, outcomes_tbl,
 
   warning("check that both inputs are the right class of variables")
 
+  # well
   warning("check geo_unit is the same for both")
 
-  warning("outcome has a factor, thats a problem")
+  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
+    stop("if outcome has a factor, thats a problem")
+  }
+
+
+  warning("set minN and check it for this single_run")
+  # you also need a place to define MinN? is it here or not at all, just
+  # a warning since that is what is defined later
+
+
+  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
   if(is.null(maxlag)) {
     maxlag = 5
   }
-
-  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
   if(is.null(argvar)) {
     x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = c(0.5, 0.9))
@@ -55,8 +64,14 @@ single_run <- function(exposure_matrix, outcomes_tbl,
   xcols <- c(exposure_col, paste0('explag',1:maxlag))
   x_mat <- exposure_matrix[, ..xcols]
 
-  cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
+  ## probably should make sure that exposure_matrix and outcome_tbl
+  ## are the same size, at least
+  stopifnot(dim(x_mat)[1] == dim(outcomes_tbl)[1])
 
+
+
+  ## if you are safe to proceed, make the x_mat
+  cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 
   ## ******************************************
   ## if using GNM, you get COEF and VCOV as part of the model objects

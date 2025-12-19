@@ -1,5 +1,5 @@
 ---
-title: "Heat-Health Associations in a Single Town"
+title: "Heat-Health Associations in a Single Town using `cityHeatHealth`"
 output:
   rmarkdown::html_vignette:
     fig.retina: 2

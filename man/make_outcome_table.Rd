@@ -4,11 +4,20 @@
 \alias{make_outcome_table}
 \title{Function to create the outcome table}
 \usage{
-make_outcome_table(data, column_mapping, collapse_to = NULL, grp_level = FALSE)
+make_outcome_table(
+  data,
+  column_mapping,
+  warm_season_months = 5:9,
+  collapse_to = NULL,
+  grp_level = FALSE
+)
 }
 \arguments{
 \item{column_mapping}{a named list that indicates relevant columns in \code{data}. for the exposure
 data table, these need to be one of: c('date', "outcome",'factor, 'geo_unit', 'geo_unit_grp')}
+
+\item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's
+May through September (5 through 9)}
 
 \item{collapse_to}{which factors to collapse across}
 
@@ -22,7 +31,6 @@ Collapse outcomes to a given factor level, or overall
 This is a good first step and you can deal here with missing data in the record
 like adding zeros and what not
 
-you also need a place to define MinN? is it here or not at all, just
-a warning since that is what is defined later
+
 *********
 }

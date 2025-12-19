@@ -1,0 +1,87 @@
+---
+title: "Quickstart guide to `cityHeatHealth`"
+output:
+  rmarkdown::html_vignette:
+    fig.retina: 2
+    dev: svg
+vignette: >
+  %\VignetteIndexEntry{Quickstart guide to `cityHeatHealth`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+### Basic DLNM (using `cityHeatHealth` functions in `R`)
+
+This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
+
+We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
+
+```{r exposure}
+# load exposure data
+boston_exposure <- subset(ma_exposure, TOWN20 == 'BOSTON')
+head(boston_exposure)
+
+# create exposure matrix
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
+head(boston_exposure_mat)
+```
+
+```{r outcome}
+# load outcome data
+boston_deaths   <- subset(ma_deaths, TOWN20 == 'BOSTON')
+head(boston_deaths)
+
+# create outcome table
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
+head(boston_deaths_tbl)
+```
+
+
+Run the model
+```{r single_run}
+m1 <- single_run(exposure_matrix = boston_exposure_mat, 
+                  outcomes = boston_deaths_tbl)
+
+```
+
+And plot
+```{r single_plot, fig.height=3, fig.width=5}
+plot_cp = data.frame(
+    x = m1$predvar,
+    RR = m1$allRRfit,
+    RRlow = m1$allRRlow,
+    RRhigh = m1$allRRhigh
+)
+library(ggplot2)
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  geom_hline(yintercept = 1, linetype = '11') +
+  theme_classic() +
+  geom_ribbon(fill = 'grey75', alpha = 0.2) +
+  geom_line() + xlab("Tmax (degC)")
+
+```

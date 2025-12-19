@@ -9,7 +9,7 @@ make_exposure_matrix(
   column_mapping,
   warm_season_months = 5:9,
   maxgap = 5,
-  n_lags = 8,
+  maxlag = 5,
   grp_level = FALSE
 )
 }
@@ -22,7 +22,7 @@ data table, these need to be one of: c('date', "exposure", 'geo_unit', 'geo_unit
 \item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's
 May through September (5 through 9)}
 
-\item{n_lags}{the number of lags for the exposure variable (default is 8)}
+\item{maxlag}{the number of lags for the exposure variable (default is 5)}
 
 \item{grp_level}{whether to summarize to the group level or not (default)}
 
