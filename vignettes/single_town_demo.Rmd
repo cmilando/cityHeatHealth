@@ -98,43 +98,6 @@ As with the exposure dataset, there may be some days that are missing data, and 
 
 ```
 
-
-
-### Basic DLNM (manual walkthrough)
-
-Now, we'll walk through a basic DLNM of heat-health associations for a single zone. This assumes some basic knowledge of `library(dlnm)`.
-
-Here are the libraries we'll need to run a conditional poisson model.
-```{r dlnm_libraries, message=FALSE}
-library(dlnm)
-library(dplyr)
-library(lubridate)
-library(gnm)
-library(ggplot2)
-```
-
-Here are the inputs to define the crossbasis matrix. We use a default of `ns` so that the behavior at the the tails of the distribution is linear.
-```{r dlnm_other}
-arg_fun = 'ns'
-lag_fun = 'ns'
-x_knots = quantile(boston_exposure_mat$tmax_C, probs = c(0.5, 0.9))
-maxlag = 5
-nk = 2
-```
-
-And put these into the lists for `argvar` and `arglag`:
-```{r dlmn_lists}
-argvar <- list(fun = arg_fun, knots = x_knots)
-arglag <- list(fun = lag_fun, knots = logknots(maxlag, nk = nk))
-```
-
-Limit the columns of the exposure matrix to be just the ones up to `maxlag`:
-```{r create_cb}
-x_mat <- boston_exposure_mat[, c('tmax_C', paste0('Templag',1:maxlag))]
-
-cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
-```
-
 Now create the strata. In general, the strata for a time- and- space stratified conditional poisson model are day of week, month, and year, and spatial unit
 ```{r create_strata}
 boston_deaths$dow   <- lubridate::wday(boston_deaths$date, label = T)
@@ -160,6 +123,40 @@ boston_deaths_agg <- boston_deaths %>%
 boston_deaths_comb <- left_join(boston_deaths, 
                            boston_deaths_agg, 
                            by = join_by(strata))
+```
+
+
+### Basic DLNM (manual walkthrough)
+
+Now, we'll walk through a basic DLNM of heat-health associations for a single zone. This assumes some basic knowledge of `library(dlnm)`.
+
+Here are the libraries we'll need to run a conditional poisson model.
+```{r dlnm_libraries, message=FALSE}
+library(dlnm)
+library(gnm)
+library(ggplot2)
+```
+
+Here are the inputs to define the crossbasis matrix. We use a default of `ns` so that the behavior at the the tails of the distribution is linear.
+```{r dlnm_other}
+arg_fun = 'ns'
+lag_fun = 'ns'
+x_knots = quantile(boston_exposure_mat$tmax_C, probs = c(0.5, 0.9))
+maxlag = 5
+nk = 2
+```
+
+And put these into the lists for `argvar` and `arglag`:
+```{r dlmn_lists}
+argvar <- list(fun = arg_fun, knots = x_knots)
+arglag <- list(fun = lag_fun, knots = logknots(maxlag, nk = nk))
+```
+
+Limit the columns of the exposure matrix to be just the ones up to `maxlag`:
+```{r create_cb}
+x_mat <- boston_exposure_mat[, c('tmax_C', paste0('Templag',1:maxlag))]
+
+cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
 ```
 
 Now run the model

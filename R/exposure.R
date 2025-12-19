@@ -1,40 +1,32 @@
-#' Script to clean the exposure data
-#'
-#' things to be aware of
-#' - there may be missing data, so fill in with na.approx
-#' - you need to include the full year so you can do xbasis matrix
-#' - you may need to know the mapping so you can average up
+#' Function to clean and prepare the exposure data matrix
 #'
 #' @param data a dataset of exposures
-#' @param column_mapping a named list that indicates relevant columns
-#' @param warm_season_months the warm season months for this region, default is Northern Hemisphere's 5 through 9
-#' @param maxgaps the maximum allowable gap, to be passed to zoo::na.approx
+#' @param column_mapping a named list that indicates relevant columns in `data`. for the exposure
+#' data table, these need to be one of: c('date', "exposure", 'geo_unit', 'geo_unit_grp')
+#' @param warm_season_months the warm season months for this region, default is Northern Hemisphere's
+#' May through September (5 through 9)
+#' @param maxgaps the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)
+#' @param n_lags the number of lags for the exposure variable (default is 8)
+#' @param grp_level whether to summarize to the group level or not (default)
 #' @import data.table
-#' @importFrom dplyr lag
 #' @importFrom tidyr expand_grid
 #' @importFrom zoo na.approx
 #' @importFrom lubridate make_date
-#' @returns
+#' @returns a data.table of class("exposure")
 #' @export
 #'
 #' @examples
 make_exposure_matrix <- function(data, column_mapping,
                                  warm_season_months = 5:9,
-                                 maxgap = 5) {
+                                 maxgap = 5, n_lags = 8,
+                                 grp_level = FALSE) {
 
-  # *************
-  # THINGS TO FIX
-
-  # - don't use lubridate for month
-  # - warning if the dates are not the whole year because then
-  #   there will be NAs
-  # - dont hardcode the number of lags
-  # - don't hardcode the name of the lagcolumn
-  # - give a warning if NAs are filled and the gap is large
-  # - Do the spatial averaging if you want to map to a larger unit
-  #   >> read this from data, which will have an attribute that says
-  #      `geo_unit` and `geo_unit_grp`, so the default is `geo_unit`
-  # *************
+  # validation block
+  stopifnot(all(warm_season_months %in% 1:12) &
+              length(warm_season_months) == length(unique(warm_season_months)))
+  stopifnot(length(maxgap) == 1 & maxgap %in% 1:10)
+  stopifnot(length(n_lags) == 1 & n_lags %in% 1:10)
+  stopifnot(length(grp_level) == 1 & grp_level %in% c(T, F))
 
   # column types
   col_types <- c('date', "exposure", 'geo_unit', 'geo_unit_grp')
@@ -50,9 +42,12 @@ make_exposure_matrix <- function(data, column_mapping,
           Look for a typo')
 
   # get years from data
-  years <- sort(unique(year(data[, column_mapping$date])))
+  setDT(data)
+  date_col <- column_mapping$date
+  years <- sort(unique(data[, year(get(date_col))]))
 
   # make the skeleton you need later
+  # this is one of the first key stumbling blocks
   get_dt <- function(yy) {
     st = lubridate::make_date(yy, 1, 1)
     ed = lubridate::make_date(yy, 12, 31)
@@ -63,14 +58,22 @@ make_exposure_matrix <- function(data, column_mapping,
   all_dt <- lapply(years, get_dt)
   all_dt <- do.call(c, all_dt)
 
+  # ******
   # this is where xgrid comes in
-  unique_areas <- unique(data[, column_mapping$geo_unit])
+  geo_col <- column_mapping$geo_unit
+  unique_areas <- unlist(unique(data[, get(geo_col)]))
   xgrid <- tidyr::expand_grid(date = all_dt, geo_unit = unique_areas)
   names(xgrid) = c(column_mapping$date, column_mapping$geo_unit)
+  head(xgrid)
 
-  # join back in county
-  town_mapping <- unique(data[, c(column_mapping$geo_unit,
-                                  column_mapping$geo_unit_grp)])
+  # ******
+  # join back in group level
+  geo_cols <- c(
+    column_mapping$geo_unit,
+    column_mapping$geo_unit_grp
+  )
+
+  town_mapping <- unique(data[, ..geo_cols])
 
   # old tidyverse code
   # xgrid <- left_join(xgrid, town_mapping,
@@ -87,12 +90,12 @@ make_exposure_matrix <- function(data, column_mapping,
     on = setNames(join_col, join_col)
   ]
 
+  # ******
   # and now join in data
-  # xgrid <- left_join(xgrid, data, by = join_by(!!sym(column_mapping$date),
-  #                                              !!sym(column_mapping$geo_unit),
-  #                                              !!sym(column_mapping$geo_unit_grp)))
-  setDT(data)
-
+  # xgrid <- left_join(xgrid, data,
+  # by = join_by(!!sym(column_mapping$date),
+  #              !!sym(column_mapping$geo_unit),
+  #              !!sym(column_mapping$geo_unit_grp)))
   join_cols <- c(
     column_mapping$date,
     column_mapping$geo_unit,
@@ -104,23 +107,25 @@ make_exposure_matrix <- function(data, column_mapping,
     on = setNames(join_cols, join_cols)
   ]
 
+  # ******
   # need to fill in NA values
-  exposure1_l <- split(xgrid, f = xgrid[, ..join_col])
+  exposure1_l <- split(xgrid, f = xgrid[, get(join_col)])
   length(exposure1_l)
 
   exposure_col <- column_mapping$exposure
   exposure2_l <- vector("list", length(exposure1_l))
 
+  # ******
   for(i in 1:length(exposure1_l)) {
 
     x <- exposure1_l[[i]]
 
     # check for NAs
-    ev1 <- is.na(x[, ..exposure_col])
+    ev1 <- is.na(x[, get(exposure_col)])
 
     # give a warning here
     if(all(ev1)) {
-      warning(paste0("all exposures for geo_unit ", x[1, ..join_col],
+      warning(paste0("all exposures for geo_unit ", x[1, get(join_col)],
                      " were blank -- skipping"))
       next
     }
@@ -128,50 +133,85 @@ make_exposure_matrix <- function(data, column_mapping,
     # fix the edge case where either the first or last one
     j = 1
     cont = F
-    while(is.na(x[j, ..exposure_col])) {
+    while(is.na(x[j, get(exposure_col)])) {
       j = j + 1
       cont = T
     }
     if(cont) {
-      fillx <- x[j, ..exposure_col]
-      x[1:(j - 1), ..exposure_col] <- fillx
+      fillx <- x[j, get(exposure_col)]
+      x[1:(j - 1), get(exposure_col)] <- fillx
     }
 
     j = nrow(x)
     cont = F
-    while(is.na(x[j, ..exposure_col])) {
+    while(is.na(x[j, get(exposure_col)])) {
       j = j-1
       cont = T
     }
     if(cont) {
-      fillx <- x[j, ..exposure_col]
-      x[(j + 1):nrow(x), ..exposure_col] <- fillx
+      fillx <- x[j, get(exposure_col)]
+      x[(j + 1):nrow(x), get(exposure_col)] <- fillx
     }
 
     # this should have caught the edge cases, cause a failure if not
-    if(is.na(x[1, ..exposure_col]))
-      stop(paste0("first value is still NA despite cleaning for geo_unit ", x[1, ..join_col]))
+    if(is.na(x[1, get(exposure_col)]))
+      stop(paste0("first value is still NA despite cleaning for geo_unit ",
+                  x[1, get(join_col)]))
 
-    if(is.na(x[nrow(x), ..exposure_col]))
-      stop(paste0("last value is still NA despite cleaning for geo_unit ", x[1, ..join_col]))
+    if(is.na(x[nrow(x), get(exposure_col)]))
+      stop(paste0("last value is still NA despite cleaning for geo_unit ",
+                  x[1, get(join_col)]))
 
     # # has to be arranged by date so the lags make sense
-    x <- x[order(x$date), ]
+    x <- x[order(x[, get(date_col)]), ]
 
     # fill in any NAs using zoo::na.approx
     x[, (exposure_col) := zoo::na.approx(get(exposure_col),maxgap = maxgap)]
-    if(any(is.na(x[, ..exposure_col]))) stop("zoo::na.approx() was not able to remove all NAs")
+    if(any(is.na(x[, get(exposure_col)])))
+      stop("zoo::na.approx() was not able to remove all NAs")
 
-    # have to do this here so it doesn't bleed over
-    # you can hard-code this so it doesn't look weird
-    x$explag1 <- dplyr::lag(x[, ..exposure_col], 1)
-    x$explag2 <- dplyr::lag(x[, ..exposure_col], 2)
-    x$explag3 <- dplyr::lag(x[, ..exposure_col], 3)
-    x$explag4 <- dplyr::lag(x[, ..exposure_col], 4)
-    x$explag5 <- dplyr::lag(x[, ..exposure_col], 5)
-    x$explag6 <- dplyr::lag(x[, ..exposure_col], 6)
-    x$explag7 <- dplyr::lag(x[, ..exposure_col], 7)
-    x$explag8 <- dplyr::lag(x[, ..exposure_col], 8)
+    exposure2_l[[i]] <- x
+  }
+
+  # grp_level summary?
+  if(grp_level) {
+
+    geo_grp_col <- column_mapping$geo_unit_grp
+    unique_grps <- unlist(unique(data[, get(geo_grp_col)]))
+    n_grps <- length(unique_grps)
+    exposure2 <- do.call(rbind, exposure2_l)
+    setDT(exposure2)
+
+    # 3. Aggregate by group
+    # Here I'm assuming you want the mean of exposure columns; adjust as needed
+    exposure2 <- exposure2[, lapply(.SD, mean, na.rm = TRUE),
+                           by = .(get(geo_grp_col), get(date_col)),
+                           .SDcols = exposure_col]
+
+    names(exposure2)[1:2] <- c(column_mapping$geo_unit_grp, column_mapping$date)
+
+    # then in order to set up lags you need to split again
+    exposure2_l <- split(exposure2, f = exposure2[, get(geo_grp_col)])
+    length(exposure2_l)
+
+    # and update column_mapping
+    column_mapping$geo_unit <- column_mapping$geo_unit_grp
+    column_mapping$geo_unit_grp <- 'ALL'
+
+  }
+
+
+  # *** Loop 2, because you could in theory summarize in-between to the grp_level
+  for(i in 1:length(exposure2_l)) {
+
+    x <-  exposure2_l[[i]]
+    setDT(x)
+
+    # Now expand to get lags
+    for (k in seq_len(n_lags)) {
+      lag_name <- paste0("explag", k)
+      x[, (lag_name) := shift(get(exposure_col), k)]
+    }
 
     exposure2_l[[i]] <- x
 
@@ -186,6 +226,9 @@ make_exposure_matrix <- function(data, column_mapping,
 
   # set the class as an exposure
   class(warm_season_exposure) <- c(class(warm_season_exposure), "exposure")
+
+  # set attributes
+  attr(warm_season_exposure, "column_mapping") <- column_mapping
 
   # at the end there shouldn't be any NAs, so give a warning to investigate
   if(any(is.na(warm_season_exposure))) {

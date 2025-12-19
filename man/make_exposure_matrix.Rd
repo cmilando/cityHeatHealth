@@ -8,23 +8,28 @@ make_exposure_matrix(
   data,
   column_mapping,
   warm_season_months = 5:9,
-  maxgap = 5
+  maxgap = 5,
+  n_lags = 8,
+  grp_level = FALSE
 )
 }
 \arguments{
 \item{data}{a dataset of exposures}
 
-\item{column_mapping}{a named list that indicates relevant columns}
+\item{column_mapping}{a named list that indicates relevant columns. for the exposure
+data table, this needs to be one of: c('date', "exposure", 'geo_unit', 'geo_unit_grp')}
 
 \item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's 5 through 9}
 
-\item{maxgaps}{the maximum allowable gap, to be passed to zoo::na.approx}
+\item{n_lags}{the number of lags for the exposure variable (default is 8)}
+
+\item{grp_level}{whether to summarize to the group level or not (default)}
+
+\item{maxgaps}{the maximum allowable gap, to be passed to zoo::na.approx (default is 5)}
+}
+\value{
+a data.table of class("exposure")
 }
 \description{
-things to be aware of
-\itemize{
-\item there may be missing data, so fill in with na.approx
-\item you need to include the full year so you can do xbasis matrix
-\item you may need to know the mapping so you can average up
-}
+Script to clean the exposure data
 }
