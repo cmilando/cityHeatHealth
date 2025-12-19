@@ -14,3 +14,6 @@ As we've seen, other time frames introduce other problems that are out of scope
 (4) the motivation here is for small-area studies, hence the specific setup for grp and grp-level. as per the paper these are both (i) hard to do, and (ii) essential for public health officials
 
 (5) There as several places where numeric cut-offs are necessary: MinN, 
+
+(6) How to deal with differing underlying population sizes? scale by the log-offset? But should it matter since you are doing within year-month-dow strata? No, the strata always have to be within populations that are the same, else the math gets messed up. I dont want to include an adjustment for log-population so i can use strata that combine multiple populations, although we could somewhat easily. Im just not sure how this would work
+in stan if its expecting the Y to be a number. I suppose in a future iteration you could build in scaling and un-scaling by some nominal amount.

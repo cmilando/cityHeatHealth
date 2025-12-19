@@ -100,8 +100,7 @@ outcome_columns <- list(
   "factor" = 'age_grp',
   "factor" = 'sex',
   "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20",
-  'strata_unit' = 'TOWN20'
+  "geo_unit_grp" = "COUNTY20"
 )
 ```
 
@@ -116,9 +115,14 @@ head(boston_deaths_tbl)
 
 Notice that two variables have been added: 
 
-(1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level, but still using the many `geo-unit`s and variation in exposures and outcomes and the sub-geo-unit-grp level. So for example, if you are working with counties and towns, and choose county, town level exposures and outcomes will be used to estimate county-level results (and results for individual towns will not be output):
+(1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level, but still using the many `geo-unit`s and variation in exposures and outcomes and the sub-geo-unit-grp level. So for example, if you are working with counties and towns, and choose county, town level exposures and outcomes will be used to estimate county-level results (and results for individual towns will not be output). So these become just like extra days of data, just with different underlying populations
 
 and (2) a variable `keep` describing the presence of group-level outcomes. at a minimum this removes any empty strata so the variances are correctly scaled (and you can increase this floor if you'd like)
+
+Note also that `make_outcome_table` has some options which we will introduce here but explore further later:
+```{r bonus_outcome}
+
+```
 
 ### Basic DLNM (manual walkthrough)
 

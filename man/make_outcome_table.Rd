@@ -4,7 +4,15 @@
 \alias{make_outcome_table}
 \title{Function to create the outcome table}
 \usage{
-make_outcome_table(data, column_mapping, collapse_to = NULL)
+make_outcome_table(data, column_mapping, collapse_to = NULL, grp_level = FALSE)
+}
+\arguments{
+\item{column_mapping}{a named list that indicates relevant columns in \code{data}. for the exposure
+data table, these need to be one of: c('date', "outcome",'factor, 'geo_unit', 'geo_unit_grp')}
+
+\item{collapse_to}{which factors to collapse across}
+
+\item{grp_level}{whether to summarize to the group level or not (default)}
 }
 \description{
 Function to create the outcome table

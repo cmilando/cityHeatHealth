@@ -1,8 +1,10 @@
 #' Function to create the outcome table
 #'
 #' @param data
-#' @param column_mapping
-#' @param collapse_to
+#' @param column_mapping a named list that indicates relevant columns in `data`. for the exposure
+#' data table, these need to be one of: c('date', "outcome",'factor, 'geo_unit', 'geo_unit_grp')
+#' @param collapse_to which factors to collapse across
+#' @param grp_level whether to summarize to the group level or not (default)
 #' @import data.table
 #' @returns
 #' @export
@@ -10,7 +12,8 @@
 #' @examples
 make_outcome_table <- function(data,
                                column_mapping,
-                               collapse_to = NULL) {
+                               collapse_to = NULL,
+                               grp_level = FALSE) {
 
   # ********
   ## TODO
@@ -28,40 +31,55 @@ make_outcome_table <- function(data,
                  'factor',
                  'outcome',
                  'geo_unit',
-                 'geo_unit_grp',
-                 'strata_unit')
+                 'geo_unit_grp')
 
   ##
   setDT(data)
 
   # **************
   ## first collapse to by summing
+  ## both by collapse to and by group
   date_col = column_mapping$date
   geo_unit_col = column_mapping$geo_unit
   geo_unit_grp_col = column_mapping$geo_unit_grp
   outcome_col <- column_mapping$outcome
-  join_col <- column_mapping$strata_unit
-  stopifnot(join_col %in% c(geo_unit_col, geo_unit_grp_col))
 
+  # Next check about collapsing across factors
   if(is.null(collapse_to)) {
 
     collapse_to = 'ALL'
 
-    data <- data[,.(
-      xoutcome = sum(get(outcome_col))
-    ), by = .(get(date_col),
-              get(geo_unit_col),
-              get(geo_unit_grp_col))]
+    if(grp_level == FALSE) {
+      data <- data[,.(
+        xoutcome = sum(get(outcome_col))
+      ), by = .(get(date_col),
+                get(geo_unit_col),
+                get(geo_unit_grp_col))]
 
-    names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col, outcome_col)
+      names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col, outcome_col)
 
-    column_mapping <- list(
-      "date" = date_col,
-      "outcome" = outcome_col,
-      "geo_unit" = geo_unit_col,
-      "geo_unit_grp" = geo_unit_grp_col,
-      'strata_unit' = join_col
-    )
+      column_mapping <- list(
+        "date" = date_col,
+        "outcome" = outcome_col,
+        "geo_unit" = geo_unit_col,
+        "geo_unit_grp" = geo_unit_grp_col
+      )
+    } else {
+
+      data <- data[,.(
+        xoutcome = sum(get(outcome_col))
+      ), by = .(get(date_col),
+                get(geo_unit_grp_col))]
+
+      names(data) <- c(date_col, geo_unit_grp_col, outcome_col)
+
+      column_mapping <- list(
+        "date" = date_col,
+        "outcome" = outcome_col,
+        "geo_unit" = geo_unit_grp_col,
+        "geo_unit_grp" = 'ALL'
+      )
+    }
 
   } else {
 
@@ -69,28 +87,51 @@ make_outcome_table <- function(data,
     factor_cols <- unlist(column_mapping[factor_cols])
     stopifnot(collapse_to %in% factor_cols)
 
-    data <- data[,.(
-      xoutcome = sum(get(outcome_col))
-    ), by = .(get(date_col),
-              get(geo_unit_col),
-              get(geo_unit_grp_col),
-              get(collapse_to))]
+    if(grp_level == FALSE) {
+      data <- data[,.(
+        xoutcome = sum(get(outcome_col))
+      ), by = .(get(date_col),
+                get(geo_unit_col),
+                get(geo_unit_grp_col),
+                get(collapse_to))]
 
-    names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col, outcome_col,
-                     collapse_to)
+      names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col, outcome_col,
+                       collapse_to)
 
-    # update the properties here
-    column_mapping <- list(
-      "date" = date_col,
-      "outcome" = outcome_col,
-      "geo_unit" = geo_unit_col,
-      "geo_unit_grp" = geo_unit_grp_col,
-      'strata_unit' = join_col,
-      "factor" = collapse_to
-    )
+      # update the properties here
+      column_mapping <- list(
+        "date" = date_col,
+        "outcome" = outcome_col,
+        "geo_unit" = geo_unit_col,
+        "geo_unit_grp" = geo_unit_grp_col,
+        "factor" = collapse_to
+      )
+    } else {
+
+      data <- data[,.(
+        xoutcome = sum(get(outcome_col))
+      ), by = .(get(date_col),
+                get(geo_unit_grp_col),
+                get(collapse_to))]
+
+      names(data) <- c(date_col, geo_unit_grp_col, outcome_col,
+                       collapse_to)
+
+      # update the properties here
+      column_mapping <- list(
+        "date" = date_col,
+        "outcome" = outcome_col,
+        "geo_unit" = geo_unit_grp_col,
+        "geo_unit_grp" = 'ALL',
+        "factor" = collapse_to
+      )
 
 
+    }
   }
+
+  geo_unit_col = column_mapping$geo_unit
+  geo_unit_grp_col = column_mapping$geo_unit_grp
 
   # **************
   ## create the strata
@@ -98,7 +139,7 @@ make_outcome_table <- function(data,
   mn  <- month(data$date)
   yr  <- year(data$date)
 
-  data$strata <- paste0(data[, get(join_col)],
+  data$strata <- paste0(data[, get(geo_unit_col)],
                         ":yr",yr, ":mn",mn, ":dow",dow, ":", collapse_to)
 
   # **************
