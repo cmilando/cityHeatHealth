@@ -2,10 +2,10 @@
 % Please edit documentation in R/xgrid.R
 \name{make_xgrid}
 \alias{make_xgrid}
-\title{Make xgrid}
+\title{An internal function to make the xgrid}
 \usage{
 make_xgrid(data, column_mapping, months = 1:12)
 }
 \description{
-Make xgrid
+An internal function to make the xgrid
 }

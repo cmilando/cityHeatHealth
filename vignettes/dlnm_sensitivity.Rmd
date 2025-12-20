@@ -1,0 +1,21 @@
+---
+title: "Exploring DLNM sensitivity in `cityHeatHealth`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exploring DLNM sensitivity in `cityHeatHealth`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+This is where you can do the `dlnm_sweep` stuff

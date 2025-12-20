@@ -25,24 +25,25 @@ make_outcome_table <- function(data,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  # ********
-  ## TODO
-  #' Collapse outcomes to a given factor level, or overall
-  #' This is a good first step and you can deal here with missing data in the record
-  #' like adding zeros and what not
-  #'
-  #'
-  #' *********
-
   # column types
-  col_types <- c('date',
-                 'factor',
-                 'outcome',
-                 'geo_unit',
-                 'geo_unit_grp')
+  col_types <- c('date', 'factor', 'outcome', 'geo_unit', 'geo_unit_grp')
 
-  warning("need to add checks of column type")
+  # check that all the types are valid
+  if(!all(names(column_mapping) %in% col_types))
+    stop('Names of column mapping is not one of the valid types:
+          date, exposure, geo_unit, geo_unit_grp')
 
+  # check that all values are correct
+  if(!all(column_mapping %in% names(data)))
+    stop('Values of column mapping not matched with column names of data.
+          Look for a typo')
+
+
+  # at the beginning there shouldn't be any outcomes < 0
+  outcome_col <- column_mapping$outcome
+  if(any(data[, get(outcome_col)] < 0)) {
+    stop("some outcomes < 0, investigate")
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -56,10 +57,10 @@ make_outcome_table <- function(data,
   # **************
   ## first collapse to by summing
   ## both by collapse to and by group
-  date_col = column_mapping$date
-  geo_unit_col = column_mapping$geo_unit
+  date_col         = column_mapping$date
+  geo_unit_col     = column_mapping$geo_unit
   geo_unit_grp_col = column_mapping$geo_unit_grp
-  outcome_col <- column_mapping$outcome
+  outcome_col     <- column_mapping$outcome
 
   # Next check about collapsing across factors
   if(is.null(collapse_to)) {
@@ -198,7 +199,7 @@ make_outcome_table <- function(data,
   date_col <- column_mapping$date
   setorderv(
     xgrid_comb,
-    c(date_col, join_col)
+    c(join_col, date_col)
   )
 
   # set the class as an exposure
@@ -207,10 +208,9 @@ make_outcome_table <- function(data,
   # set attributes
   attr(xgrid_comb, "column_mapping") <- column_mapping
 
-
   # at the end there shouldn't be any NAs, so give a warning to investigate
   if(any(is.na(xgrid_comb))) {
-    warning("some NAs persist, investigate")
+    stop("some NAs persist, investigate")
   }
 
   return(xgrid_comb)

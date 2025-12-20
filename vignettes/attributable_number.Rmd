@@ -1,0 +1,23 @@
+---
+title: "Calculating attributable numbers and rates in `cityHeatHealth`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Calculating attributable numbers and rates in `cityHeatHealth`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+Note this will require going back to the original files and adding:
+
+ * estimates of group-level population to the outcome table (maybe not such a bad thing)

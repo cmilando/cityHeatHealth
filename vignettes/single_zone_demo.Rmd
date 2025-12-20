@@ -5,7 +5,7 @@ output:
     fig.retina: 2
     dev: svg
 vignette: >
-  %\VignetteIndexEntry{Heat-Health Associations in a Single Town}
+  %\VignetteIndexEntry{Heat-Health Associations in a Single Town using `cityHeatHealth`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-Let's use built-in functions to examine heat-health relationships in a single geographic unit. For testing purposes, start with your largest geographic unit! 
+Let's use built-in functions to examine heat-health relationships in a single geographic unit. 
+
+For testing purposes, start with your largest geographic unit! 
 
 ```{r setup}
 library(cityHeatHealth)
@@ -34,7 +36,7 @@ head(boston_exposure)
 
 Notice how this dataset contains temperature for the whole year. This is a good starting place. 
 
-Also notice that these data are messy, as is common in environmenal data, there are both NA values and days where there are no measurements:
+Also notice that these data are messy, as is common in environmental data, there are both NA values and days where there are no measurements:
 ```{r exp_clean}
 # Sept 17 2010 has NA data
 boston_exposure[255:260,]
@@ -223,7 +225,7 @@ all.equal(t1, t2, tolerance = 1e-8)
 
 ### Basic DLNM (using `cityHeatHealth` functions in `R`)
 
-The functionality above is what is encapsulated in the `condPois` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
+The functionality above is what is encapsulated in the `condPois_single` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
 
 We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
 
@@ -249,7 +251,7 @@ outcome_columns <- list(
 boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
 
 # run the model
-m1 <- condPois(exposure_matrix = boston_exposure_mat, 
+m1 <- condPois_single(exposure_matrix = boston_exposure_mat, 
                   outcomes_tbl = boston_deaths_tbl)
 
 ```
@@ -270,11 +272,3 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
   geom_line() + xlab("Tmax (degC)")
 
 ```
-
-### Basic DLNM (using `cityHeatHealth` functions in `STAN`)
-
-Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. 
-
-
-
-

@@ -17,9 +17,9 @@
 #' @export
 #'
 #' @examples
-condPois <- function(exposure_matrix, outcomes_tbl,
+condPois_single <- function(exposure_matrix, outcomes_tbl,
                         argvar = NULL, arglag = NULL, maxlag = NULL,
-                       min_n = 50) {
+                       min_n = NULL) {
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -44,6 +44,7 @@ condPois <- function(exposure_matrix, outcomes_tbl,
   ## Check 2
   ## probably should make sure that exposure_matrix and outcome_tbl
   ## are the same size, at least
+  ## and have the same dates
   exp_date_col <- attributes(exposure_matrix)$column_mapping$date
   outcome_date_col <- attributes(outcomes_tbl)$column_mapping$date
 
@@ -74,27 +75,48 @@ condPois <- function(exposure_matrix, outcomes_tbl,
   }
 
   ## CHECK 6 - minN
+  if(is.null(min_n)) {
+    min_n = 50
+  }
   outcome_col <- attributes(outcomes_tbl)$column_mapping$outcome
   stopifnot(sum(outcomes_tbl[, get(outcome_col)]) >= min_n)
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
-  #' CREATE CROSSBASIS
+  #' CREATE CROSSBASIS for this single zone
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
   if(is.null(maxlag)) {
     maxlag = 5
+  } else {
+    warning("check that these are valid")
   }
 
   if(is.null(argvar)) {
     x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = c(0.5, 0.9))
     argvar <- list(fun = 'ns', knots = x_knots)
+  } else {
+    # this one is a little tricky because its based on the local data
+    if(argvar$fun == 'ns') {
+      stopifnot(all(argvar$pct < 1) & all(argvar$pct > 0))
+      x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = argvar$pct)
+      argvar <- list(fun = argvar$fun, knots = x_knots)
+    } else if(argvar$fun == 'bs') {
+      stopifnot(all(argvar$pct < 1) & all(argvar$pct > 0))
+      stopifnot(argvar$degree %in% c(2:4))
+      x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = argvar$pct)
+      argvar <- list(fun = argvar$fun, knots = x_knots, degree = argvar$degree)
+    } else {
+      stop("argvar that isn't `ns` or `bs` not implemented yet")
+    }
   }
 
   if(is.null(arglag)) {
     arglag <- list(fun = 'ns', knots = dlnm::logknots(maxlag, nk = 2))
+  } else {
+    warning("check that these are valid")
   }
 
   ## get the columns you need
@@ -103,6 +125,9 @@ condPois <- function(exposure_matrix, outcomes_tbl,
 
   ## if you are safe to proceed, make the x_mat
   cb <- crossbasis(x_mat, lag = maxlag, argvar = argvar, arglag = arglag)
+
+  # there should be no NAs here
+  if(any(is.na(cb))) stop("crossbasis has NULL, something went wrong")
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -119,6 +144,10 @@ condPois <- function(exposure_matrix, outcomes_tbl,
 
   m_coef <- coef(m_sub)
   m_vcov <- vcov(m_sub)
+
+  # there should be no NAs
+  if(any(is.na(m_coef))) stop("coef has NULL, something went wrong")
+  if(any(is.na(m_vcov))) stop("vcov has NULL, something went wrong")
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================

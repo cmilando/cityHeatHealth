@@ -1,4 +1,4 @@
-#' Make xgrid
+#' An internal function to make the xgrid
 #'
 #' @param data
 #' @param column_mapping

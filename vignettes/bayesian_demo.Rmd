@@ -1,0 +1,47 @@
+---
+title: "Using Spatial Bayesian methods in `cityHeatHealth`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using Spatial Bayesian methods in `cityHeatHealth`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. 
+
+
+### Basic DLNM for a single zone 
+
+#### Comparison to single zone basic
+
+
+### Multi-zone spatial bayesian 
+
+The innovation here is combining the method of Armstrong 2014 with the method of Marcos 20XX.
+
+We implemented the spatial bayesian method of Marcos, but instead of regular poisson as a conditional poisson (i.e., multinomial) which has performance gains that they articulate in Amrstrong.
+
+This requires bringing in a shapefile, so you can define the network 
+
+#### MCMC case
+
+The standard application is using MCMC
+
+
+#### Variational
+
+You can also experiment with speeding things up (at the risk of less precise estimates) using the variational method. see Jack's notes as so what is going on here
+
+
+

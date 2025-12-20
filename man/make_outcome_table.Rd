@@ -32,12 +32,6 @@ Function to create the outcome table
 VALIDATIONS
 ==========================================================================
 //////////////////////////////////////////////////////////////////////////
-Collapse outcomes to a given factor level, or overall
-This is a good first step and you can deal here with missing data in the record
-like adding zeros and what not
-
-
-*********
 //////////////////////////////////////////////////////////////////////////
 ==========================================================================
 COLLAPSE AND SUMMARIZE

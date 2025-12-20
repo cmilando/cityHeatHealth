@@ -24,3 +24,5 @@ skeleton of what you expect.
 (8) throughout we also want to keep the size of various datasets small.
 
 (9) and you need to remember its crossreduce not crosspred at the end of the day
+
+(10) you could make this slightly more size resilient by not expanding outcomes until the ineer step, but for now this is hopefully ok
