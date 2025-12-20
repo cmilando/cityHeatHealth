@@ -189,7 +189,8 @@ condPois_2stage <- function(exposure_matrix,
   #' //////////////////////////////////////////////////////////////////////////
 
   warning("probably want to output a whole model here?
-          or a way to access individual results")
+          or a way to access individual results, probably would be nice
+          to do the level=0 things.")
 
 
 }
