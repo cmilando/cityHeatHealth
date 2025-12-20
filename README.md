@@ -17,3 +17,10 @@ As we've seen, other time frames introduce other problems that are out of scope
 
 (6) How to deal with differing underlying population sizes? scale by the log-offset? But should it matter since you are doing within year-month-dow strata? No, the strata always have to be within populations that are the same, else the math gets messed up. I dont want to include an adjustment for log-population so i can use strata that combine multiple populations, although we could somewhat easily. Im just not sure how this would work
 in stan if its expecting the Y to be a number. I suppose in a future iteration you could build in scaling and un-scaling by some nominal amount.
+
+(7) for both exposures and outcomes, `make_xgrid` is a key function that creates the
+skeleton of what you expect.
+
+(8) throughout we also want to keep the size of various datasets small.
+
+(9) and you need to remember its crossreduce not crosspred at the end of the day

@@ -19,7 +19,13 @@ make_exposure_matrix <- function(data, column_mapping,
                                  maxgap = 5,
                                  maxlag = 5,
                                  grp_level = FALSE) {
-  # ************
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' VALIDATIONS
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   # validation block
   # set some arbitrary limits on these but users could always make a local
   # copy and override if they really want to
@@ -42,11 +48,21 @@ make_exposure_matrix <- function(data, column_mapping,
     stop('Values of column mapping not matched with column names of data.
           Look for a typo')
 
-  # ************
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' CREATE XGRID
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   # build xgrid
   xgrid <- make_xgrid(data, column_mapping)
 
-  # ************
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' FILL NA VALUES
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   # Loop 1: need to fill in NA values
   exposure_col <- column_mapping$exposure
   join_col <- column_mapping$geo_unit
@@ -80,7 +96,7 @@ make_exposure_matrix <- function(data, column_mapping,
     }
     if(cont) {
       fillx <- x[j, get(exposure_col)]
-      x[1:(j - 1), get(exposure_col)] <- fillx
+      x[1:(j - 1), (exposure_col):=fillx]
     }
 
     j = nrow(x)
@@ -91,7 +107,7 @@ make_exposure_matrix <- function(data, column_mapping,
     }
     if(cont) {
       fillx <- x[j, get(exposure_col)]
-      x[(j + 1):nrow(x), get(exposure_col)] <- fillx
+      x[(j + 1):nrow(x), (exposure_col):=fillx]
     }
 
     # this should have caught the edge cases, cause a failure if not
@@ -115,7 +131,12 @@ make_exposure_matrix <- function(data, column_mapping,
     exposure2_l[[i]] <- x
   }
 
-  # *************************
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' GROUP LEVEL SUMMARY?
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   # grp_level summary?
   if(grp_level) {
 
@@ -143,30 +164,50 @@ make_exposure_matrix <- function(data, column_mapping,
 
   }
 
-  # *************************
-  # *** Loop 2, get lags
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' ADD LAGS
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   for(i in 1:length(exposure2_l)) {
 
     x <-  exposure2_l[[i]]
     setDT(x)
 
-    # Now expand to get lags
-    for (k in seq_len(maxlag)) {
-      lag_name <- paste0("explag", k)
-      x[, (lag_name) := shift(get(exposure_col), k)]
-    }
+    if(nrow(x) > 0) {
 
-    exposure2_l[[i]] <- x
+      # Now expand to get lags
+      for (k in seq_len(maxlag)) {
+        lag_name <- paste0("explag", k)
+        x[, (lag_name) := shift(get(exposure_col), k)]
+      }
+
+      exposure2_l[[i]] <- x
+    }
 
   }
 
-  # *************************
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' OUTPUT
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   # rbind them all together
   exposure2 <- do.call(rbind, exposure2_l)
 
   # get just the warm season months
   rr <- month(exposure2$date) %in% warm_season_months
   warm_season_exposure <- exposure2[rr, ]
+
+  # reset the order
+  join_col <- column_mapping$geo_unit
+  date_col <- column_mapping$date
+  setorderv(
+    warm_season_exposure,
+    c(date_col, join_col)
+  )
 
   # set the class as an exposure
   class(warm_season_exposure) <- c(class(warm_season_exposure), "exposure")

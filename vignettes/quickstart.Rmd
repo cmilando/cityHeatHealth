@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 library(cityHeatHealth)
 ```
 
-### Basic DLNM (using `cityHeatHealth` functions in `R`)
+### Basic model in a single region (using `cityHeatHealth` functions in `R`)
 
-This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
+Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts. 
 
 We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
 
@@ -64,18 +64,17 @@ head(boston_deaths_tbl)
 
 Run the model
 ```{r single_run}
-m1 <- single_run(exposure_matrix = boston_exposure_mat, 
-                  outcomes = boston_deaths_tbl)
-
+m1 <- condPois(exposure_matrix = boston_exposure_mat, 
+                  outcomes_tbl = boston_deaths_tbl)
 ```
 
 And plot
 ```{r single_plot, fig.height=3, fig.width=5}
 plot_cp = data.frame(
-    x = m1$predvar,
-    RR = m1$allRRfit,
-    RRlow = m1$allRRlow,
-    RRhigh = m1$allRRhigh
+    x = m1$cr$predvar,
+    RR = m1$cr$RRfit,
+    RRlow = m1$cr$RRlow,
+    RRhigh = m1$cr$RRhigh
 )
 library(ggplot2)
 ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
@@ -85,3 +84,96 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
   geom_line() + xlab("Tmax (degC)")
 
 ```
+
+### Basic model pooling across multiple regions (using `cityHeatHealth` functions in `R`)
+
+We can easily extend this to estimate impacts across many regions.
+
+First create the inputs
+```{r multi_town_setup}
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+ma_outcomes_table <- make_outcome_table(ma_deaths, outcome_columns)
+```
+
+Now create little futures packets so the size doesn't blow up
+I think if you create a combined list of little packets
+Or you could just run in series, it doesn't take that long to be honest
+So not worth the startup-cost
+
+Just test on a loop through. Since we care about the unique towns in outcomes
+```{r multi_town_run}
+
+geo_grp_col <- outcome_columns$geo_unit
+unique_geos <- unlist(unique(ma_outcomes_table[, get(geo_grp_col)]))
+n_geos <- length(unique_geos)
+cp_list <- vector("list", n_geos)
+
+# the size of this changes based on what your argvar arglag are
+# right because this is really based on cross-reduce, right right
+coef_model <- matrix(NA, n_geos, length(c(0.5, 0.9)) + 1, 
+                     dimnames = list(unique_geos, NULL))
+
+vcov_model <- vector("list", n_geos); 
+exp_mean <- vector("list", n_geos); 
+exp_IQR <- vector("list", n_geos); 
+vcov_model <- vector("list", n_geos); 
+names(vcov_model) <- unique_geos
+
+# don't need but to avoid annoying messages
+GLOBAL_CEN <- 29
+
+for(i in seq_along(cp_list)) {
+  
+  this_geo <- unique_geos[i]
+  cat(this_geo, '\t')
+  city_exposure_mat = subset(ma_exposure_matrix, TOWN20 == this_geo)
+  city_deaths_tbl = subset(ma_outcomes_table, TOWN20 == this_geo)
+  
+  cp_list[[i]] <- condPois(city_exposure_mat, city_deaths_tbl)
+
+  coef_model[i, ] <- coef(cp_list[[i]]$cr)
+  vcov_model[[i]] <- vcov(cp_list[[i]]$cr)
+  
+  # other things
+  exp_mean[[i]]   <- cp_list[[i]]$exp_mean
+  exp_IQR[[i]]    <- cp_list[[i]]$exp_IQR
+}
+```
+
+Note: Some will produce errors because of small numbers, that's what we are working towards.
+
+Plot Boston just to make sure we're still good
+```{r quickplot}
+m1 <- cp_list[[which(unique_geos == 'BOSTON')]]
+plot_cp = data.frame(
+    x = m1$cr$predvar,
+    RR = m1$cr$RRfit,
+    RRlow = m1$cr$RRlow,
+    RRhigh = m1$cr$RRhigh
+)
+library(ggplot2)
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  geom_hline(yintercept = 1, linetype = '11') +
+  theme_classic() +
+  geom_ribbon(fill = 'grey75', alpha = 0.2) +
+  geom_line() + xlab("Tmax (degC)")
+```
+
+
+

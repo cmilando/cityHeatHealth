@@ -19,6 +19,12 @@ make_outcome_table <- function(data,
                                collapse_to = NULL,
                                grp_level = FALSE) {
 
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' VALIDATIONS
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   # ********
   ## TODO
   #' Collapse outcomes to a given factor level, or overall
@@ -34,6 +40,15 @@ make_outcome_table <- function(data,
                  'outcome',
                  'geo_unit',
                  'geo_unit_grp')
+
+  warning("need to add checks of column type")
+
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' COLLAPSE AND SUMMARIZE
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
 
   ##
   setDT(data)
@@ -135,7 +150,12 @@ make_outcome_table <- function(data,
   geo_unit_col = column_mapping$geo_unit
   geo_unit_grp_col = column_mapping$geo_unit_grp
 
-  # **************
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' MAKE XGRID AND STRATA
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   ## fill in the blanks with 0s
   ## so make xgrid again
   xgrid <- make_xgrid(data, column_mapping, warm_season_months)
@@ -156,7 +176,6 @@ make_outcome_table <- function(data,
 
   # **************
   # Label strata that have no cases, these will be removed later
-
   # Extract outcome column name programmatically
   group_col   <- "strata"
 
@@ -168,11 +187,22 @@ make_outcome_table <- function(data,
   # 2. Join back to the original data (left join)
   xgrid_comb <- xgrid[xgrid_agg, on = group_col]
 
-  # **************
-  # prepare for output
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' OUTPUT
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
+  # reset the order
+  join_col <- column_mapping$geo_unit
+  date_col <- column_mapping$date
+  setorderv(
+    xgrid_comb,
+    c(date_col, join_col)
+  )
 
   # set the class as an exposure
-  class(xgrid_comb) <- c(class(xgrid_comb), "outcoome")
+  class(xgrid_comb) <- c(class(xgrid_comb), "outcome")
 
   # set attributes
   attr(xgrid_comb, "column_mapping") <- column_mapping

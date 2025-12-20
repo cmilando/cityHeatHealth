@@ -164,7 +164,7 @@ m_sub <- gnm(daily_deaths ~ cb,
 summary(m_sub)
 ```
 
-Notice that the dispersion parameter is `8.009799` (quite high! but again, these are simulated data) -- this is part of how the quasipoisson model works and is used to re-scale the variance covariance matrix.
+Notice that the dispersion parameter is quite high! but again, these are simulated data -- this is part of how the quasipoisson model works and is used to re-scale the variance covariance matrix.
 
 Next get the crosspred outputs correctly centered at the minimum RR
 ```{r crosspred}
@@ -223,7 +223,7 @@ all.equal(t1, t2, tolerance = 1e-8)
 
 ### Basic DLNM (using `cityHeatHealth` functions in `R`)
 
-The functionality above is what is encapsulated in the `single_run` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
+The functionality above is what is encapsulated in the `condPois` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
 
 We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
 
@@ -249,18 +249,18 @@ outcome_columns <- list(
 boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
 
 # run the model
-m1 <- single_run(exposure_matrix = boston_exposure_mat, 
-                  outcomes = boston_deaths_tbl)
+m1 <- condPois(exposure_matrix = boston_exposure_mat, 
+                  outcomes_tbl = boston_deaths_tbl)
 
 ```
 
 And plot
 ```{r single_plot, fig.height=3, fig.width=5}
 plot_cp = data.frame(
-    x = m1$predvar,
-    RR = m1$allRRfit,
-    RRlow = m1$allRRlow,
-    RRhigh = m1$allRRhigh
+    x = m1$cr$predvar,
+    RR = m1$cr$RRfit,
+    RRlow = m1$cr$RRlow,
+    RRhigh = m1$cr$RRhigh
 )
 
 ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
@@ -271,11 +271,10 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
 
 ```
 
+### Basic DLNM (using `cityHeatHealth` functions in `STAN`)
 
+Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. 
 
-### Basic DLNM (using STAN)
-
-Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. https://mc-stan.org/docs/2_20/functions-reference/multinomial-distribution.html
 
 
 
