@@ -40,15 +40,61 @@ condPois_2stage <- function(exposure_matrix,
                             verbose = 0) {
 
 
+  ## Check 1 -- that both inputs are the right class of variables
+  stopifnot("exposure" %in% class(exposure_matrix))
+  stopifnot("outcome" %in% class(outcomes_tbl))
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' IF the outcomes_tbl has a FACTOR, enter a recursive loop
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
+
+    factor_col <- attributes(outcomes_tbl)$column_mapping$factor
+
+    unique_fcts <- unlist(unique(outcomes_tbl[, get(factor_col)]))
+
+    fct_outlist <- vector("list", length(unique_fcts))
+
+    for(fct_i in seq_along(fct_outlist)) {
+
+      if(verbose > 0) {
+        cat("<",factor_col,":", unique_fcts[fct_i], ">\n")
+      }
+
+      rr <- which(outcomes_tbl[, get(factor_col)] == unique_fcts[fct_i])
+      subset_outcomes_tbl <- outcomes_tbl[rr, , drop = FALSE]
+      attributes(subset_outcomes_tbl)$column_mapping$factor <- NULL
+
+      # re-call the function, but with just one subset, it should work now
+      # and you take the first element here to get rid of having
+      # another "_"
+      fct_outlist[[fct_i]] <- condPois_2stage(exposure_matrix,
+                                              subset_outcomes_tbl,
+                                              global_cen = global_cen,
+                                              argvar = argvar,
+                                              arglag = arglag,
+                                              maxlag = maxlag,
+                                              min_n = min_n,
+                                              strata_min = strata_min,
+                                              verbose = verbose)[[1]]
+
+
+    }
+
+    names(fct_outlist) = unique_fcts
+
+    return(fct_outlist)
+
+
+  }
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' VALIDATION
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
-
-  ## Check 1 -- that both inputs are the right class of variables
-  stopifnot("exposure" %in% class(exposure_matrix))
-  stopifnot("outcome" %in% class(outcomes_tbl))
 
   ## Check 1.5 -- every outcome geo_unit should have data
   ## NOTE - this is sligtly different from the check for pois_single
@@ -99,19 +145,6 @@ condPois_2stage <- function(exposure_matrix,
 
   if(verbose > 0) {
     cat("** Validation passed **\n")
-  }
-
-  #' //////////////////////////////////////////////////////////////////////////
-  #' ==========================================================================
-  #' IF the outcomes_tbl has a FACTOR, enter a recursive loop
-  #' ==========================================================================
-  #' //////////////////////////////////////////////////////////////////////////
-  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
-
-
-
-
-
   }
 
   #' //////////////////////////////////////////////////////////////////////////
@@ -232,7 +265,6 @@ condPois_2stage <- function(exposure_matrix,
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
   blup_cp   <- vector("list", n_geos);
-  names(blup_cp) <- unique_geos
 
   # loop through geos
   for(i in seq_along(cp_list)) {
@@ -294,14 +326,19 @@ condPois_2stage <- function(exposure_matrix,
     attr(blup_cp[[i]], "geo_unit") = this_geo
   }
 
+  # set names
+  names(blup_cp) <- unique_geos
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' OUTPUT
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  outlist = list(meta_fit = meta_fit, blup_cp = blup_cp)
-  # names(outlist) = "_"
+  # yes, a list in a list, this will make sense later
+  # aka, in the recursive call to this function that happens above
+  outlist = list(list(meta_fit = meta_fit, blup_cp = blup_cp))
+  names(outlist) = "_"
   class(outlist) = 'condPois_2stage'
 
   return(outlist)

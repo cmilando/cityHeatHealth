@@ -115,8 +115,8 @@ We can easily extend this to estimate impacts across many regions.
 
 First create the inputs, using the same `exposure_columns` and `outcome_columns` as above.
 ```{r multi_town_setup}
-exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
-outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
+ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+ma_outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
 ```
 
 Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 1 function from these inputs and defaults for `argvar`, `arglag` and `maxlag`. 
@@ -124,19 +124,19 @@ Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 
 Importantly, the estimates in each `geo_unit` are bolstered by those in their `geo_unit_grp` by including a random effect for `geo_unit_grp` in the `mixmeta` model.
 
 ```{r multi_town_run}
-ma_model <- condPois_2stage(exposure_matrix, outcomes_tbl, verbose = 1)
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
 And now plot
 ```{r multi_plot, fig.height=3, fig.width=5}
-ii = 150
-ma_model$meta_fit$model$TOWN20[[ii]]
-attr(ma_model$blup_cp[[ii]], "geo_unit")
-tt = attr(ma_model$blup_cp[[ii]], "geo_unit")
+ii = 36
+ma_model$`_`$meta_fit$model$TOWN20[[ii]]
+attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
+tt = attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
 plot_cp = data.frame(
-    x = ma_model$blup_cp[[ii]]$predvar,
-    RR = ma_model$blup_cp[[ii]]$allRRfit,
-    RRlow = ma_model$blup_cp[[ii]]$allRRlow,
-    RRhigh = ma_model$blup_cp[[ii]]$allRRhigh
+    x = ma_model$`_`$blup_cp[[ii]]$predvar,
+    RR = ma_model$`_`$blup_cp[[ii]]$allRRfit,
+    RRlow = ma_model$`_`$blup_cp[[ii]]$allRRlow,
+    RRhigh = ma_model$`_`$blup_cp[[ii]]$allRRhigh
 )
 library(ggplot2)
 ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
@@ -148,3 +148,37 @@ ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
 ```
 
 It does seem like this is a wider confidence interval than the solo model. Perhaps this is expected given the variables around it? 
+
+#### Model by factor
+
+Only a small change is required to run the model by factor
+
+```{r multi_town_setup_factor}
+ma_outcomes_tbl <- make_outcome_table(ma_deaths, 
+                                      outcome_columns,
+                                      collapse_to = 'age_grp')
+head(ma_outcomes_tbl)
+```
+
+```{r fctrun}
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+```
+```{r multi_plot2, fig.height=3, fig.width=5}
+ii = 36
+ma_model$`0-17`$`_`$
+attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
+tt = attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
+plot_cp = data.frame(
+    x = ma_model$`_`$blup_cp[[ii]]$predvar,
+    RR = ma_model$`_`$blup_cp[[ii]]$allRRfit,
+    RRlow = ma_model$`_`$blup_cp[[ii]]$allRRlow,
+    RRhigh = ma_model$`_`$blup_cp[[ii]]$allRRhigh
+)
+library(ggplot2)
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  geom_hline(yintercept = 1, linetype = '11') +
+  theme_classic() +
+  ggtitle(tt) +
+  geom_ribbon(fill = 'grey75', alpha = 0.2) +
+  geom_line() + xlab("Tmax (degC)")
+```
