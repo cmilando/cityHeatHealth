@@ -121,6 +121,14 @@ plot(ma_model, "BOSTON")
 
 It does seem like this is a wider confidence interval than the solo model -- Perhaps this is expected given the variables around it? Worth investigating in your dataset, as these are simulated data.
 
+You can also plot by group (TODO -- a way to make this cleaner to get to)
+
+```{r grp, fig.height=8, fig.width=8}
+ma_model$`_`$grp_plt
+```
+
+The centering points here are all different because they are the average of the centering points that are in each group. Should it work this way?
+
 #### Model by factor
 
 Only a small change is required to run the model by factor
@@ -136,5 +144,5 @@ head(ma_outcomes_tbl)
 ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
 ```{r multi_plot2, fig.height=3, fig.width=5}
-plot(ma_model, "BOSTON")
+plot(ma_model,"BOSTON")
 ```

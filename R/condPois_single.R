@@ -93,31 +93,18 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   #' //////////////////////////////////////////////////////////////////////////
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
+  # maxlag
   if(is.null(maxlag)) {
     maxlag = 5
   } else {
     warning("check that maxlag is valid")
   }
 
-  if(is.null(argvar)) {
-    x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = c(0.5, 0.9))
-    argvar <- list(fun = 'ns', knots = x_knots)
-  } else {
-    # this one is a little tricky because its based on the local data
-    if(argvar$fun == 'ns') {
-      stopifnot(all(argvar$pct < 1) & all(argvar$pct > 0))
-      x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = argvar$pct)
-      argvar <- list(fun = argvar$fun, knots = x_knots)
-    } else if(argvar$fun == 'bs') {
-      stopifnot(all(argvar$pct < 1) & all(argvar$pct > 0))
-      stopifnot(argvar$degree %in% c(2:4))
-      x_knots = quantile(exposure_matrix[, get(exposure_col)], probs = argvar$pct)
-      argvar <- list(fun = argvar$fun, knots = x_knots, degree = argvar$degree)
-    } else {
-      stop("argvar fun that isn't `ns` or `bs` not implemented yet")
-    }
-  }
+  # argvar
+  this_exp = exposure_matrix[, get(exposure_col)]
+  argvar <- check_argvar(argvar, this_exp)
 
+  # arglag
   if(is.null(arglag)) {
     arglag <- list(fun = 'ns', knots = dlnm::logknots(maxlag, nk = 2))
   } else {
@@ -194,10 +181,13 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
              geo_unit_grp = this_geo_unit_grp,
              cr = cr,
              exposure_col = exposure_col,
+             cen = cen,
              argvar = argvar,
              exp_mean = exp_mean,
              exp_IQR = exp_IQR)
+
   class(oo) <- 'condPois_single'
+
   return(oo)
 
 }
@@ -245,7 +235,7 @@ plot.condPois_single <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
     geom_hline(yintercept = 1, linetype = '11') +
     theme_classic() +
     ggtitle(title) +
-    geom_ribbon(fill = 'grey75', alpha = 0.2) +
+    geom_ribbon(fill = 'lightblue', alpha = 0.2) +
     geom_line() + xlab(xlab) + ylab(ylab)
 }
 

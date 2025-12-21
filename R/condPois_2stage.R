@@ -13,6 +13,8 @@
 #' https://github.com/gasparrini/2015_gasparrini_EHP_Rcodedata
 #' https://github.com/gasparrini/2019_sera_StatMed_Rcode/blob/master/03.MultilevelMA.R
 #'
+#' update as of 2025.12.21, its this https://github.com/gasparrini/Extended2stage/blob/cf82fd2f0d616210e8aa6911d2fb49a732f65795/02.multilevel.R#L68
+#'
 #' @param exposure_matrix a matrix of exposures, with columns for lag, usually created by `make_exposure_matrix`
 #' @param outcomes_tbl a data.table of outcomes, created by `make_outcome_table`
 #' @param verbose whether to print geo_units as they are run
@@ -176,6 +178,7 @@ condPois_2stage <- function(exposure_matrix,
   cp_list     <- vector("list", n_geos);
   vcov_model  <- vector("list", n_geos);
   argvar_list <- vector("list", n_geos);
+  cen_list    <- vector("list", n_geos);
   exp_mean    <- vector("list", n_geos);
   exp_IQR     <- vector("list", n_geos);
   vcov_list   <- vector("list", n_geos);
@@ -212,8 +215,9 @@ condPois_2stage <- function(exposure_matrix,
     coef_list[[i]] <- coef(cp_list[[i]]$cr)
     vcov_list[[i]] <- vcov(cp_list[[i]]$cr)
 
-    # get argvar_list
+    # get argvar_list and cen
     argvar_list[[i]]   <- cp_list[[i]]$argvar
+    cen_list[[i]]      <- cp_list[[i]]$cen
 
     # other things for mixmeta scaling
     exp_mean[[i]]   <- cp_list[[i]]$exp_mean
@@ -235,7 +239,8 @@ condPois_2stage <- function(exposure_matrix,
 
   # add in the mean and IQR of exposure in each geo_unit
   unique_geos$exp_mean <- do.call(c, exp_mean)
-  unique_geos$exp_IQR <- do.call(c, exp_IQR)
+  unique_geos$exp_IQR  <- do.call(c, exp_IQR)
+  unique_geos$cen      <- do.call(c, cen_list)
 
   # create the random effect formula
   # ~ 1 | geo_unit_grp / geo_unit
@@ -254,9 +259,127 @@ condPois_2stage <- function(exposure_matrix,
 
   # get BLUP
   # there is a `level` argument here
-
+  # pausing this for now, see below
+  # blup_geo <- blup(meta_fit, vcov = T)
+  # blup_geo_lvl2 <- blup(meta_fit, vcov = T, level = 2)
+  # stopifnot(identical(blup_geo, blup_geo_lvl2))
   blup_geo <- blup(meta_fit, vcov = T)
   names(blup_geo) = unique_geos
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' detour to calculate blups and RRs for other levels
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
+  # this *should* work as described but it doesn't
+  # https://github.com/gasparrini/Extended2stage/issues/1
+
+  # cityblup <- exp(blup(meta_fit, pi=T))
+  # stateblup <- unique(blup(meta_fit, level=1))
+  #
+  # length(stateblup)
+  #
+  # # if you don't want city-specific results, do this
+  #
+  # rf1 = as.formula(paste0("~ 1 | ", outcome_columns$geo_unit_grp))
+  #
+  # # see function description for references for this
+  # meta_fit1 <- mixmeta(coef_matrix ~ exp_mean + exp_IQR,
+  #                     random = rf1,
+  #                     S = vcov_list,
+  #                     data = unique_geos[,-1],
+  #                     control = list(showiter=F),
+  #                     na.action = 'na.exclude')
+  #
+  # blup_geo_grp <- blup(meta_fit1, vcov = T, level = 0)
+  # cc <- do.call(rbind, lapply(blup_geo_grp, \(x) x$blup))
+  # cc
+
+  # ONE FOR EACH REGION WOO
+  # xgrid_agg <- xgrid[, .(
+  #   strata_total = round(sum(get(outcome_col)))
+  # ), by = group_col]
+  group_col <- outcome_columns$geo_unit_grp
+  datapred <- unique_geos[, .(
+    exp_mean = mean(exp_mean),
+    exp_IQR = mean(exp_IQR),
+    cen    = mean(cen)
+  ), by = group_col]
+
+  ngrp <- nrow(datapred)
+
+  grp_l <- vector("list", ngrp)
+  exp_grp_col <- attributes(exposure_matrix)$column_mapping$geo_unit_grp
+  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
+
+  for(grp_i in 1:ngrp) {
+
+    # PREDICT COEF/VCOV
+    ## THIS DOESN"T DIRECTLY USE THE BLUP
+    ## THIS PREDICTS FROM THE MIXMETA OBJECT
+    ## AT THE REGION LEVEL
+    pred <- predict(meta_fit, datapred[grp_i, ], vcov = T)
+
+    ## get group_level data
+    rr <- which(exposure_matrix[, get(exp_grp_col)] ==
+                  datapred[grp_i, get(group_col)])
+
+    grp_dat <- exposure_matrix[rr, ]
+    this_exp <- grp_dat[, get(exposure_col)]
+
+    ## reset argvar for the group
+    grp_argvar <- check_argvar(argvar, this_exp)
+
+    ## get a centered
+    grp_cp <- get_centered_cp(argvar = grp_argvar,
+                              this_exp = this_exp,
+                              x_b = x_b,
+                              xcoef = pred$fit,
+                              xvcov = pred$vcov,
+                              global_cen = global_cen,
+                              cen = datapred[grp_i, cen])
+
+    grp_l[[grp_i]] <- list(
+      cp = grp_cp$cp,
+      geo_unit_grp = datapred[grp_i, get(group_col)]
+    )
+
+  }
+
+  # conevert list to df
+  list_to_df <- function(x) {
+    # x = PLOT_l[[1]]
+    o <- data.frame(x = x$cp$predvar,
+                    RR  =  x$cp$allRRfit,
+                    RRlow = x$cp$allRRlow,
+                    RRhigh = x$cp$allRRhigh,
+                    geo_unit_grp = x$geo_unit_grp)
+    return(o)
+  }
+
+  plot_df <- do.call(rbind, lapply(grp_l, list_to_df))
+
+  #plot_df
+
+  grp_plt <- ggplot(plot_df) + theme_classic() +
+    geom_hline(yintercept = 1, linetype = '11') +
+    ##
+    geom_ribbon(aes(x = x,
+                    ymin = RRlow,
+                    ymax = RRhigh),
+                fill = 'lightblue', alpha = 0.5) +
+
+    geom_line(aes(x = x,
+                  y = RR)) +
+    facet_wrap(~geo_unit_grp, axes = 'all') +
+    scale_y_continuous(transform = 'log') +
+    coord_cartesian(ylim = c(0.75, 1.5)) +
+    theme(strip.background = element_blank(),
+          strip.text = element_text(face = 'bold'))  +
+    ylab("Relative Risk") +
+    xlab(exposure_col)
+
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -284,61 +407,22 @@ condPois_2stage <- function(exposure_matrix,
     this_exp <- single_exposure_matrix[, get(exposure_col)]
     x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
 
-    # get argvar
-    this_argvar <- argvar_list[[i]]
-
-    # (1) get onebasis
-    basis_x <- do.call("onebasis", modifyList(this_argvar,
-                                              list(x=this_exp,
-                                                   Boundary.knots = x_b)))
-
-    # *********
-    # (2) Center basis
-    # either MMT or GLOBAL CEN
-    # you need boundary knots because the centerpoint is almost
-    # always outside of the percentiles in this work
-    # so this creates a full range to test over
-    if(!is.null(global_cen)) {
-      cen = global_cen
-      stopifnot(global_cen >= x_b[1] & global_cen <= x_b[2])
-      basis_mmt <- do.call("onebasis", modifyList(this_argvar,
-                                                  list(x=global_cen,
-                                                       Boundary.knots = x_b)))
-    } else {
-      cen = cp_list[[i]]$cr$cen
-      basis_mmt <- do.call("onebasis",
-                           modifyList(this_argvar,
-                                      list(x=cen, Boundary.knots = x_b)))
-    }
-
-    # *********
-
-    # (3) Center and scale
-    basis_cen <- scale(basis_x, center = basis_mmt, scale = FALSE)
-
-    # Apply to a grid
-    grid <- seq(from =  x_b[1], to = x_b[2], by = 0.1)
-
-    # get the cross-pred object
-    # cen is passed forward from before
-    # the main reason  you need this for the RR plot
-    # and this gives back out BLUP coef and vcov which you can use
-    # in the AN calc
-    # does it also give back basis_cen?
-    blup_cp <- crosspred(basis_cen,
-                           cen = cen,
-                           coef = blup_geo[[i]]$blup,
-                           vcov = blup_geo[[i]]$vcov,
-                           model.link = "log",
-                           at = grid)
+    # get centered basis
+    blup_cp <- get_centered_cp(argvar = argvar_list[[i]],
+                               xcoef = blup_geo[[i]]$blup,
+                               xvcov = blup_geo[[i]]$vcov,
+                               global_cen = global_cen,
+                               cen = cp_list[[i]]$cr$cen,
+                               this_exp = this_exp,
+                               x_b = x_b)
 
     ## make the out
     RRdf <- data.frame(
       geo_unit = this_geo,
-      x = blup_cp$predvar,
-      RR = blup_cp$allRRfit,
-      RRlb = blup_cp$allRRlow,
-      RRub = blup_cp$allRRhigh
+      x = blup_cp$cp$predvar,
+      RR = blup_cp$cp$allRRfit,
+      RRlb = blup_cp$cp$allRRlow,
+      RRub = blup_cp$cp$allRRhigh
     )
     names(RRdf)[2] <- exposure_col
     setDT(RRdf)
@@ -346,7 +430,7 @@ condPois_2stage <- function(exposure_matrix,
     #
     blup_out[[i]] <- list(
       geo_unit = this_geo,
-      basis_cen = basis_cen,
+      basis_cen = blup_cp$basis_cen,
       exposure_col = exposure_col,
       coef = blup_geo[[i]]$blup,
       vcov = blup_geo[[i]]$vcov,
@@ -368,7 +452,8 @@ condPois_2stage <- function(exposure_matrix,
   # aka, in the recursive call to this function that happens above
   # you could modify this to also output the mixmeta object
   # but not clear that you need that
-  outlist = list(list(blup_out = blup_out))
+  outlist = list(list(meta_fit = meta_fit, blup_out = blup_out,
+                      grp_plt = grp_plt))
   names(outlist) = "_"
   class(outlist) = 'condPois_2stage'
 
@@ -420,7 +505,7 @@ plot.condPois_2stage <- function(x, geo_unit,
       geom_hline(yintercept = 1, linetype = '11') +
       theme_classic() +
       ggtitle(title) +
-      geom_ribbon(fill = 'grey75', alpha = 0.2) +
+      geom_ribbon(fill = 'lightblue', alpha = 0.2) +
       geom_line() + xlab(xlab) + ylab(ylab)
 
   } else {
@@ -453,7 +538,5 @@ plot.condPois_2stage <- function(x, geo_unit,
       scale_fill_viridis_d()
 
   }
-
-
 
 }
