@@ -165,14 +165,12 @@ ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
 ```{r multi_plot2, fig.height=3, fig.width=5}
 ii = 36
-ma_model$`0-17`$`_`$
-attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
-tt = attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
+tt = attr(ma_model$`0-17`$blup_cp[[ii]], "geo_unit")
 plot_cp = data.frame(
-    x = ma_model$`_`$blup_cp[[ii]]$predvar,
-    RR = ma_model$`_`$blup_cp[[ii]]$allRRfit,
-    RRlow = ma_model$`_`$blup_cp[[ii]]$allRRlow,
-    RRhigh = ma_model$`_`$blup_cp[[ii]]$allRRhigh
+    x = ma_model$`0-17`$blup_cp[[ii]]$predvar,
+    RR = ma_model$`0-17`$blup_cp[[ii]]$allRRfit,
+    RRlow = ma_model$`0-17`$blup_cp[[ii]]$allRRlow,
+    RRhigh = ma_model$`0-17`$blup_cp[[ii]]$allRRhigh
 )
 library(ggplot2)
 ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
