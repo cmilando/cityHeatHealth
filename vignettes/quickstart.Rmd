@@ -92,19 +92,7 @@ m1 <- condPois_single(exposure_matrix = boston_exposure_mat,
 
 And plot
 ```{r single_plot, fig.height=3, fig.width=5}
-plot_cp = data.frame(
-    x = m1$cr$predvar,
-    RR = m1$cr$RRfit,
-    RRlow = m1$cr$RRlow,
-    RRhigh = m1$cr$RRhigh
-)
-library(ggplot2)
-ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
-  geom_hline(yintercept = 1, linetype = '11') +
-  theme_classic() +
-  geom_ribbon(fill = 'grey75', alpha = 0.2) +
-  geom_line() + xlab("Tmax (degC)")
-
+plot(m1)
 ```
 
 For more details on this see `vignette("single_zone_demo")`.
@@ -128,26 +116,10 @@ ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
 And now plot
 ```{r multi_plot, fig.height=3, fig.width=5}
-ii = 36
-ma_model$`_`$meta_fit$model$TOWN20[[ii]]
-attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
-tt = attr(ma_model$`_`$blup_cp[[ii]], "geo_unit")
-plot_cp = data.frame(
-    x = ma_model$`_`$blup_cp[[ii]]$predvar,
-    RR = ma_model$`_`$blup_cp[[ii]]$allRRfit,
-    RRlow = ma_model$`_`$blup_cp[[ii]]$allRRlow,
-    RRhigh = ma_model$`_`$blup_cp[[ii]]$allRRhigh
-)
-library(ggplot2)
-ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
-  geom_hline(yintercept = 1, linetype = '11') +
-  theme_classic() +
-  ggtitle(tt) +
-  geom_ribbon(fill = 'grey75', alpha = 0.2) +
-  geom_line() + xlab("Tmax (degC)")
+plot(ma_model, "BOSTON")
 ```
 
-It does seem like this is a wider confidence interval than the solo model. Perhaps this is expected given the variables around it? 
+It does seem like this is a wider confidence interval than the solo model -- Perhaps this is expected given the variables around it? Worth investigating in your dataset, as these are simulated data.
 
 #### Model by factor
 
@@ -164,19 +136,5 @@ head(ma_outcomes_tbl)
 ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
 ```{r multi_plot2, fig.height=3, fig.width=5}
-ii = 36
-tt = attr(ma_model$`0-17`$blup_cp[[ii]], "geo_unit")
-plot_cp = data.frame(
-    x = ma_model$`0-17`$blup_cp[[ii]]$predvar,
-    RR = ma_model$`0-17`$blup_cp[[ii]]$allRRfit,
-    RRlow = ma_model$`0-17`$blup_cp[[ii]]$allRRlow,
-    RRhigh = ma_model$`0-17`$blup_cp[[ii]]$allRRhigh
-)
-library(ggplot2)
-ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
-  geom_hline(yintercept = 1, linetype = '11') +
-  theme_classic() +
-  ggtitle(tt) +
-  geom_ribbon(fill = 'grey75', alpha = 0.2) +
-  geom_line() + xlab("Tmax (degC)")
+plot(ma_model, "BOSTON")
 ```

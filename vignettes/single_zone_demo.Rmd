@@ -258,17 +258,5 @@ m1 <- condPois_single(exposure_matrix = boston_exposure_mat,
 
 And plot
 ```{r single_plot, fig.height=3, fig.width=5}
-plot_cp = data.frame(
-    x = m1$cr$predvar,
-    RR = m1$cr$RRfit,
-    RRlow = m1$cr$RRlow,
-    RRhigh = m1$cr$RRhigh
-)
-
-ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
-  geom_hline(yintercept = 1, linetype = '11') +
-  theme_classic() +
-  geom_ribbon(fill = 'grey75', alpha = 0.2) +
-  geom_line() + xlab("Tmax (degC)")
-
+plot(m1)
 ```

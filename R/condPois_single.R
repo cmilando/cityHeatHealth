@@ -1,6 +1,5 @@
 #' Run a conditional poisson model for a single geographic unit
 #'
-#'
 #' @import data.table
 #' @importFrom dlnm crossbasis
 #' @importFrom dlnm crosspred
@@ -194,6 +193,7 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   oo <- list(geo_unit = this_geo_unit,
              geo_unit_grp = this_geo_unit_grp,
              cr = cr,
+             exposure_col = exposure_col,
              argvar = argvar,
              exp_mean = exp_mean,
              exp_IQR = exp_IQR)
@@ -201,3 +201,52 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   return(oo)
 
 }
+
+#'@export
+#' print.condPois_single
+#'
+#' @param x an object of class condPois_single
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+print.condPois_single <- function(x) {
+  cat("< an object of class `condPois_single` >\n")
+  invisible(x)
+}
+
+#'@export
+#' plot.condPois_single
+#'
+#' @param x an object of class condPois_single
+#' @param xlab xlab override
+#' @param ylab ylab override
+#' @param title title override
+#' @import ggplot2
+#' @returns
+#' @export
+#'
+#' @examples
+plot.condPois_single <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
+
+  plot_cp = data.frame(
+    x = x$cr$predvar,
+    RR = x$cr$RRfit,
+    RRlow = x$cr$RRlow,
+    RRhigh = x$cr$RRhigh
+  )
+
+  if(is.null(xlab)) xlab = x$exposure_col
+  if(is.null(ylab)) ylab = "RR"
+  if(is.null(title)) title = x$geo_unit
+
+  ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+    geom_hline(yintercept = 1, linetype = '11') +
+    theme_classic() +
+    ggtitle(title) +
+    geom_ribbon(fill = 'grey75', alpha = 0.2) +
+    geom_line() + xlab(xlab) + ylab(ylab)
+}
+
+

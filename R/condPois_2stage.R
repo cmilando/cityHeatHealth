@@ -25,6 +25,7 @@
 #' @importFrom mixmeta blup
 #' @importFrom dlnm onebasis
 #' @importFrom dlnm crosspred
+#' @import data.table
 #' @returns
 #' @export
 #'
@@ -80,10 +81,15 @@ condPois_2stage <- function(exposure_matrix,
                                               strata_min = strata_min,
                                               verbose = verbose)[[1]]
 
+      fct_outlist[[fct_i]]$factor_col <- factor_col
+      fct_outlist[[fct_i]]$factor_val <- unique_fcts[fct_i]
+
 
     }
 
     names(fct_outlist) = unique_fcts
+
+    class(fct_outlist) = 'condPois_2stage'
 
     return(fct_outlist)
 
@@ -144,7 +150,7 @@ condPois_2stage <- function(exposure_matrix,
   }
 
   if(verbose > 0) {
-    cat("** Validation passed **\n")
+    cat("-- validation passed\n")
   }
 
   #' //////////////////////////////////////////////////////////////////////////
@@ -154,7 +160,7 @@ condPois_2stage <- function(exposure_matrix,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(verbose > 0) {
-    cat("** STAGE 1 **\n")
+    cat("-- stage 1\n")
   }
 
   outcome_columns <- attributes(outcomes_tbl)$column_mapping
@@ -221,7 +227,7 @@ condPois_2stage <- function(exposure_matrix,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(verbose > 0) {
-    cat("** MIXMETA **\n")
+    cat("-- mixmeta\n")
   }
 
   # convert to a matrix
@@ -259,12 +265,12 @@ condPois_2stage <- function(exposure_matrix,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(verbose > 0) {
-    cat("** STAGE 2 - BLUP **\n")
+    cat("-- stage 2\n")
   }
 
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
-  blup_cp   <- vector("list", n_geos);
+  blup_out   <- vector("list", n_geos);
 
   # loop through geos
   for(i in seq_along(cp_list)) {
@@ -315,19 +321,42 @@ condPois_2stage <- function(exposure_matrix,
 
     # get the cross-pred object
     # cen is passed forward from before
-    blup_cp[[i]] <- crosspred(basis_cen,
+    # the main reason  you need this for the RR plot
+    # and this gives back out BLUP coef and vcov which you can use
+    # in the AN calc
+    # does it also give back basis_cen?
+    blup_cp <- crosspred(basis_cen,
                            cen = cen,
                            coef = blup_geo[[i]]$blup,
                            vcov = blup_geo[[i]]$vcov,
                            model.link = "log",
                            at = grid)
 
+    ## make the out
+    RRdf <- data.frame(
+      geo_unit = this_geo,
+      x = blup_cp$predvar,
+      RR = blup_cp$allRRfit,
+      RRlb = blup_cp$allRRlow,
+      RRub = blup_cp$allRRhigh
+    )
+    names(RRdf)[2] <- exposure_col
+    setDT(RRdf)
+
     #
-    attr(blup_cp[[i]], "geo_unit") = this_geo
+    blup_out[[i]] <- list(
+      geo_unit = this_geo,
+      basis_cen = basis_cen,
+      exposure_col = exposure_col,
+      coef = blup_geo[[i]]$blup,
+      vcov = blup_geo[[i]]$vcov,
+      RRdf = RRdf
+    )
+
   }
 
   # set names
-  names(blup_cp) <- unique_geos
+  names(blup_out) <- unique_geos[, get(outcome_columns$geo_unit)]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -337,7 +366,9 @@ condPois_2stage <- function(exposure_matrix,
 
   # yes, a list in a list, this will make sense later
   # aka, in the recursive call to this function that happens above
-  outlist = list(list(meta_fit = meta_fit, blup_cp = blup_cp))
+  # you could modify this to also output the mixmeta object
+  # but not clear that you need that
+  outlist = list(list(blup_out = blup_out))
   names(outlist) = "_"
   class(outlist) = 'condPois_2stage'
 
@@ -345,3 +376,84 @@ condPois_2stage <- function(exposure_matrix,
 
 }
 
+#'@export
+#' print.condPois_2stage
+#'
+#' @param x
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+print.condPois_2stage <- function(x) {
+  cat("< an object of class `condPois_2stage` >\n")
+  invisible(x)
+}
+
+#'@export
+#' plot.condPois_2stage
+#'
+#' @param x an object of class condPois_2stage
+#' @param geo_unit a geo_unit to investigate
+#' @param xlab xlab override
+#' @param ylab ylab override
+#' @param title title override
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+plot.condPois_2stage <- function(x, geo_unit,
+                                 xlab = NULL, ylab = NULL, title = NULL) {
+
+  if(is.null(ylab)) ylab = "RR"
+  if(is.null(title)) title = geo_unit
+
+  if(length(names(x)) == 1 & all(names(x) == "_")) {
+
+    obj <- x$`_`$blup_out[[geo_unit]]
+
+    if(is.null(xlab)) xlab = obj$exposure_col
+
+    ggplot(obj$RRdf, aes(x = !!sym(obj$exposure_col), y = RR,
+                         ymin = RRlb, ymax = RRub)) +
+      geom_hline(yintercept = 1, linetype = '11') +
+      theme_classic() +
+      ggtitle(title) +
+      geom_ribbon(fill = 'grey75', alpha = 0.2) +
+      geom_line() + xlab(xlab) + ylab(ylab)
+
+  } else {
+
+    obj_l <- vector("list", length(names(x)))
+    fct_lab <- x[[names(x)[1]]]$factor_col
+    exp_lab <- x[[names(x)[1]]]$blup_out[[geo_unit]]$exposure_col
+
+    for(i in seq_along(obj_l)) {
+      yy <- x[[names(x)[i]]]$blup_out[[geo_unit]]$RRdf
+      fct <- x[[names(x)[i]]]$factor_val
+      yy[[fct_lab]] <- fct
+      obj_l[[i]] <- yy
+    }
+
+    obj <- do.call(rbind, obj_l)
+
+    if(is.null(xlab)) xlab = exp_lab
+
+    ggplot(obj) +
+      geom_hline(yintercept = 1, linetype = '11') +
+      theme_classic() +
+      ggtitle(title) +
+      geom_ribbon(aes(x = !!sym(exp_lab), y = RR,
+                      ymin = RRlb, ymax = RRub,
+                      fill = !!sym(fct_lab)), alpha = 0.2) +
+      geom_line(aes(x = !!sym(exp_lab), y = RR,
+                    color = !!sym(fct_lab))) + xlab(xlab) + ylab(ylab) +
+      scale_color_viridis_d() +
+      scale_fill_viridis_d()
+
+  }
+
+
+
+}
