@@ -10,11 +10,14 @@ condPois_single(
   argvar = NULL,
   arglag = NULL,
   maxlag = NULL,
-  min_n = NULL
+  min_n = NULL,
+  strata_min = 0
 )
 }
 \arguments{
 \item{exposure_matrix}{a matrix of exposures, with columns for lag, usually created by \code{make_exposure_matrix}}
+
+\item{outcomes_tbl}{a data.table of outcomes, created by \code{make_outcome_table}}
 
 \item{argvar}{a list containing the \code{argvar} components for the \code{crossbasis}}
 
@@ -24,7 +27,7 @@ condPois_single(
 
 \item{min_n}{an integer describing the minimum number of cases for a single region}
 
-\item{outcomes}{a data.table of outcomes, created by \code{make_outcome_table}}
+\item{strata_min}{an integer describing the minimum number of cases for a single strata}
 }
 \description{
 Run a conditional poisson model for a single geographic unit

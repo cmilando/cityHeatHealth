@@ -217,7 +217,7 @@ make_exposure_matrix <- function(data, column_mapping,
 
   # at the end there shouldn't be any NAs, so give a warning to investigate
   if(any(is.na(warm_season_exposure))) {
-    warning("some NAs persist, investigate")
+    warning("some NAs persist, investigate and submit a Github issue :)")
   }
 
   return(warm_season_exposure)

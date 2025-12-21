@@ -119,7 +119,7 @@ Notice that two variables have been added:
 
 (1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level.
 
-and (2) a variable `keep` describing the presence of group-level outcomes. at a minimum this removes any empty strata so the variances are correctly scaled (and you can increase this floor if you'd like)
+and (2) a variable `strata` describing the number of total outcomes within each strata
 
 ### Basic DLNM (manual walkthrough)
 
@@ -162,7 +162,7 @@ m_sub <- gnm(daily_deaths ~ cb,
              data = boston_deaths_tbl,
              family = quasipoisson,
              eliminate = factor(strata),
-             subset = keep == 1)
+             subset = strata_total > 0)
 summary(m_sub)
 ```
 

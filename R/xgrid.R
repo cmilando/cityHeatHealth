@@ -11,7 +11,15 @@
 #' @examples
 make_xgrid <- function(data, column_mapping, months = 1:12) {
 
+  #
   setDT(data)
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' GET ALL DATES
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   date_col <- column_mapping$date
   years   <- sort(unique(data[, year(get(date_col))]))
 
@@ -28,16 +36,52 @@ make_xgrid <- function(data, column_mapping, months = 1:12) {
   all_dt <- lapply(years, get_dt)
   all_dt <- do.call(c, all_dt)
 
-  # ******
-  # this is where xgrid comes in
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' CREATE XGRID SKELETON
+  #'
+  #' For dates, you need all the dates
+  #'
+  #' For outcomes, you also need all the dates within strata
+  #' that have SOME data so you can add 0s to low data places
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   geo_col <- column_mapping$geo_unit
   unique_areas <- unlist(unique(data[, get(geo_col)]))
-  xgrid <- tidyr::expand_grid(date = all_dt, geo_unit = unique_areas)
-  names(xgrid) = c(column_mapping$date, column_mapping$geo_unit)
-  head(xgrid)
 
-  # ******
-  # join back in group level
+  if(any(names(column_mapping) == 'factor')) {
+
+    stopifnot(length(which(names(column_mapping) == 'factor')) == 1)
+
+    factor_col <- column_mapping$factor
+
+    unique_fcts <- unlist(unique(data[, get(factor_col)]))
+
+    xgrid <- tidyr::expand_grid(date = all_dt,
+                                geo_unit = unique_areas,
+                                fct = unique_fcts)
+
+    names(xgrid) = c(column_mapping$date,
+                     column_mapping$geo_unit,
+                     column_mapping$factor)
+
+  } else {
+
+    xgrid <- tidyr::expand_grid(date = all_dt, geo_unit = unique_areas)
+
+    names(xgrid) = c(column_mapping$date, column_mapping$geo_unit)
+
+  }
+
+  setDT(xgrid)
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' JOIN WITH GROUP DATA
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
   geo_cols <- c(
     column_mapping$geo_unit,
     column_mapping$geo_unit_grp
@@ -45,19 +89,12 @@ make_xgrid <- function(data, column_mapping, months = 1:12) {
 
   geo_unit_mapping <- unique(data[, ..geo_cols])
 
-  # i think here, if any geo_unit appears more than once
-  # this should enforce
+  # if any geo_unit appears more than once then its not 1:1
   if(length(unique_areas) != nrow(geo_unit_mapping)) {
     stop("need to enforce that there is a 1:1 mapping of geo_unit to geo_unit_grp.
          That is, a single geo_unit cannot belong to more than one geo_unit_grp")
   }
 
-  # old tidyverse code
-  # xgrid <- left_join(xgrid, geo_unit_mapping,
-  # by = join_by(!!sym(column_mapping$geo_unit)))
-
-  # new data.table code
-  setDT(xgrid)
   setDT(geo_unit_mapping)
 
   join_col <- column_mapping$geo_unit
@@ -67,17 +104,28 @@ make_xgrid <- function(data, column_mapping, months = 1:12) {
     on = setNames(join_col, join_col)
   ]
 
-  # ******
-  # and now join in data
-  # xgrid <- left_join(xgrid, data,
-  # by = join_by(!!sym(column_mapping$date),
-  #              !!sym(column_mapping$geo_unit),
-  #              !!sym(column_mapping$geo_unit_grp)))
-  join_cols <- c(
-    column_mapping$date,
-    column_mapping$geo_unit,
-    column_mapping$geo_unit_grp
-  )
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' FINALLY - JOIN WITH DATA
+  #'
+  #' This shouldn't add any rows
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
+  if(any(names(column_mapping) == 'factor')) {
+    join_cols <- c(
+      column_mapping$date,
+      column_mapping$geo_unit,
+      column_mapping$geo_unit_grp,
+      column_mapping$factor
+    )
+  } else {
+    join_cols <- c(
+      column_mapping$date,
+      column_mapping$geo_unit,
+      column_mapping$geo_unit_grp
+    )
+  }
 
   xgrid <- data[
     xgrid,

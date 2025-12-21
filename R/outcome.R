@@ -60,7 +60,7 @@ make_outcome_table <- function(data,
   date_col         = column_mapping$date
   geo_unit_col     = column_mapping$geo_unit
   geo_unit_grp_col = column_mapping$geo_unit_grp
-  outcome_col     <- column_mapping$outcome
+  outcome_col      = column_mapping$outcome
 
   # Next check about collapsing across factors
   if(is.null(collapse_to)) {
@@ -68,6 +68,7 @@ make_outcome_table <- function(data,
     collapse_to = 'ALL'
 
     if(grp_level == FALSE) {
+
       data <- data[,.(
         xoutcome = sum(get(outcome_col))
       ), by = .(get(date_col),
@@ -82,6 +83,7 @@ make_outcome_table <- function(data,
         "geo_unit" = geo_unit_col,
         "geo_unit_grp" = geo_unit_grp_col
       )
+
     } else {
 
       data <- data[,.(
@@ -91,11 +93,13 @@ make_outcome_table <- function(data,
 
       names(data) <- c(date_col, geo_unit_grp_col, outcome_col)
 
+      data$spatial_grp <- 'ALL'
+
       column_mapping <- list(
         "date" = date_col,
         "outcome" = outcome_col,
         "geo_unit" = geo_unit_grp_col,
-        "geo_unit_grp" = 'ALL'
+        "geo_unit_grp" = 'spatial_grp'
       )
     }
 
@@ -106,6 +110,7 @@ make_outcome_table <- function(data,
     stopifnot(collapse_to %in% factor_cols)
 
     if(grp_level == FALSE) {
+
       data <- data[,.(
         xoutcome = sum(get(outcome_col))
       ), by = .(get(date_col),
@@ -113,8 +118,8 @@ make_outcome_table <- function(data,
                 get(geo_unit_grp_col),
                 get(collapse_to))]
 
-      names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col, outcome_col,
-                       collapse_to)
+      names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col,
+                       collapse_to, outcome_col)
 
       # update the properties here
       column_mapping <- list(
@@ -132,15 +137,17 @@ make_outcome_table <- function(data,
                 get(geo_unit_grp_col),
                 get(collapse_to))]
 
-      names(data) <- c(date_col, geo_unit_grp_col, outcome_col,
-                       collapse_to)
+      names(data) <- c(date_col, geo_unit_grp_col,
+                       collapse_to, outcome_col)
+
+      data$spatial_grp <- 'ALL'
 
       # update the properties here
       column_mapping <- list(
         "date" = date_col,
         "outcome" = outcome_col,
         "geo_unit" = geo_unit_grp_col,
-        "geo_unit_grp" = 'ALL',
+        "geo_unit_grp" = 'spatial_grp',
         "factor" = collapse_to
       )
 
@@ -171,9 +178,17 @@ make_outcome_table <- function(data,
   dow <- wday(xgrid[, get(date_col)])
   mn  <- month(xgrid[, get(date_col)])
   yr  <- year(xgrid[, get(date_col)])
+  if(any(names(column_mapping) == 'factor')) {
+    fct <- xgrid[, get(column_mapping$factor)]
+    xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
+                           ":yr",yr, ":mn",mn, ":dow",dow,":",
+                           column_mapping$factor, fct)
 
-  xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
-                        ":yr",yr, ":mn",mn, ":dow",dow, ":", collapse_to)
+  } else {
+    xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
+                           ":yr",yr, ":mn",mn, ":dow",dow)
+  }
+
 
   # **************
   # Label strata that have no cases, these will be removed later
@@ -182,11 +197,19 @@ make_outcome_table <- function(data,
 
   # 1. Aggregate by group and create the 'keep' flag
   xgrid_agg <- xgrid[, .(
-    keep = as.integer(sum(get(outcome_col), na.rm = TRUE) > 0)
+    strata_total = round(sum(get(outcome_col)))
   ), by = group_col]
 
   # 2. Join back to the original data (left join)
   xgrid_comb <- xgrid[xgrid_agg, on = group_col]
+
+  # remove any empty strata
+  # again this probably could be done better by only adding 0s to
+  # strata that have data, thus avoiding the bump in memory, but
+  # i don't think that it will matter .... right ?
+  # TODO
+  rr <- which(xgrid_comb$strata_total > 0)
+  xgrid_comb <- xgrid_comb[rr, ,drop = FALSE]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -210,7 +233,7 @@ make_outcome_table <- function(data,
 
   # at the end there shouldn't be any NAs, so give a warning to investigate
   if(any(is.na(xgrid_comb))) {
-    stop("some NAs persist, investigate")
+    warning("some NAs persist, investigate and submit a Github issue :) ")
   }
 
   return(xgrid_comb)

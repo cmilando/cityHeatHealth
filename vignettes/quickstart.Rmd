@@ -27,9 +27,11 @@ This package can be used in three main ways:
 
 | Single-Zone | 2-stage design | Spatial Bayes |
 |-------------|----------------|---------------|
-| A standard single-stage conditional poisson model when estimating heat-health impacts in a single zone | A 2-stage design (using mixmeta and BLUP) is used when estimating heat-health impacts across many zones, but where individual zone impacts are desired         | If numbers are very small in the 2-stage design, spatial bayesian methods can be used to tighten confidence intervals |
+| A standard single-stage conditional poisson model when estimating heat-health impacts in a single zone | A 2-stage design is used when estimating heat-health impacts across many zones, but where individual zone impacts are desired  | If numbers are very small in the 2-stage design, spatial bayesian methods can be used to tighten confidence intervals |
 
-Followin any of these implementations, the same attributable number calculation is applied to model outcomes to get heat-attributable outcomes. To avoid repetition, we provide a separate vignette that details the attributable number module: `vignette("attributable_number")`.
+Following any of these implementations, the same attributable number calculation is applied to model outcomes to get heat-attributable outcomes. To avoid repetition, we provide a separate vignette that details the attributable number module: `vignette("attributable_number")`.
+
+## Starting a new analysis
 
 To start a new analysis, you will need the following **4** datasets:
 
@@ -37,7 +39,7 @@ To start a new analysis, you will need the following **4** datasets:
 |----------|----------|----------|----------|
 | Exposures at the daily scale for each `geo_unit` | Health outcomes at the daily scale for each `geo_unit` | Population data for each subdivision of the health outcome data that you want results for | A map showing how the various `geo_unit`s are neighbors |
 
-This package comes pre-loaded with sample datasets of each type so each of these methods can be explored. See below for starter code for each type of analysis.
+This package comes pre-loaded with sample datasets of each type (e.g., `ma_exposure`, `ma_deaths`, `ma_pop_data`, and `ma_towns` respectively) so each of these methods can be explored. See below for starter code for each type of analysis.
 
 ### Basic model in a single zone 
 
@@ -113,8 +115,8 @@ We can easily extend this to estimate impacts across many regions.
 
 First create the inputs, using the same `exposure_columns` and `outcome_columns` as above.
 ```{r multi_town_setup}
-ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
-ma_outcomes_table <- make_outcome_table(ma_deaths, outcome_columns)
+exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
 ```
 
 Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 1 function from these inputs and defaults for `argvar`, `arglag` and `maxlag`. 
@@ -122,9 +124,27 @@ Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 
 Importantly, the estimates in each `geo_unit` are bolstered by those in their `geo_unit_grp` by including a random effect for `geo_unit_grp` in the `mixmeta` model.
 
 ```{r multi_town_run}
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_table)
+ma_model <- condPois_2stage(exposure_matrix, outcomes_tbl, verbose = 1)
+```
+And now plot
+```{r multi_plot, fig.height=3, fig.width=5}
+ii = 150
+ma_model$meta_fit$model$TOWN20[[ii]]
+attr(ma_model$blup_cp[[ii]], "geo_unit")
+tt = attr(ma_model$blup_cp[[ii]], "geo_unit")
+plot_cp = data.frame(
+    x = ma_model$blup_cp[[ii]]$predvar,
+    RR = ma_model$blup_cp[[ii]]$allRRfit,
+    RRlow = ma_model$blup_cp[[ii]]$allRRlow,
+    RRhigh = ma_model$blup_cp[[ii]]$allRRhigh
+)
+library(ggplot2)
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  geom_hline(yintercept = 1, linetype = '11') +
+  theme_classic() +
+  ggtitle(tt) +
+  geom_ribbon(fill = 'grey75', alpha = 0.2) +
+  geom_line() + xlab("Tmax (degC)")
 ```
 
-
-
-
+It does seem like this is a wider confidence interval than the solo model. Perhaps this is expected given the variables around it? 
