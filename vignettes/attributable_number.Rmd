@@ -1,6 +1,9 @@
 ---
 title: "Calculating attributable numbers and rates in `cityHeatHealth`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig.retina: 2
+    dev: svg
 vignette: >
   %\VignetteIndexEntry{Calculating attributable numbers and rates in `cityHeatHealth`}
   %\VignetteEngine{knitr::rmarkdown}
@@ -163,7 +166,7 @@ ma_AN$`_`$number_table
 ```
 
 Some plot functions exist but you probably want to summarize to larger spatial units so the plots are manageable
-```{r grpsum3}
+```{r grpsum3, fig.height=3, fig.width=8}
 ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  agg_type = 'COUNTY20', 
                  join_cols = 'TOWN20', 
@@ -178,7 +181,7 @@ plot(ma_AN, table_type = 'rate')
 
 In the case where you have factors, you can easily extend this
 
-```{r fctrun}
+```{r fctrun, fig.height=3, fig.width=8}
 ma_outcomes_tbl_fct <- make_outcome_table(ma_deaths, 
                                       outcome_columns,
                                       collapse_to = 'age_grp')

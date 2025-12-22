@@ -1,6 +1,9 @@
 ---
 title: "Using Spatial Bayesian methods in `cityHeatHealth`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig.retina: 2
+    dev: svg
 vignette: >
   %\VignetteIndexEntry{Using Spatial Bayesian methods in `cityHeatHealth`}
   %\VignetteEngine{knitr::rmarkdown}

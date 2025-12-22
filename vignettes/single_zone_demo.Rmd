@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Let's use built-in functions to examine heat-health relationships in a single geographic unit. 
+Let's use built-in functions to examine heat-health relationships in a single geographic unit. We'll start with a review of DLNM, and then show how its implemented in `cityHeatHealth`.
 
 For testing purposes, start with your largest geographic unit! 
 
