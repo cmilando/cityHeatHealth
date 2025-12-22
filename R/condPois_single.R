@@ -12,6 +12,7 @@
 #' @param maxlag an integer of the maximum lag
 #' @param min_n an integer describing the minimum number of cases for a single region
 #' @param strata_min an integer describing the minimum number of cases for a single strata
+#' @param global_cen global centering point
 #'
 #' @returns
 #' @export
@@ -19,7 +20,7 @@
 #' @examples
 condPois_single <- function(exposure_matrix, outcomes_tbl,
                         argvar = NULL, arglag = NULL, maxlag = NULL,
-                       min_n = NULL, strata_min = 0) {
+                       min_n = NULL, strata_min = 0, global_cen = NULL) {
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -168,7 +169,11 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
                   cen = exp_mean,
                   by = 0.1)
 
-  cen = cp$predvar[which.min(cp$allRRfit)]
+  if(!is.null(global_cen)) {
+    cen = global_cen
+  } else {
+    cen = cp$predvar[which.min(cp$allRRfit)]
+  }
 
   # now apply to cr and export
   cr <- crossreduce(cb,
@@ -186,6 +191,7 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
              this_exp = exposure_matrix[, get(exposure_col)],
              outcomes = outcomes_tbl[, get(outcome_col)],
              cen = cen,
+             global_cen = global_cen,
              argvar = argvar,
              exp_mean = exp_mean,
              exp_IQR = exp_IQR)

@@ -40,7 +40,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       }
 
       # model subset
-      sub_model <- model[[unique_fcts[fct_i]]]
+      sub_model <- model[unique_fcts[fct_i]]
       names(sub_model) = "_"
 
       # outcomes subset
@@ -62,7 +62,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
                                       agg_type,
                                       join_cols,
                                       nsim = 300,
-                                      verbose = 0)
+                                      verbose = verbose)[[1]]
 
       fct_outlist[[fct_i]]$factor_col <- factor_col
       fct_outlist[[fct_i]]$factor_val <- unique_fcts[fct_i]
@@ -86,6 +86,11 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' //////////////////////////////////////////////////////////////////////////
 
   warning('add other validations')
+
+  outcomes_col     <- attributes(outcomes_tbl)$column_mapping$outcome
+  date_col         <- attributes(outcomes_tbl)$column_mapping$date
+  geo_unit_col     <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
   # check agg_type
   stopifnot(agg_type %in% c(geo_unit_col, geo_unit_grp_col, 'all'))
@@ -117,11 +122,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   AN <- vector("list", n_geo_units)
 
   #
-  outcomes_col     <- attributes(outcomes_tbl)$column_mapping$outcome
   exposure_col     <- x$blup_out[[1]]$exposure_col
-  date_col         <- attributes(outcomes_tbl)$column_mapping$date
-  geo_unit_col     <- attributes(outcomes_tbl)$column_mapping$geo_unit
-  geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
   for(i in 1:n_geo_units) {
 
@@ -130,25 +131,32 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     }
 
     # things you need
-    this_geo  <- x$blup_out[[i]]$geo_unit
-    basis_cen <- x$blup_out[[i]]$basis_cen
-    xcoef     <- x$blup_out[[i]]$coef
-    xvcov     <- x$blup_out[[i]]$vcov
-    outcomes  <- x$blup_out[[i]]$outcomes
-    this_exp  <- x$blup_out[[i]]$this_exp
-    cen       <- x$blup_out[[i]]$cen
+    this_geo   <- x$blup_out[[i]]$geo_unit
+    basis_cen  <- x$blup_out[[i]]$basis_cen
+    xcoef      <- x$blup_out[[i]]$coef
+    xvcov      <- x$blup_out[[i]]$vcov
+    outcomes   <- x$blup_out[[i]]$outcomes
+    this_exp   <- x$blup_out[[i]]$this_exp
+    cen        <- x$blup_out[[i]]$cen
+    global_cen <- x$blup_out[[i]]$global_cen
 
     # and the outcome database, which should match
     rr <- which(outcomes_tbl[, get(geo_unit_col)] == this_geo)
     single_outcomes_tbl <- outcomes_tbl[rr, ,drop = FALSE]
-    stopifnot(identical(single_outcomes_tbl[, get(outcomes_col)], outcomes))
+    if(!identical(single_outcomes_tbl[, get(outcomes_col)], outcomes)) {
+      print(head(single_outcomes_tbl))
+      print(nrow(single_outcomes_tbl))
+      print(head(outcomes))
+      print(length(outcomes))
+      stop('Outcomes not the same')
+    }
 
     # convert to matrix
     bvar_mat <- as.matrix(basis_cen)
 
     # check that AF is always positive
     af_updated <- (1-exp(-bvar_mat %*% xcoef))
-    if(any(af_updated < -0.001)) {
+    if(any(af_updated < -0.001) & is.null(global_cen)) {
       print(summary(af_updated))
       stop(paste0("Attributable Fraction (AF) < -0.001 for ", this_geo,
                   ", which means that centering was likely not done
