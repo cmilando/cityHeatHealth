@@ -17,7 +17,13 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
 
   ## Check 1 -- that both inputs are the right class of variables
+  stopifnot(class(model) %in%
+              c('condPois_single', 'condPois_2stage', 'condPois_bayes'))
+
   stopifnot("outcome" %in% class(outcomes_tbl))
+
+  stopifnot('population' %in% names(pop_data))
+  stopifnot(all(join_cols %in% names(pop_data)))
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -44,14 +50,15 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       names(sub_model) = "_"
 
       # outcomes subset
+      stopifnot(factor_col %in% names(outcomes_tbl))
       rr <- which(outcomes_tbl[, get(factor_col)] == unique_fcts[fct_i])
       sub_outcomes_tbl <- outcomes_tbl[rr, , drop = FALSE]
       attributes(sub_outcomes_tbl)$column_mapping$factor <- NULL
 
       # pop_data subset
+      stopifnot(factor_col %in% names(pop_data))
       rr <- which(pop_data[, get(factor_col)] == unique_fcts[fct_i])
       sub_pop_data <- pop_data[rr, , drop = FALSE]
-
 
       # re-call the function, but with just one subset, it should work now
       # and you take the first element here to get rid of having
@@ -85,7 +92,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  warning('add other validations')
+  warning('more validations to add')
 
   outcomes_col     <- attributes(outcomes_tbl)$column_mapping$outcome
   date_col         <- attributes(outcomes_tbl)$column_mapping$date
@@ -96,8 +103,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   stopifnot(agg_type %in% c(geo_unit_col, geo_unit_grp_col, 'all'))
 
   # check jointype
-  stopifnot('population' %in% names(pop_data))
-  stopifnot(all(join_cols %in% names(pop_data)))
+
   setDT(pop_data)
 
   if(verbose > 0) {
@@ -303,7 +309,9 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  c1 <- which(! (names(AN_ANNUAL) %in% c('population','year', 'nsim','annual_AN') ))
+  c1 <- which(! (names(AN_ANNUAL) %in%
+                   c('population','year', 'nsim','annual_AN') ))
+
   g1_cols <- c(names(AN_ANNUAL)[c1], "population", "nsim")
 
   # mean annual
