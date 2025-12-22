@@ -70,9 +70,7 @@ condPois_2stage <- function(exposure_matrix,
       subset_outcomes_tbl <- outcomes_tbl[rr, , drop = FALSE]
       attributes(subset_outcomes_tbl)$column_mapping$factor <- NULL
 
-      # re-call the function, but with just one subset, it should work now
-      # and you take the first element here to get rid of having
-      # another "_"
+      # re-call the function, but with just one subset
       fct_outlist[[fct_i]] <- condPois_2stage(exposure_matrix,
                                               subset_outcomes_tbl,
                                               global_cen = global_cen,
@@ -81,17 +79,16 @@ condPois_2stage <- function(exposure_matrix,
                                               maxlag = maxlag,
                                               min_n = min_n,
                                               strata_min = strata_min,
-                                              verbose = verbose)[[1]]
+                                              verbose = verbose)
 
       fct_outlist[[fct_i]]$factor_col <- factor_col
       fct_outlist[[fct_i]]$factor_val <- unique_fcts[fct_i]
-
 
     }
 
     names(fct_outlist) = unique_fcts
 
-    class(fct_outlist) = 'condPois_2stage'
+    class(fct_outlist) = 'condPois_2stage_list'
 
     return(fct_outlist)
 
@@ -489,6 +486,21 @@ print.condPois_2stage <- function(x) {
 }
 
 #'@export
+#' print.condPois_2stage_list
+#'
+#' @param x
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+print.condPois_2stage_list <- function(x) {
+  cat("< an object of class `condPois_2stage_list`:",
+      paste(names(x), collapse = ",")," >\n")
+  invisible(x)
+}
+
+#'@export
 #' plot.condPois_2stage
 #'
 #' @param x an object of class condPois_2stage
@@ -507,49 +519,64 @@ plot.condPois_2stage <- function(x, geo_unit,
   if(is.null(ylab)) ylab = "RR"
   if(is.null(title)) title = geo_unit
 
-  if(length(names(x)) == 1 & all(names(x) == "_")) {
+  obj <- x$`_`$blup_out[[geo_unit]]
 
-    obj <- x$`_`$blup_out[[geo_unit]]
+  if(is.null(xlab)) xlab = obj$exposure_col
 
-    if(is.null(xlab)) xlab = obj$exposure_col
+  ggplot(obj$RRdf, aes(x = !!sym(obj$exposure_col), y = RR,
+                       ymin = RRlb, ymax = RRub)) +
+    geom_hline(yintercept = 1, linetype = '11') +
+    theme_classic() +
+    ggtitle(title) +
+    geom_ribbon(fill = 'lightblue', alpha = 0.2) +
+    geom_line() + xlab(xlab) + ylab(ylab)
+}
 
-    ggplot(obj$RRdf, aes(x = !!sym(obj$exposure_col), y = RR,
-                         ymin = RRlb, ymax = RRub)) +
-      geom_hline(yintercept = 1, linetype = '11') +
-      theme_classic() +
-      ggtitle(title) +
-      geom_ribbon(fill = 'lightblue', alpha = 0.2) +
-      geom_line() + xlab(xlab) + ylab(ylab)
 
-  } else {
+#'@export
+#' plot.condPois_2stage
+#'
+#' @param x an object of class condPois_2stage
+#' @param geo_unit a geo_unit to investigate
+#' @param xlab xlab override
+#' @param ylab ylab override
+#' @param title title override
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+plot.condPois_2stage_list <- function(x, geo_unit,
+                                 xlab = NULL, ylab = NULL, title = NULL) {
 
-    obj_l <- vector("list", length(names(x)))
-    fct_lab <- x[[names(x)[1]]]$factor_col
-    exp_lab <- x[[names(x)[1]]]$blup_out[[geo_unit]]$exposure_col
+  if(is.null(ylab)) ylab = "RR"
+  if(is.null(title)) title = geo_unit
 
-    for(i in seq_along(obj_l)) {
-      yy <- x[[names(x)[i]]]$blup_out[[geo_unit]]$RRdf
-      fct <- x[[names(x)[i]]]$factor_val
-      yy[[fct_lab]] <- fct
-      obj_l[[i]] <- yy
-    }
+  obj_l <- vector("list", length(names(x)))
+  fct_lab <- x[[names(x)[1]]]$factor_col
+  exp_lab <- x[[names(x)[1]]]$"_"$blup_out[[geo_unit]]$exposure_col
 
-    obj <- do.call(rbind, obj_l)
-
-    if(is.null(xlab)) xlab = exp_lab
-
-    ggplot(obj) +
-      geom_hline(yintercept = 1, linetype = '11') +
-      theme_classic() +
-      ggtitle(title) +
-      geom_ribbon(aes(x = !!sym(exp_lab), y = RR,
-                      ymin = RRlb, ymax = RRub,
-                      fill = !!sym(fct_lab)), alpha = 0.2) +
-      geom_line(aes(x = !!sym(exp_lab), y = RR,
-                    color = !!sym(fct_lab))) + xlab(xlab) + ylab(ylab) +
-      scale_color_viridis_d() +
-      scale_fill_viridis_d()
-
+  for(i in seq_along(obj_l)) {
+    yy <- x[[names(x)[i]]]$"_"$blup_out[[geo_unit]]$RRdf
+    fct <- x[[names(x)[i]]]$factor_val
+    yy[[fct_lab]] <- fct
+    obj_l[[i]] <- yy
   }
+
+  obj <- do.call(rbind, obj_l)
+
+  if(is.null(xlab)) xlab = exp_lab
+
+  ggplot(obj) +
+    geom_hline(yintercept = 1, linetype = '11') +
+    theme_classic() +
+    ggtitle(title) +
+    geom_ribbon(aes(x = !!sym(exp_lab), y = RR,
+                    ymin = RRlb, ymax = RRub,
+                    fill = !!sym(fct_lab)), alpha = 0.2) +
+    geom_line(aes(x = !!sym(exp_lab), y = RR,
+                  color = !!sym(fct_lab))) + xlab(xlab) + ylab(ylab) +
+    scale_color_viridis_d() +
+    scale_fill_viridis_d()
 
 }

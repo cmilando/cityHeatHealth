@@ -143,7 +143,7 @@ ma_AN$`_`$number_table
 See that the numbers are roughly the same for Suffolk county ? They won't be exactly the same because of how the averaging works.
 
 And for all
-```{r grpsum}
+```{r grpsum2}
 ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  agg_type = 'all', 
                  join_cols = 'TOWN20', 
@@ -164,16 +164,13 @@ ma_outcomes_tbl_fct <- make_outcome_table(ma_deaths,
 
 ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, 
                                 verbose = 1)
-plot(ma_model_fct, "BOSTON")
 
-# THIS IS WHERE I STOPPED FOR TODAY
 ma_AN <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct, ma_pop_data_long,
                  agg_type = 'TOWN20', 
                  join_cols = 'TOWN20', 
                  nsim = 100,
-                 verbose = 2)
+                 verbose = 1)
 
-ma_AN$`0-17`$`_`$rate_table
+```
 
-ma_AN$`_`$rate_table
-ma_AN$`_`$number_table
+

@@ -11,7 +11,8 @@ condPois_single(
   arglag = NULL,
   maxlag = NULL,
   min_n = NULL,
-  strata_min = 0
+  strata_min = 0,
+  global_cen = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ condPois_single(
 \item{min_n}{an integer describing the minimum number of cases for a single region}
 
 \item{strata_min}{an integer describing the minimum number of cases for a single strata}
+
+\item{global_cen}{global centering point}
 }
 \description{
 Run a conditional poisson model for a single geographic unit

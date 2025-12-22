@@ -18,7 +18,9 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   ## Check 1 -- that both inputs are the right class of variables
   stopifnot(class(model) %in%
-              c('condPois_single', 'condPois_2stage', 'condPois_bayes'))
+              c('condPois_single',
+                'condPois_2stage', 'condPois_2stage_list',
+                'condPois_bayes'))
 
   stopifnot("outcome" %in% class(outcomes_tbl))
 
@@ -31,7 +33,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
+  if(("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) &
+     class(model) %in% c("condPois_2stage_list")) {
 
     factor_col <- attributes(outcomes_tbl)$column_mapping$factor
 
@@ -46,8 +49,9 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       }
 
       # model subset
-      sub_model <- model[unique_fcts[fct_i]]
-      names(sub_model) = "_"
+      sub_model <- model[[ unique_fcts[fct_i] ]]
+      stopifnot(class(sub_model) == 'condPois_2stage')
+      stopifnot("_" %in% names(sub_model))
 
       # outcomes subset
       stopifnot(factor_col %in% names(outcomes_tbl))
@@ -60,16 +64,14 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       rr <- which(pop_data[, get(factor_col)] == unique_fcts[fct_i])
       sub_pop_data <- pop_data[rr, , drop = FALSE]
 
-      # re-call the function, but with just one subset, it should work now
-      # and you take the first element here to get rid of having
-      # another "_"
+      # re-call the function, but with just one subset
       fct_outlist[[fct_i]] <- calc_AN(sub_model,        # <<< **Updated
                                       sub_outcomes_tbl, # <<< **Updated
                                       sub_pop_data,     # <<< **Updated
                                       agg_type,
                                       join_cols,
-                                      nsim = 300,
-                                      verbose = verbose)[[1]]
+                                      nsim = nsim,
+                                      verbose = verbose)
 
       fct_outlist[[fct_i]]$factor_col <- factor_col
       fct_outlist[[fct_i]]$factor_val <- unique_fcts[fct_i]
@@ -79,7 +81,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
     names(fct_outlist) = unique_fcts
 
-    class(fct_outlist) = 'calcAN'
+    class(fct_outlist) = 'calcAN_list'
 
     return(fct_outlist)
 
@@ -303,6 +305,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   AN_ANNUAL <- do.call(rbind, AN_ANNUAL)
 
+  if(verbose > 1) {
+    cat('\n')
+  }
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' OUTPUT
@@ -318,6 +324,11 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   x1 <- AN_ANNUAL[,.(
     mean_annual_AN = mean(annual_AN)
   ), by = g1_cols]
+  if(any(is.na(x1$mean_annual_AN))) {
+    rr <- which(is.na(x1$mean_annual_AN))
+    print(x1[rr, ])
+    stop('annual_AN has NA, find out why')
+  }
 
   # rate column
   x1[, mean_annual_AN_rate := mean_annual_AN / population * 1e5]

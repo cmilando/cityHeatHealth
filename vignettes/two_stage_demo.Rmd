@@ -81,5 +81,6 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 
 And plot
 ```{r multi_plot2, fig.height=3, fig.width=5}
-plot(ma_model_fct,"BOSTON")
+plot(ma_model_fct, "BOSTON")
+plot(ma_model_fct$`0-17`, "BOSTON")
 ```

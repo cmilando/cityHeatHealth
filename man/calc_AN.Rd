@@ -4,7 +4,15 @@
 \alias{calc_AN}
 \title{Calculate attributable number and attributable rates}
 \usage{
-calc_AN(model, outcomes_tbl, pop_data, agg_type, join_cols, nsim = 300)
+calc_AN(
+  model,
+  outcomes_tbl,
+  pop_data,
+  agg_type,
+  join_cols,
+  nsim = 300,
+  verbose = 0
+)
 }
 \arguments{
 \item{model}{a model object of class \code{condPois_2stage}, \code{condPois_single}, or \code{condPois_bayes}}
@@ -18,6 +26,8 @@ calc_AN(model, outcomes_tbl, pop_data, agg_type, join_cols, nsim = 300)
 \item{join_cols}{how should you join population data to the outcome table}
 
 \item{nsim}{number of simulations required for calculation of empirical CI (default = 300)}
+
+\item{verbose}{0 = no printing, 1 = headers, 2 = detailed}
 }
 \description{
 Calculate attributable number and attributable rates
@@ -25,12 +35,12 @@ Calculate attributable number and attributable rates
 \examples{
 //////////////////////////////////////////////////////////////////////////
 ==========================================================================
-VALIDATIONS
-==========================================================================
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-==========================================================================
 RECURSIVE CALL IF FACTOR
+==========================================================================
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+==========================================================================
+VALIDATIONS
 ==========================================================================
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
