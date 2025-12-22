@@ -261,10 +261,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     } else if(agg_type == geo_unit_grp_col) {
 
       group_cols = c(
-        geo_unit_col, 'year', 'nsim'
+        geo_unit_grp_col, 'year', 'nsim'
       )
 
-      AN_ANNUAL[[xi]] = AN_sub_all[,.(
+      AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
         annual_AN = sum(annual_AN),
         population = sum(population)
       ), by = group_cols]
@@ -275,7 +275,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
         'year', 'nsim'
       )
 
-      AN_ANNUAL[[xi]] = AN_sub_all[,.(
+      AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
         annual_AN = sum(annual_AN),
         population = sum(population)
       ), by = group_cols]

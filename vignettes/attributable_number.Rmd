@@ -125,4 +125,50 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  join_cols = 'TOWN20', 
                  nsim = 100,
                  verbose = 2)
+ma_AN$`_`$rate_table
+ma_AN$`_`$number_table
 ```
+
+you can change `agg_type` to be a different spatial resolution -- either whatever the group variable was or "all"
+```{r grpsum}
+ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+                 agg_type = 'COUNTY20', 
+                 join_cols = 'TOWN20', 
+                 nsim = 100,
+                 verbose = 2)
+ma_AN$`_`$rate_table
+ma_AN$`_`$number_table
+```
+
+See that the numbers are roughly the same for Suffolk county ? They won't be exactly the same because of how the averaging works.
+
+And for all
+```{r grpsum}
+ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+                 agg_type = 'all', 
+                 join_cols = 'TOWN20', 
+                 nsim = 100,
+                 verbose = 2)
+ma_AN$`_`$rate_table
+ma_AN$`_`$number_table
+```
+
+### Estimating the AN - with factors
+
+In the case where you have factors, you can easily extend this
+
+```{r fctrun}
+ma_outcomes_tbl <- make_outcome_table(ma_deaths, 
+                                      outcome_columns,
+                                      collapse_to = 'age_grp')
+
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+
+ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+                 agg_type = 'COUNTY20', 
+                 join_cols = 'TOWN20', 
+                 nsim = 100,
+                 verbose = 2)
+
+ma_AN$`_`$rate_table
+ma_AN$`_`$number_table
