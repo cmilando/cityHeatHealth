@@ -121,6 +121,8 @@ In this block you need:
 
 ```{r calcAN}
 ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'TOWN20', join_cols = 'TOWN20', nsim = 100,
+                 agg_type = 'TOWN20', 
+                 join_cols = 'TOWN20', 
+                 nsim = 100,
                  verbose = 2)
 ```

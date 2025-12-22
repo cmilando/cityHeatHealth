@@ -103,7 +103,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(verbose > 0) {
-    cat("-- initial estimate\n")
+    cat("-- estimate in each geo_unit\n")
   }
 
   # starting here
@@ -121,6 +121,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
   for(i in 1:n_geo_units) {
+
+    if(verbose > 1) {
+      if(i %% 5 == 0) cat(i, '\t')
+    }
 
     # things you need
     this_geo  <- x$blup_out[[i]]$geo_unit
@@ -174,6 +178,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   }
 
+  if(verbose > 1) {
+    cat('\n')
+  }
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' Part 2
@@ -181,7 +189,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(verbose > 0) {
-    cat("-- summarize\n")
+    cat("-- summarize by simulation\n")
   }
 
   # collapse population data
