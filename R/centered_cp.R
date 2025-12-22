@@ -42,6 +42,7 @@ get_centered_cp <- function(argvar, xcoef, xvcov,
                                                      Boundary.knots = x_b)))
   } else {
 
+    # if global cen isn't set, re-center to the local minimum
     b2 <- crosspred(basis_x,
                     cen = mean(this_exp),
                     coef = xcoef,
@@ -49,8 +50,10 @@ get_centered_cp <- function(argvar, xcoef, xvcov,
                     model.link = "log",
                     at = grid)
 
+    # which is the min
     cen = b2$predvar[which.min(b2$allRRfit)]
 
+    # get a basis for the MMT
     basis_mmt <- do.call("onebasis",
                          modifyList(argvar,
                                     list(x=cen, Boundary.knots = x_b)))
@@ -67,7 +70,6 @@ get_centered_cp <- function(argvar, xcoef, xvcov,
   # the main reason  you need this for the RR plot
   # and this gives back out BLUP coef and vcov which you can use
   # in the AN calc
-  # does it also give back basis_cen?
   centered_cp <- crosspred(basis_cen,
                        cen = cen,
                        coef = xcoef,
@@ -75,6 +77,7 @@ get_centered_cp <- function(argvar, xcoef, xvcov,
                        model.link = "log",
                        at = grid)
 
+  # return the centered cp and the basis_cen, which you need for AN
   return(list(cp = centered_cp, basis_cen = basis_cen))
 
 }

@@ -18,6 +18,108 @@ knitr::opts_chunk$set(
 library(cityHeatHealth)
 ```
 
-Note this will require going back to the original files and adding:
+Estimating Attributable numbers (and rates of attributable numbers) are a key way that we can translate relative risks into numbers that are more tangible in public health settings. Below we provide easy functionality to go from our model objects to estimates of attributable numbers and rates.
 
- * estimates of group-level population to the outcome table (maybe not such a bad thing)
+### Setup
+
+The first step of calculating attributable numbers is having a population data estimate. 
+
+This varies a lot by place and dataset, so we don't include functionality for it (but an example of how this could be done can be seen in `vignette("get_pop_estimates")`).
+
+Assume you are starting with a dataset for the entire timeframe that looks like this:
+```{r}
+library(data.table)
+data("ma_pop_data")
+setDT(ma_pop_data)
+ma_pop_data
+```
+
+Need to do some transformations:
+
+* pivot longer
+* variable clean
+
+Note again, this processing will vary by application so this approach is not prescriptive !
+
+Pivot longer:
+```{r transform}
+ma_pop_data_long <- melt(
+  ma_pop_data,
+  id.vars = "TOWN20",
+  variable.name = "sex_age",
+  value.name = "population"
+)
+```
+
+Variable clean:
+```{r clean}
+ma_pop_data_long$sex_age <- as.character(ma_pop_data_long$sex_age)
+varnames <- strsplit(ma_pop_data_long$sex_age, "_", fixed = T)
+varnames <- data.frame(do.call(rbind, varnames))
+names(varnames) <- c('sex', 'age_grp')
+rr <- which(varnames$sex == 'Female')
+varnames$sex[rr] <- 'F'
+rr <- which(varnames$sex == 'Male')
+varnames$sex[rr] <- 'M'
+ma_pop_data_long$sex = varnames$sex
+ma_pop_data_long$age_grp = varnames$age_grp
+ma_pop_data_long$sex_age <- NULL
+ma_pop_data_long
+```
+
+We assume that these properties hold for the entire timeframe of our analysis
+
+Now, quickly get `condPois_2stage()` estimates for every town in the state:
+```{r multizone}
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+ma_outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
+
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+```
+
+### Estimating the AN
+
+Ok so now you pass in `population`. 
+
+So now estimate the AN as a full object
+
+Remember that this needs to be compatible for:
+
+* single zone
+
+* ma model with ma_model$`_`
+
+* ma model with factor ma_model$`0-17`
+  > I think you can handle this the same way you did before, with recursion
+  
+
+Now in this second step, you can choose the aggregation level that you want results to.
+
+In this block you need:
+  
+  * what spatial resolution are you summarizing to:
+  ->> 'geo_unit', 'geo_unit_grp', or 'all'
+
+* are you just getting the impacts that are > then the centering point: 
+  ->> lets just assume yes for now, can always go back and change it
+
+```{r calcAN}
+ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+                 agg_type = 'TOWN20', join_cols = 'TOWN20', nsim = 100)
+```

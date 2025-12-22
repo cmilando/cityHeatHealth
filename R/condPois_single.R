@@ -128,7 +128,9 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   #' //////////////////////////////////////////////////////////////////////////
 
   ## if using GNM, you get COEF and VCOV as part of the model objects
-  m_sub <- gnm(daily_deaths ~ cb,
+  ff = as.formula(paste(outcome_col, "~ cb"))
+
+  m_sub <- gnm(formula = ff,
                data = outcomes_tbl,
                family = quasipoisson,
                eliminate = factor(strata),
@@ -181,6 +183,8 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
              geo_unit_grp = this_geo_unit_grp,
              cr = cr,
              exposure_col = exposure_col,
+             this_exp = exposure_matrix[, get(exposure_col)],
+             outcomes = outcomes_tbl[, get(outcome_col)],
              cen = cen,
              argvar = argvar,
              exp_mean = exp_mean,

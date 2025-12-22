@@ -183,6 +183,7 @@ condPois_2stage <- function(exposure_matrix,
   exp_IQR     <- vector("list", n_geos);
   vcov_list   <- vector("list", n_geos);
   coef_list   <- vector("list", n_geos);
+  outc_list   <- vector("list", n_geos);
   names(vcov_model) <- unique_geos
   names(coef_list) <- unique_geos
 
@@ -215,9 +216,10 @@ condPois_2stage <- function(exposure_matrix,
     coef_list[[i]] <- coef(cp_list[[i]]$cr)
     vcov_list[[i]] <- vcov(cp_list[[i]]$cr)
 
-    # get argvar_list and cen
+    # get argvar_list and cen and outcomes
     argvar_list[[i]]   <- cp_list[[i]]$argvar
     cen_list[[i]]      <- cp_list[[i]]$cen
+    outc_list[[i]]     <- cp_list[[i]]$outcomes
 
     # other things for mixmeta scaling
     exp_mean[[i]]   <- cp_list[[i]]$exp_mean
@@ -303,8 +305,7 @@ condPois_2stage <- function(exposure_matrix,
   group_col <- outcome_columns$geo_unit_grp
   datapred <- unique_geos[, .(
     exp_mean = mean(exp_mean),
-    exp_IQR = mean(exp_IQR),
-    cen    = mean(cen)
+    exp_IQR = mean(exp_IQR)
   ), by = group_col]
 
   ngrp <- nrow(datapred)
@@ -327,11 +328,12 @@ condPois_2stage <- function(exposure_matrix,
 
     grp_dat <- exposure_matrix[rr, ]
     this_exp <- grp_dat[, get(exposure_col)]
+    x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
 
     ## reset argvar for the group
     grp_argvar <- check_argvar(argvar, this_exp)
 
-    ## get a centered
+    ## get a centered cp
     grp_cp <- get_centered_cp(argvar = grp_argvar,
                               this_exp = this_exp,
                               x_b = x_b,
@@ -392,6 +394,7 @@ condPois_2stage <- function(exposure_matrix,
   }
 
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
+  outcomes_col <- attributes(outcomes_tbl)$column_mapping$outcome
 
   blup_out   <- vector("list", n_geos);
 
@@ -427,11 +430,20 @@ condPois_2stage <- function(exposure_matrix,
     names(RRdf)[2] <- exposure_col
     setDT(RRdf)
 
+    ## attach outcomes vector
+    rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
+    single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
+    outcomes_vec = single_outcomes_tbl[, get(outcomes_col)]
+    stopifnot(sum(outcomes_vec) == sum(outc_list[[i]]))
+
     #
     blup_out[[i]] <- list(
       geo_unit = this_geo,
       basis_cen = blup_cp$basis_cen,
       exposure_col = exposure_col,
+      this_exp = this_exp,
+      cen = blup_cp$cp$cen,
+      outcomes = outc_list[[i]],
       coef = blup_geo[[i]]$blup,
       vcov = blup_geo[[i]]$vcov,
       RRdf = RRdf

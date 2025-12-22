@@ -1,0 +1,85 @@
+---
+title: "Heat-Health Associations across multiple towns using `cityHeatHealth`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{two_stage_demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+We can easily extend the functionality from `vignette("singe_zone_demo")` to estimate impacts across many regions.
+
+First create the inputs, using the same `exposure_columns` and `outcome_columns` as before.
+```{r multi_town_setup}
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+ma_outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
+```
+
+Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 1 function from these inputs and defaults for `argvar`, `arglag` and `maxlag`. 
+
+Importantly, the estimates in each `geo_unit` are bolstered by those in their `geo_unit_grp` by including a random effect for `geo_unit_grp` in the `mixmeta` model.
+
+```{r multi_town_run}
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+```
+
+And now plot
+```{r multi_plot, fig.height=3, fig.width=5}
+plot(ma_model, "BOSTON")
+```
+
+It does seem like this is a wider confidence interval than the solo model -- Perhaps this is expected given the variables around it? Worth investigating in your dataset, as these are simulated data.
+
+You can also plot by `geo_unit_grp` (TODO -- a way to make this cleaner to get to)
+
+```{r grp, fig.height=8, fig.width=8}
+ma_model$`_`$grp_plt
+```
+
+#### Model by factor
+
+Only a small change is required to run the model by factor, e.g., age_grp:
+
+```{r multi_town_setup_factor}
+ma_outcomes_tbl <- make_outcome_table(ma_deaths, 
+                                      outcome_columns,
+                                      collapse_to = 'age_grp')
+head(ma_outcomes_tbl)
+```
+
+Run the model
+```{r fctrun}
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+```
+
+And plot
+```{r multi_plot2, fig.height=3, fig.width=5}
+plot(ma_model,"BOSTON")
+```

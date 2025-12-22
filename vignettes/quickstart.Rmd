@@ -29,6 +29,12 @@ This package can be used in three main ways:
 |-------------|----------------|---------------|
 | A standard single-stage conditional poisson model when estimating heat-health impacts in a single zone | A 2-stage design is used when estimating heat-health impacts across many zones, but where individual zone impacts are desired  | If numbers are very small in the 2-stage design, spatial bayesian methods can be used to tighten confidence intervals |
 
+The vignettes for these are:
+
+* `vignette("single_zone_demo")`
+* `vignette("two_stage_demo")`
+* `vignette("bayesian_demo")`
+
 Following any of these implementations, the same attributable number calculation is applied to model outcomes to get heat-attributable outcomes. To avoid repetition, we provide a separate vignette that details the attributable number module: `vignette("attributable_number")`.
 
 ## Starting a new analysis
@@ -39,110 +45,4 @@ To start a new analysis, you will need the following **4** datasets:
 |----------|----------|----------|----------|
 | Exposures at the daily scale for each `geo_unit` | Health outcomes at the daily scale for each `geo_unit` | Population data for each subdivision of the health outcome data that you want results for | A map showing how the various `geo_unit`s are neighbors |
 
-This package comes pre-loaded with sample datasets of each type (e.g., `ma_exposure`, `ma_deaths`, `ma_pop_data`, and `ma_towns` respectively) so each of these methods can be explored. See below for starter code for each type of analysis.
-
-### Basic model in a single zone 
-
-This single zone case has just one stage, model run, followed by the estimation of the attributable number.
-
-#### Load exposure data
-```{r exposure}
-boston_exposure <- subset(ma_exposure, TOWN20 == 'BOSTON')
-head(boston_exposure)
-
-# create exposure matrix
-exposure_columns <- list(
-  "date" = "date",
-  "exposure" = "tmax_C",
-  "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20"
-)
-boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
-head(boston_exposure_mat)
-```
-
-#### Load outcome data
-```{r outcome}
-# load outcome data
-boston_deaths   <- subset(ma_deaths, TOWN20 == 'BOSTON')
-head(boston_deaths)
-
-# create outcome table
-outcome_columns <- list(
-  "date" = "date",
-  "outcome" = "daily_deaths",
-  "factor" = 'age_grp',
-  "factor" = 'sex',
-  "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20"
-)
-boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
-head(boston_deaths_tbl)
-```
-
-
-#### Run the model
-
-We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
-
-```{r single_run}
-m1 <- condPois_single(exposure_matrix = boston_exposure_mat, 
-                  outcomes_tbl = boston_deaths_tbl)
-```
-
-And plot
-```{r single_plot, fig.height=3, fig.width=5}
-plot(m1)
-```
-
-For more details on this see `vignette("single_zone_demo")`.
-
-### Basic model pooling across multiple regions (using `cityHeatHealth` functions in `R`)
-
-We can easily extend this to estimate impacts across many regions.
-
-First create the inputs, using the same `exposure_columns` and `outcome_columns` as above.
-```{r multi_town_setup}
-ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
-ma_outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
-```
-
-Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 1 function from these inputs and defaults for `argvar`, `arglag` and `maxlag`. 
-
-Importantly, the estimates in each `geo_unit` are bolstered by those in their `geo_unit_grp` by including a random effect for `geo_unit_grp` in the `mixmeta` model.
-
-```{r multi_town_run}
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
-```
-And now plot
-```{r multi_plot, fig.height=3, fig.width=5}
-plot(ma_model, "BOSTON")
-```
-
-It does seem like this is a wider confidence interval than the solo model -- Perhaps this is expected given the variables around it? Worth investigating in your dataset, as these are simulated data.
-
-You can also plot by group (TODO -- a way to make this cleaner to get to)
-
-```{r grp, fig.height=8, fig.width=8}
-ma_model$`_`$grp_plt
-```
-
-The centering points here are all different because they are the average of the centering points that are in each group. Should it work this way?
-
-#### Model by factor
-
-Only a small change is required to run the model by factor
-
-```{r multi_town_setup_factor}
-ma_outcomes_tbl <- make_outcome_table(ma_deaths, 
-                                      outcome_columns,
-                                      collapse_to = 'age_grp')
-head(ma_outcomes_tbl)
-```
-
-```{r fctrun}
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
-```
-```{r multi_plot2, fig.height=3, fig.width=5}
-plot(ma_model,"BOSTON")
-```
+This package comes pre-loaded with sample datasets of each type (e.g., `ma_exposure`, `ma_deaths`, `ma_pop_data`, and `ma_towns` respectively) so each of these methods can be explored. See the above vignettes for starter code for each type of analysis.

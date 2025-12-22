@@ -75,8 +75,7 @@ boston_exposure_mat[72:77,]
 
 Its probably a good idea to see if there is any systematic bias in the missingness (i.e., are the data "missing at random") but for the purposes of this tutorial we'll assume that they are (which is true since these are simulated data!).
 
-It may also be a good idea to check that the exposure values generally look like you
-expect them to look (e.g., with some summary statistics), just to make sure you don't need to do anys additional pre-processing (e.g., if there are location-specific wildly high or low temperatures, this script as is will not catch those).
+It may also be a good idea to check that the exposure values generally look like you expect them to look (e.g., with some summary statistics), just to make sure you don't need to do anys additional pre-processing (e.g., if there are location-specific wildly high or low temperatures, this script as is will not catch those).
 
 ```{r exp_summary}
 summary(boston_exposure_mat$tmax_C)
