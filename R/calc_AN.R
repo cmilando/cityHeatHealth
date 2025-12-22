@@ -6,21 +6,83 @@
 #' @param agg_type what is the spatial resolution you are aggregating to
 #' @param join_cols how should you join population data to the outcome table
 #' @param nsim number of simulations required for calculation of empirical CI (default = 300)
+#' @param verbose 0 = no printing, 1 = headers, 2 = detailed
 #' @import data.table
 #' @returns
 #' @export
 #'
 #' @examples
 calc_AN <- function(model, outcomes_tbl, pop_data,
-                    agg_type, join_cols, nsim = 300) {
+                    agg_type, join_cols, nsim = 300, verbose = 0) {
 
+
+  ## Check 1 -- that both inputs are the right class of variables
+  stopifnot("outcome" %in% class(outcomes_tbl))
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' RECURSIVE CALL IF FACTOR
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
+  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
+
+    factor_col <- attributes(outcomes_tbl)$column_mapping$factor
+
+    unique_fcts <- unlist(unique(outcomes_tbl[, get(factor_col)]))
+
+    fct_outlist <- vector("list", length(unique_fcts))
+
+    for(fct_i in seq_along(fct_outlist)) {
+
+      if(verbose > 0) {
+        cat("<",factor_col,":", unique_fcts[fct_i], ">\n")
+      }
+
+      # model subset
+      sub_model <- model[[unique_fcts[fct_i]]]
+
+      # outcomes subset
+      rr <- which(outcomes_tbl[, get(factor_col)] == unique_fcts[fct_i])
+      sub_outcomes_tbl <- outcomes_tbl[rr, , drop = FALSE]
+      attributes(sub_outcomes_tbl)$column_mapping$factor <- NULL
+
+      # pop_data subset
+      rr <- which(pop_data[, get(factor_col)] == unique_fcts[fct_i])
+      sub_pop_data <- pop_data[rr, , drop = FALSE]
+
+
+      # re-call the function, but with just one subset, it should work now
+      # and you take the first element here to get rid of having
+      # another "_"
+      fct_outlist[[fct_i]] <- calc_AN(sub_model,        # <<< **Updated
+                                      sub_outcomes_tbl, # <<< **Updated
+                                      sub_pop_data,     # <<< **Updated
+                                      agg_type,
+                                      join_cols,
+                                      nsim = 300,
+                                      verbose = 0)
+
+      fct_outlist[[fct_i]]$factor_col <- factor_col
+      fct_outlist[[fct_i]]$factor_val <- unique_fcts[fct_i]
+
+
+    }
+
+    names(fct_outlist) = unique_fcts
+
+    class(fct_outlist) = 'calcAN'
+
+    return(fct_outlist)
+
+
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' VALIDATIONS
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
-
 
   # check agg_type
   stopifnot(agg_type %in% c(geo_unit_col, geo_unit_grp_col, 'all'))
@@ -30,22 +92,19 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   stopifnot(all(join_cols %in% names(pop_data)))
   setDT(pop_data)
 
-  #' //////////////////////////////////////////////////////////////////////////
-  #' ==========================================================================
-  #' RECURSIVE CALL IF FACTOR
-  #' ==========================================================================
-  #' //////////////////////////////////////////////////////////////////////////
-
-
-
-
-
+  if(verbose > 0) {
+    cat("-- validation passed\n")
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' Part 1
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
+
+  if(verbose > 0) {
+    cat("-- initial estimate\n")
+  }
 
   # starting here
   x <- model$`_`
@@ -120,6 +179,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' Part 2
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
+
+  if(verbose > 0) {
+    cat("-- summarize\n")
+  }
 
   # collapse population data
   pop_data_collapse <- pop_data[, .(
@@ -247,6 +310,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     mean_annual_attr_num_ub = quantile(mean_annual_AN, 0.975)
   ), by = g2_cols]
 
-  return(list(rate_table = rate_table, number_table = number_table))
+  outlist <- list(list(rate_table = rate_table, number_table = number_table))
+  names(outlist) = "_"
+  class(outlist) <- 'calcAN'
+
+  return(outlist)
 
 }
