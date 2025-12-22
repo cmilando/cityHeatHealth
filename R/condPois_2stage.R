@@ -170,6 +170,7 @@ condPois_2stage <- function(exposure_matrix,
   )
   unique_geos <- unique(outcomes_tbl[, ..geo_cols])
   n_geos      <- nrow(unique_geos)
+  stopifnot(n_geos > 1)
 
   # get things you need
   cp_list     <- vector("list", n_geos);
@@ -181,8 +182,8 @@ condPois_2stage <- function(exposure_matrix,
   vcov_list   <- vector("list", n_geos);
   coef_list   <- vector("list", n_geos);
   outc_list   <- vector("list", n_geos);
-  names(vcov_model) <- unique_geos
-  names(coef_list) <- unique_geos
+  names(vcov_model) <- unique_geos[, get(outcome_columns$geo_unit)]
+  names(coef_list) <- unique_geos[, get(outcome_columns$geo_unit)]
 
   # loop through geos
   for(i in seq_along(cp_list)) {
@@ -263,7 +264,7 @@ condPois_2stage <- function(exposure_matrix,
   # blup_geo_lvl2 <- blup(meta_fit, vcov = T, level = 2)
   # stopifnot(identical(blup_geo, blup_geo_lvl2))
   blup_geo <- blup(meta_fit, vcov = T)
-  names(blup_geo) = unique_geos
+  names(blup_geo) = unique_geos[, get(outcome_columns$geo_unit)]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -276,29 +277,8 @@ condPois_2stage <- function(exposure_matrix,
 
   # cityblup <- exp(blup(meta_fit, pi=T))
   # stateblup <- unique(blup(meta_fit, level=1))
-  #
-  # length(stateblup)
-  #
-  # # if you don't want city-specific results, do this
-  #
-  # rf1 = as.formula(paste0("~ 1 | ", outcome_columns$geo_unit_grp))
-  #
-  # # see function description for references for this
-  # meta_fit1 <- mixmeta(coef_matrix ~ exp_mean + exp_IQR,
-  #                     random = rf1,
-  #                     S = vcov_list,
-  #                     data = unique_geos[,-1],
-  #                     control = list(showiter=F),
-  #                     na.action = 'na.exclude')
-  #
-  # blup_geo_grp <- blup(meta_fit1, vcov = T, level = 0)
-  # cc <- do.call(rbind, lapply(blup_geo_grp, \(x) x$blup))
-  # cc
 
-  # ONE FOR EACH REGION WOO
-  # xgrid_agg <- xgrid[, .(
-  #   strata_total = round(sum(get(outcome_col)))
-  # ), by = group_col]
+  # ONE FOR EACH GRP
   group_col <- outcome_columns$geo_unit_grp
   datapred <- unique_geos[, .(
     exp_mean = mean(exp_mean),
@@ -534,9 +514,9 @@ plot.condPois_2stage <- function(x, geo_unit,
 
 
 #'@export
-#' plot.condPois_2stage
+#' plot.condPois_2stage_list
 #'
-#' @param x an object of class condPois_2stage
+#' @param x an object of class condPois_2stage_list
 #' @param geo_unit a geo_unit to investigate
 #' @param xlab xlab override
 #' @param ylab ylab override

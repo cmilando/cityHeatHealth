@@ -18,9 +18,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   ## Check 1 -- that both inputs are the right class of variables
   stopifnot(class(model) %in%
-              c('condPois_single',
-                'condPois_2stage', 'condPois_2stage_list',
-                'condPois_bayes'))
+              c('condPois_2stage', 'condPois_2stage_list',
+                'condPois_bayes',  'condPois_bayes_list'))
 
   stopifnot("outcome" %in% class(outcomes_tbl))
 
@@ -93,8 +92,6 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' VALIDATIONS
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
-
-  warning('more validations to add')
 
   outcomes_col     <- attributes(outcomes_tbl)$column_mapping$outcome
   date_col         <- attributes(outcomes_tbl)$column_mapping$date
@@ -290,8 +287,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
     } else {
 
+      AN_ANNUAL[[xi]]$all <- 'ALL'
+
       group_cols = c(
-        'year', 'nsim'
+        'all', 'year', 'nsim'
       )
 
       AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
@@ -348,10 +347,232 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     mean_annual_attr_num_ub = quantile(mean_annual_AN, 0.975)
   ), by = g2_cols]
 
-  outlist <- list(list(rate_table = rate_table, number_table = number_table))
+  outlist <- list(list(
+    rate_table = rate_table,
+    number_table = number_table))
+
   names(outlist) = "_"
   class(outlist) <- 'calcAN'
 
   return(outlist)
 
 }
+
+#'@export
+#' print.calcAN
+#'
+#' @param x
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+print.calcAN <- function(x) {
+  cat("< an object of class `calcAN` >\n")
+  invisible(x)
+}
+
+#'@export
+#' print.calcAN_list
+#'
+#' @param x
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+print.calcAN_list <- function(x) {
+  cat("< an object of class `calcAN_list`:",
+      paste(names(x), collapse = ",")," >\n")
+  invisible(x)
+}
+
+#'@export
+#' plot.calcAN
+#'
+#' @param x an object of class plot.calcAN
+#' @importFrom ggplot2 ggplot
+#' @importFrom scales number
+#' @import data.table
+#' @returns
+#' @export
+#'
+#' @examples
+plot.calcAN <- function(x, table_type) {
+
+  stopifnot(table_type %in% c('rate', 'num'))
+  geo_unit_col <- attributes(x$`_`)$column_mapping
+
+  if(table_type == 'num') {
+
+    byX_df <- x$`_`$number_table
+    x_col <- names(byX_df)[1]
+    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
+
+    ggplot(byX_df) +
+      coord_cartesian() +
+      theme_classic() +
+      geom_col(aes(
+        y = mean_annual_attr_num_est,
+        x = reorder(!!sym(x_col), mean_annual_attr_num_est)),
+        linewidth = 0.4, fill = 'lightblue', col = 'black') +
+      geom_errorbar(aes(
+        ymax = mean_annual_attr_num_ub,
+        ymin = mean_annual_attr_num_lb,
+        x = reorder(!!sym(x_col), mean_annual_attr_num_est)),
+        color = 'grey15', width = 0.3,
+        linewidth = 0.4) +
+      geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_num_est),
+                     y = mean_annual_attr_num_est+1,
+                     label = number(round(mean_annual_attr_num_est, 0),
+                                    big.mark = ',')),
+                 color = 'grey15', linewidth = 0.4, fill = 'white',
+                 size = 2) +
+      theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
+            axis.title.y = element_text(angle = 0, vjust = 0.5)) +
+      xlab(x_col) +
+      ylab("Annual Heat Attr.\n Outcomes (#)")
+
+  } else {
+
+    byX_df <- x$`_`$rate_table
+    x_col <- names(byX_df)[1]
+    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
+
+    ggplot(byX_df) +
+      coord_cartesian() +
+      theme_classic() +
+      geom_col(aes(
+        y = mean_annual_attr_rate_est,
+        x = reorder(!!sym(x_col), mean_annual_attr_rate_est)),
+        linewidth = 0.4, fill = 'lightblue', col = 'black') +
+      geom_errorbar(aes(
+        ymax = mean_annual_attr_rate_ub,
+        ymin = mean_annual_attr_rate_lb,
+        x = reorder(!!sym(x_col), mean_annual_attr_rate_est)),
+        color = 'grey15', width = 0.3,
+        linewidth = 0.4) +
+      geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_rate_est),
+                     y = mean_annual_attr_rate_est+1,
+                     label = number(round(mean_annual_attr_rate_est, 1),
+                                    big.mark = ',')),
+                 color = 'grey15', linewidth = 0.4, fill = 'white',
+                 size = 2) +
+      theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
+            axis.title.y = element_text(angle = 0, vjust = 0.5)) +
+      xlab(x_col) +
+      ylab("Annual Heat Attr.\n Outcomes Rate\n(# per 100,000)")
+
+  }
+
+}
+
+
+#'@export
+#' plot.calcAN_list
+#'
+#' @param x an object of class plot.calcAN_list
+#' @importFrom ggplot2 ggplot
+#' @import data.table
+#' @returns
+#' @export
+#'
+#' @examples
+plot.calcAN_list <- function(x, table_type) {
+
+  stopifnot(table_type %in% c('rate', 'num'))
+
+  fct_names <- names(x)
+  fct_lab <- x[[1]]$factor_col
+
+  byX_df  <- vector("list", length(fct_names))
+
+  if(table_type == 'num') {
+
+    for(i in 1:length(byX_df)) {
+      byX_df[[i]] <- x[[fct_names[i]]]$`_`$number_table
+      byX_df[[i]][, (fct_lab) := fct_names[i]]
+    }
+
+    byX_df <- do.call(rbind, byX_df)
+    x_col <- names(byX_df)[1]
+    if(nrow(byX_df) > 20 * length(byX_df)) stop("too many plot elements")
+
+    ##
+    pd <- position_dodge2(width = 0.9, preserve = "single")
+
+    ggplot(byX_df) +
+      coord_cartesian() +
+      theme_classic() +
+      geom_col(aes(
+        y = mean_annual_attr_num_est,
+        fill = !!sym(fct_lab),
+        group = !!sym(fct_lab),
+        x = reorder(!!sym(x_col), mean_annual_attr_num_est)),
+        linewidth = 0.4, col = 'black', position = pd) +
+      geom_errorbar(aes(
+        group = !!sym(fct_lab),
+        ymax = mean_annual_attr_num_ub,
+        ymin = mean_annual_attr_num_lb,
+        x = reorder(!!sym(x_col), mean_annual_attr_num_est)),
+        color = 'grey15', position = pd,
+        linewidth = 0.4) +
+      geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_num_est),
+                     y = mean_annual_attr_num_est+1,
+                     group = !!sym(fct_lab),
+                     label = number(round(mean_annual_attr_num_est, 0),
+                                    big.mark = ',')),
+                 color = 'grey15', linewidth = 0.4, fill = 'white',
+                 size = 2, position = pd) +
+      theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
+            axis.title.y = element_text(angle = 0, vjust = 0.5)) +
+      xlab(x_col) +
+      ylab("Annual Heat Attr.\n Outcomes (#)")
+
+  } else {
+
+    for(i in 1:length(byX_df)) {
+      byX_df[[i]] <- x[[fct_names[i]]]$`_`$rate_table
+      byX_df[[i]][, (fct_lab) := fct_names[i]]
+    }
+
+    byX_df <- do.call(rbind, byX_df)
+    x_col <- names(byX_df)[1]
+    if(nrow(byX_df) > 20 * length(byX_df)) stop("too many plot elements")
+
+    ##
+    pd <- position_dodge2(width = 0.9, preserve = "single")
+
+    ggplot(byX_df) +
+      coord_cartesian() +
+      theme_classic() +
+      geom_col(aes(
+        y = mean_annual_attr_rate_est,
+        fill = !!sym(fct_lab),
+        group = !!sym(fct_lab),
+        x = reorder(!!sym(x_col), mean_annual_attr_rate_est)),
+        linewidth = 0.4, col = 'black', position = pd) +
+      geom_errorbar(aes(
+        group = !!sym(fct_lab),
+        ymax = mean_annual_attr_rate_ub,
+        ymin = mean_annual_attr_rate_lb,
+        x = reorder(!!sym(x_col), mean_annual_attr_rate_est)),
+        color = 'grey15', position = pd,
+        linewidth = 0.4) +
+      geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_rate_est),
+                     y = mean_annual_attr_rate_est+1,
+                     group = !!sym(fct_lab),
+                     label = number(round(mean_annual_attr_rate_est, 0),
+                                    big.mark = ',')),
+                 color = 'grey15', linewidth = 0.4, fill = 'white',
+                 size = 2, position = pd) +
+      theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
+            axis.title.y = element_text(angle = 0, vjust = 0.5)) +
+      xlab(x_col) +
+      ylab("Annual Heat Attr.\n Outcomes Rate\n(# per 100,000)")
+
+  }
+
+}
+
+

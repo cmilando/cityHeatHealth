@@ -67,10 +67,11 @@ ma_pop_data_long$sex_age <- NULL
 ma_pop_data_long
 ```
 
-We assume that these properties hold for the entire timeframe of our analysis
+We assume that these properties hold for the entire timeframe of our analysis, but you could also make a version of this dataset with a 'year' column. 
 
-Now, quickly get `condPois_2stage()` estimates for every town in the state:
-```{r multizone}
+Now, quickly get a `condPois_single()` and `condPois_2stage()` objects to use in testing:
+exposures
+```{r ee}
 exposure_columns <- list(
   "date" = "date",
   "exposure" = "tmax_C",
@@ -79,7 +80,10 @@ exposure_columns <- list(
 )
 
 ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+```
 
+outcomes
+```{r oo}
 outcome_columns <- list(
   "date" = "date",
   "outcome" = "daily_deaths",
@@ -88,8 +92,13 @@ outcome_columns <- list(
   "geo_unit" = "TOWN20",
   "geo_unit_grp" = "COUNTY20"
 )
+
 ma_outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
 
+```
+
+models
+```{r jj}
 ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
 
@@ -153,6 +162,18 @@ ma_AN$`_`$rate_table
 ma_AN$`_`$number_table
 ```
 
+Some plot functions exist but you probably want to summarize to larger spatial units so the plots are manageable
+```{r grpsum3}
+ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+                 agg_type = 'COUNTY20', 
+                 join_cols = 'TOWN20', 
+                 nsim = 100,
+                 verbose = 1)
+
+plot(ma_AN, table_type = 'rate')
+```
+
+
 ### Estimating the AN - with factors
 
 In the case where you have factors, you can easily extend this
@@ -162,14 +183,16 @@ ma_outcomes_tbl_fct <- make_outcome_table(ma_deaths,
                                       outcome_columns,
                                       collapse_to = 'age_grp')
 
-ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, 
-                                verbose = 1)
+ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
 
-ma_AN <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct, ma_pop_data_long,
-                 agg_type = 'TOWN20', 
+ma_AN_fct <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct,
+                     ma_pop_data_long,
+                 agg_type = 'COUNTY20', 
                  join_cols = 'TOWN20', 
                  nsim = 100,
                  verbose = 1)
+
+plot(ma_AN_fct, "num")
 
 ```
 

@@ -26,4 +26,4 @@ skeleton of what you expect.
 
 (10) you could make this slightly more size resilient by not expanding outcomes until the ineer step, but for now this is hopefully ok
 
-(11) why aren't you doing more with future? im not sure these tasks are best suited, its a lot of quickly running tasks with lots of i/o and things to be passed around. none of these calculations actually take that long. I suppose you could look into it for some of the smaller tasks. but you'd have to make copies of some of the large objects, which could be bad? unless they aren't actually that big.
+(11) why aren't you doing more with future? im not sure these tasks are best suited, its a lot of quickly running tasks with lots of i/o and things to be passed around. none of these calculations actually take that long. I suppose you could look into it for some of the smaller tasks. but you'd have to make copies of some of the large objects, which could be bad? unless they aren't actually that big. Also the speed gains are pretty small, this really doesn't take that much time at all, so your total time savings will be small.

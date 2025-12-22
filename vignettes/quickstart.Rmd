@@ -35,7 +35,7 @@ The vignettes for these are:
 * `vignette("two_stage_demo")`
 * `vignette("bayesian_demo")`
 
-Following any of these implementations, the same attributable number calculation is applied to model outcomes to get heat-attributable outcomes. To avoid repetition, we provide a separate vignette that details the attributable number module: `vignette("attributable_number")`.
+Following the 2-stage design or Bayesian implementation, an attributable number calculation is applied to model outcomes to get heat-attributable outcomes. To avoid repetition, we provide a separate vignette that details the attributable number module: `vignette("attributable_number")`. 
 
 ## Starting a new analysis
 
