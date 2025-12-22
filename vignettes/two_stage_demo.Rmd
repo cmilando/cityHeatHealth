@@ -68,18 +68,18 @@ ma_model$`_`$grp_plt
 Only a small change is required to run the model by factor, e.g., age_grp:
 
 ```{r multi_town_setup_factor}
-ma_outcomes_tbl <- make_outcome_table(ma_deaths, 
+ma_outcomes_tbl_fct <- make_outcome_table(ma_deaths, 
                                       outcome_columns,
                                       collapse_to = 'age_grp')
-head(ma_outcomes_tbl)
+head(ma_outcomes_tbl_fct)
 ```
 
 Run the model
 ```{r fctrun}
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
 ```
 
 And plot
 ```{r multi_plot2, fig.height=3, fig.width=5}
-plot(ma_model,"BOSTON")
+plot(ma_model_fct,"BOSTON")
 ```

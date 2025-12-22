@@ -41,6 +41,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
       # model subset
       sub_model <- model[[unique_fcts[fct_i]]]
+      names(sub_model) = "_"
 
       # outcomes subset
       rr <- which(outcomes_tbl[, get(factor_col)] == unique_fcts[fct_i])
@@ -83,6 +84,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' VALIDATIONS
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
+
+  warning('add other validations')
 
   # check agg_type
   stopifnot(agg_type %in% c(geo_unit_col, geo_unit_grp_col, 'all'))

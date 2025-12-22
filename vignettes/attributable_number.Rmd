@@ -158,13 +158,15 @@ ma_AN$`_`$number_table
 In the case where you have factors, you can easily extend this
 
 ```{r fctrun}
-ma_outcomes_tbl <- make_outcome_table(ma_deaths, 
+ma_outcomes_tbl_fct <- make_outcome_table(ma_deaths, 
                                       outcome_columns,
                                       collapse_to = 'age_grp')
 
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, 
+                                verbose = 1)
 
-ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+# THIS IS WHERE I STOPPED FOR TODAY
+ma_AN <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct, ma_pop_data_long,
                  agg_type = 'COUNTY20', 
                  join_cols = 'TOWN20', 
                  nsim = 100,
