@@ -8,6 +8,7 @@
 #' @param nsim number of simulations required for calculation of empirical CI (default = 300)
 #' @param verbose 0 = no printing, 1 = headers, 2 = detailed
 #' @import data.table
+#' @importFrom tidyr expand_grid
 #' @returns
 #' @export
 #'
@@ -209,10 +210,31 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   }
 
   # collapse population data
+  stopifnot(all(join_cols %in% names(pop_data)))
   pop_data_collapse <- pop_data[, .(
     population = sum(population)),
     by = join_cols
   ]
+
+  ## you have missing rows here because not every
+  ## place has values below MMT in every year
+  ## so its almost like you need another xgrid
+  ## by geo_unit_col, geo_unit_grp_col, 'year', and above_MMT
+  geo_cols <- c(
+    geo_unit_col,
+    geo_unit_grp_col
+  )
+  unique_geos <- unique(outcomes_tbl[, ..geo_cols])
+  unique_years <- unique(year(outcomes_tbl[, get(date_col)]))
+
+  ## now expand_grid for every year and above_MMT = c(T, F)
+  xgrid <- expand_grid(data.frame(unique_geos),
+                       year = unique_years,
+                       above_MMT = c(T, F),
+                       nsim = 1:nsim)
+  setDT(xgrid)
+
+  ## join w population
 
   AN_ANNUAL <- vector("list", nsim)
 
@@ -242,29 +264,45 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     names(AN_sub_all)[length(get_cols)] <- "attributable_number"
 
     ## get just those above the centering point
-    rr <- which(AN_sub_all$this_exp > AN_sub_all$cen)
-    AN_sub_all <- AN_sub_all[rr, ,drop = FALSE]
+    # rr <- AN_sub_all$this_exp > AN_sub_all$cen)
+    # AN_sub_all <- AN_sub_all[rr, ,drop = FALSE]
+    AN_sub_all$above_MMT = AN_sub_all$this_exp >= AN_sub_all$cen
 
     ## do an initial fine grain summary
     group_cols = c(
-      geo_unit_col, geo_unit_grp_col, 'year', 'nsim'
+      geo_unit_col, geo_unit_grp_col, 'year', 'nsim', 'above_MMT'
     )
 
     AN_ANNUAL[[xi]] <- AN_sub_all[, .(
       annual_AN = round(sum(attributable_number))
     ), by = group_cols]
 
-    n_rows_orig <- nrow( AN_ANNUAL[[xi]] )
+    sum_AN_orig <- sum(AN_ANNUAL[[xi]]$annual_AN)
+
+    ## merge to xgrid
+    ## which way does this go?
+    AN_ANNUAL[[xi]] <- AN_ANNUAL[[xi]][
+      xgrid,
+      on = setNames(group_cols, group_cols)
+    ]
+
+    # fill in NAs
+    rr <- which(is.na(AN_ANNUAL[[xi]]$annual_AN))
+    AN_ANNUAL[[xi]]$annual_AN[rr] <- 0
+    if(any(is.na(AN_ANNUAL[[xi]]))) stop("AN expand_grid didn't work correctly")
 
     ## and join pop
-    stopifnot(all(join_cols %in% names(pop_data_collapse)))
+
+
     AN_ANNUAL[[xi]] <- pop_data_collapse[
       AN_ANNUAL[[xi]],
       on = setNames(join_cols, join_cols)
     ]
 
-    if(!(nrow(AN_ANNUAL[[xi]]) == n_rows_orig)) {
-      stop("rows after merge is not the same, some error is happening")
+    sum_AN_new <- sum(AN_ANNUAL[[xi]]$annual_AN)
+
+    if(!(sum_AN_new == sum_AN_orig)) {
+      stop("sum_AN after merge is not the same, some error is happening")
     }
 
 
@@ -277,7 +315,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     } else if(agg_type == geo_unit_grp_col) {
 
       group_cols = c(
-        geo_unit_grp_col, 'year', 'nsim'
+        geo_unit_grp_col, 'year', 'nsim', 'above_MMT'
       )
 
       AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
@@ -290,7 +328,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       AN_ANNUAL[[xi]]$all <- 'ALL'
 
       group_cols = c(
-        'all', 'year', 'nsim'
+        'all', 'year', 'nsim', 'above_MMT'
       )
 
       AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
@@ -315,9 +353,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' //////////////////////////////////////////////////////////////////////////
 
   c1 <- which(! (names(AN_ANNUAL) %in%
-                   c('population','year', 'nsim','annual_AN') ))
+                   c('population', 'year', 'nsim','annual_AN', 'above_MMT') ))
 
-  g1_cols <- c(names(AN_ANNUAL)[c1], "population", "nsim")
+  # remove year and annual_AN
+  g1_cols <- c(names(AN_ANNUAL)[c1], "population", "nsim", 'above_MMT')
 
   # mean annual
   x1 <- AN_ANNUAL[,.(
@@ -333,7 +372,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   x1[, mean_annual_AN_rate := mean_annual_AN / population * 1e5]
 
   # rate eCI
-  g2_cols <- names(AN_ANNUAL)[c1]
+  g2_cols <- c(names(AN_ANNUAL)[c1], "population", 'above_MMT')
   rate_table <- x1[,.(
     mean_annual_attr_rate_est = quantile(mean_annual_AN_rate, 0.50),
     mean_annual_attr_rate_lb = quantile(mean_annual_AN_rate, 0.025),
@@ -391,6 +430,8 @@ print.calcAN_list <- function(x) {
 #' plot.calcAN
 #'
 #' @param x an object of class plot.calcAN
+#' @param table_type showing the rate table "rate" or number table "num"
+#' @param above_MMT plot attributable numbers above or below the MMT
 #' @importFrom ggplot2 ggplot
 #' @importFrom scales number
 #' @import data.table
@@ -398,14 +439,18 @@ print.calcAN_list <- function(x) {
 #' @export
 #'
 #' @examples
-plot.calcAN <- function(x, table_type) {
+plot.calcAN <- function(x, table_type, above_MMT) {
 
   stopifnot(table_type %in% c('rate', 'num'))
+  stopifnot(above_MMT %in% c(T, F))
   geo_unit_col <- attributes(x$`_`)$column_mapping
+  ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
 
   if(table_type == 'num') {
 
     byX_df <- x$`_`$number_table
+    rr <- which(byX_df$above_MMT == above_MMT)
+    byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
     if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
 
@@ -423,7 +468,7 @@ plot.calcAN <- function(x, table_type) {
         color = 'grey15', width = 0.3,
         linewidth = 0.4) +
       geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_num_est),
-                     y = mean_annual_attr_num_est+1,
+                     y = mean_annual_attr_num_est,
                      label = number(round(mean_annual_attr_num_est, 0),
                                     big.mark = ',')),
                  color = 'grey15', linewidth = 0.4, fill = 'white',
@@ -431,11 +476,13 @@ plot.calcAN <- function(x, table_type) {
       theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
             axis.title.y = element_text(angle = 0, vjust = 0.5)) +
       xlab(x_col) +
-      ylab("Annual Heat Attr.\n Outcomes (#)")
+      ylab(paste0("Annual Temp Attr.\nOutcomes\n", ylab_flag, "\n(#)"))
 
   } else {
 
     byX_df <- x$`_`$rate_table
+    rr <- which(byX_df$above_MMT == above_MMT)
+    byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
     if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
 
@@ -453,7 +500,7 @@ plot.calcAN <- function(x, table_type) {
         color = 'grey15', width = 0.3,
         linewidth = 0.4) +
       geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_rate_est),
-                     y = mean_annual_attr_rate_est+1,
+                     y = mean_annual_attr_rate_est,
                      label = number(round(mean_annual_attr_rate_est, 1),
                                     big.mark = ',')),
                  color = 'grey15', linewidth = 0.4, fill = 'white',
@@ -461,7 +508,8 @@ plot.calcAN <- function(x, table_type) {
       theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
             axis.title.y = element_text(angle = 0, vjust = 0.5)) +
       xlab(x_col) +
-      ylab("Annual Heat Attr.\n Outcomes Rate\n(# per 100,000)")
+      ylab(paste0("Annual Temp Attr.\nOutcomes Rate\n",
+                  ylab_flag, "\n(# per 100,000)"))
 
   }
 
@@ -472,15 +520,18 @@ plot.calcAN <- function(x, table_type) {
 #' plot.calcAN_list
 #'
 #' @param x an object of class plot.calcAN_list
+#' @param table_type showing the rate table "rate" or number table "num"
+#' @param above_MMT plot attributable numbers above or below the MMT
 #' @importFrom ggplot2 ggplot
 #' @import data.table
 #' @returns
 #' @export
 #'
 #' @examples
-plot.calcAN_list <- function(x, table_type) {
+plot.calcAN_list <- function(x, table_type, above_MMT) {
 
   stopifnot(table_type %in% c('rate', 'num'))
+  ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
 
   fct_names <- names(x)
   fct_lab <- x[[1]]$factor_col
@@ -495,11 +546,14 @@ plot.calcAN_list <- function(x, table_type) {
     }
 
     byX_df <- do.call(rbind, byX_df)
+    rr <- which(byX_df$above_MMT == above_MMT)
+    byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
     if(nrow(byX_df) > 20 * length(byX_df)) stop("too many plot elements")
 
     ##
     pd <- position_dodge2(width = 0.9, preserve = "single")
+
 
     ggplot(byX_df) +
       coord_cartesian() +
@@ -518,7 +572,7 @@ plot.calcAN_list <- function(x, table_type) {
         color = 'grey15', position = pd,
         linewidth = 0.4) +
       geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_num_est),
-                     y = mean_annual_attr_num_est+1,
+                     y = mean_annual_attr_num_est,
                      group = !!sym(fct_lab),
                      label = number(round(mean_annual_attr_num_est, 0),
                                     big.mark = ',')),
@@ -527,7 +581,7 @@ plot.calcAN_list <- function(x, table_type) {
       theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
             axis.title.y = element_text(angle = 0, vjust = 0.5)) +
       xlab(x_col) +
-      ylab("Annual Heat Attr.\n Outcomes (#)")
+      ylab(paste0("Annual Temp Attr.\nOutcomes\n", ylab_flag, "\n(#)"))
 
   } else {
 
@@ -537,6 +591,8 @@ plot.calcAN_list <- function(x, table_type) {
     }
 
     byX_df <- do.call(rbind, byX_df)
+    rr <- which(byX_df$above_MMT == above_MMT)
+    byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
     if(nrow(byX_df) > 20 * length(byX_df)) stop("too many plot elements")
 
@@ -560,7 +616,7 @@ plot.calcAN_list <- function(x, table_type) {
         color = 'grey15', position = pd,
         linewidth = 0.4) +
       geom_label(aes(x = reorder(!!sym(x_col), mean_annual_attr_rate_est),
-                     y = mean_annual_attr_rate_est+1,
+                     y = mean_annual_attr_rate_est,
                      group = !!sym(fct_lab),
                      label = number(round(mean_annual_attr_rate_est, 0),
                                     big.mark = ',')),
@@ -569,7 +625,8 @@ plot.calcAN_list <- function(x, table_type) {
       theme(axis.text.x = element_text(angle= 90, hjust = 1, vjust = 0.5),
             axis.title.y = element_text(angle = 0, vjust = 0.5)) +
       xlab(x_col) +
-      ylab("Annual Heat Attr.\n Outcomes Rate\n(# per 100,000)")
+      ylab(paste0("Annual Temp Attr.\nOutcomes Rate\n",
+                  ylab_flag, "\n(# per 100,000)"))
 
   }
 

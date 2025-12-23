@@ -160,7 +160,7 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  agg_type = 'all', 
                  join_cols = 'TOWN20', 
                  nsim = 100,
-                 verbose = 2)
+                 verbose = 1)
 ma_AN$`_`$rate_table
 ma_AN$`_`$number_table
 ```
@@ -173,7 +173,8 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  nsim = 100,
                  verbose = 1)
 
-plot(ma_AN, table_type = 'rate')
+plot(ma_AN, table_type = 'rate', above_MMT = T)
+plot(ma_AN, table_type = 'rate', above_MMT = F)
 ```
 
 

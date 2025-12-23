@@ -26,7 +26,8 @@ Another way that this model can be solved is by using Bayesian inference, implem
 
 ### Basic DLNM for a single zone 
 
-#### Comparison to single zone basic
+
+### Comparison to single zone basic
 
 
 ### Multi-zone spatial bayesian 
