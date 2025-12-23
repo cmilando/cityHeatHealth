@@ -165,7 +165,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     if(any(af_updated < -0.001) & is.null(global_cen)) {
       print(summary(af_updated))
       stop(paste0("Attributable Fraction (AF) < -0.001 for ", this_geo,
-                  ", which means that centering was likely not done
+                  "and global_cen is NULL,
+                  which means that centering was likely not done
                   correctly in an earlier step"))
     }
 
