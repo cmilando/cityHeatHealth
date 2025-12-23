@@ -118,7 +118,7 @@ Notice that two variables have been added:
 
 (1) the `strata`. typically this is for for geo-unit (or geo-unit-grp), year, month- and day of week (essential for a time- and- space stratified conditional poisson model of heat-heath impacts). If `geo-unit`, then results are estimated at the `geo-unit` level. if `geo-unit-grp`, then results are estimated at the `geo-unit-grp` level.
 
-and (2) a variable `strata` describing the number of total outcomes within each strata
+and (2) a variable `strata_total` describing the number of total outcomes within each strata
 
 ### Basic DLNM (manual walkthrough)
 

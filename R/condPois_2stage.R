@@ -23,6 +23,7 @@
 #' @param arglag a list containing the `arglag` components for the `crossbasis`
 #' @param maxlag an integer of the maximum lag
 #' @param min_n an integer describing the minimum number of cases for a single region
+#' @param strata_min minimum number of cases per strata
 #' @importFrom mixmeta mixmeta
 #' @importFrom mixmeta blup
 #' @importFrom dlnm onebasis
@@ -209,6 +210,9 @@ condPois_2stage <- function(exposure_matrix,
                                     argvar = argvar, arglag = arglag,
                                     maxlag = maxlag, min_n = min_n,
                                     strata_min = strata_min)
+
+    # remove cb for space
+    cp_list[[i]]$cb <- NULL
 
     # get coef and vcov
     coef_list[[i]] <- coef(cp_list[[i]]$cr)

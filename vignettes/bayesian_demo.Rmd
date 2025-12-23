@@ -23,6 +23,51 @@ library(cityHeatHealth)
 
 Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. 
 
+```{r setup}
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns, 
+                                        grp_level = T)
+
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns,
+                                   grp_level = T)
+
+shp_sf <- data("ma_towns")
+
+shp_sf_2 <- shp_sf |>
+  group_by(COUNTY20) |>
+  summarise(
+    geometry = st_union(geometry),
+    .groups = "drop"
+  )
+
+plot(shp_sf)
+
+# join to the county20 level
+
+global_cen = NULL
+argvar = NULL
+arglag = NULL
+maxlag = NULL
+min_n = NULL
+strata_min = 0
+verbose = 0
+
+```
 
 ### Basic DLNM for a single zone 
 

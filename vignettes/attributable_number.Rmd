@@ -154,25 +154,8 @@ ma_AN$`_`$number_table
 
 See that the numbers are roughly the same for Suffolk county ? They won't be exactly the same because of how the averaging works.
 
-And for all
-```{r grpsum2}
-ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'all', 
-                 join_cols = 'TOWN20', 
-                 nsim = 100,
-                 verbose = 1)
-ma_AN$`_`$rate_table
-ma_AN$`_`$number_table
-```
-
-Some plot functions exist but you probably want to summarize to larger spatial units so the plots are manageable
+Some plot functions exist:
 ```{r grpsum3, fig.height=3, fig.width=8}
-ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'COUNTY20', 
-                 join_cols = 'TOWN20', 
-                 nsim = 100,
-                 verbose = 1)
-
 plot(ma_AN, table_type = 'rate', above_MMT = T)
 plot(ma_AN, table_type = 'rate', above_MMT = F)
 ```
@@ -196,8 +179,10 @@ ma_AN_fct <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct,
                  nsim = 100,
                  verbose = 1)
 
-plot(ma_AN_fct, "num")
+plot(ma_AN_fct, "num", above_MMT = T)
 
 ```
 
+These results are fictional of course but show what kind of outputs can be made
+easily.
 
