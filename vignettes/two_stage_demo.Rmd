@@ -99,7 +99,18 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 ```
 
 And plot
-```{r multi_plot2, fig.height=3, fig.width=5}
+```{r multi_plot2a, fig.height=3, fig.width=5}
 plot(ma_model_fct, "BOSTON")
+```
+
+```{r multi_plot2b, fig.height=3, fig.width=5}
 plot(ma_model_fct$`18-64`, "BOSTON", title = 'BOSTON: 18-64')
+```
+
+```{r multi_plot2c, fig.height=5, fig.width=5}
+forest_plot(ma_model_fct, 25.1)
+```
+
+```{r multi_plot2d, fig.height=10, fig.width=6}
+spatial_plot(ma_model_fct, shp = ma_towns, exposure_val = 25.1)
 ```

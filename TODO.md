@@ -29,16 +29,16 @@ for everyplace --> but wait, you actually can if you do the poor-man's recursion
 
 * spatial plot
 
-I think you should make a basic one then a have additinal per class
+I think you should make a basic one then a have additional per class
 so function(x, ...) usemethod("spatial_plot") or something like that
 
 >> spatial_plot(calcAN, shp, "rate")
->> spatial_plot(ma_model_fct, shp, x = 30)
-
-
 
 
 * Attributable number for `condPois_1stage
 
+
+
+* Fix the 2_stage BLUP thing ...
 
 
