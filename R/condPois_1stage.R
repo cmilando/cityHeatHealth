@@ -24,15 +24,60 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                        min_n = NULL, strata_min = 0, global_cen = NULL,
                        multi_zone = FALSE) {
 
+  ## Check 1 -- that both inputs are the right class of variables
+  stopifnot("exposure" %in% class(exposure_matrix))
+  stopifnot("outcome" %in% class(outcomes_tbl))
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
+  #' IF the outcomes_tbl has a FACTOR, enter a recursive loop
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
+
+    factor_col <- attributes(outcomes_tbl)$column_mapping$factor
+
+    unique_fcts <- unlist(unique(outcomes_tbl[, get(factor_col)]))
+
+    fct_outlist <- vector("list", length(unique_fcts))
+
+    for(fct_i in seq_along(fct_outlist)) {
+
+      # cat("<",factor_col,":", unique_fcts[fct_i], ">\n")
+      rr <- which(outcomes_tbl[, get(factor_col)] == unique_fcts[fct_i])
+      subset_outcomes_tbl <- outcomes_tbl[rr, , drop = FALSE]
+      attributes(subset_outcomes_tbl)$column_mapping$factor <- NULL
+
+      # re-call the function, but with just one subset
+      fct_outlist[[fct_i]] <- condPois_1stage(exposure_matrix,
+                                              subset_outcomes_tbl,
+                                              global_cen = global_cen,
+                                              argvar = argvar,
+                                              arglag = arglag,
+                                              maxlag = maxlag,
+                                              min_n = min_n,
+                                              strata_min = strata_min,
+                                              multi_zone = multi_zone)
+
+      fct_outlist[[fct_i]]$factor_col <- factor_col
+      fct_outlist[[fct_i]]$factor_val <- unique_fcts[fct_i]
+
+    }
+
+    names(fct_outlist) = unique_fcts
+
+    class(fct_outlist) = 'condPois_1stage_list'
+
+    return(fct_outlist)
+
+
+  }
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' VALIDATIONS
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
-
-  ## Check 1 -- that both inputs are the right class of variables
-  stopifnot("exposure" %in% class(exposure_matrix))
-  stopifnot("outcome" %in% class(outcomes_tbl))
 
   ## Check 1.5 -- there should be just one geo_unit
   exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
@@ -43,6 +88,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 
   stopifnot(identical(exp_geo_unit, out_geo_unit))
 
+  # check if multizone
   if(!multi_zone) stopifnot(length(out_geo_unit) == 1)
 
   ## Check 2
@@ -230,6 +276,20 @@ print.condPois_1stage <- function(x) {
 }
 
 
+#'@export
+#' print.condPois_1stage_list
+#'
+#' @param x an object of class condPois_1stage
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+print.condPois_1stage_list <- function(x) {
+  cat("< an object of class `condPois_1stage_list` >\n")
+  invisible(x)
+}
+
 
 #'@export
 #' plot.condPois_1stage
@@ -264,6 +324,62 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
     geom_ribbon(fill = 'lightblue', alpha = 0.2) +
     geom_line() + xlab(xlab) + ylab(ylab)
 }
+
+
+#'@export
+#' plot.condPois_1stage
+#'
+#' @param x an object of class condPois_1stage
+#' @param xlab xlab override
+#' @param ylab ylab override
+#' @param title title override
+#' @import ggplot2
+#' @returns
+#' @export
+#'
+#' @examples
+plot.condPois_1stage_list <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
+
+  fct_names <- names(x)
+
+  plot_cl_l <- vector("list", length(names(x)))
+
+  for(i in 1:length(names(x))) {
+
+    plot_cl_l[[i]] = data.frame(
+      x = x[[names(x)[i]]]$cr$predvar,
+      fct = names(x)[i],
+      RR = x[[names(x)[i]]]$cr$RRfit,
+      RRlow = x[[names(x)[i]]]$cr$RRlow,
+      RRhigh = x[[names(x)[i]]]$cr$RRhigh
+    )
+
+    factor_col <- x[[names(x)[i]]]$factor_col
+    names(plot_cl_l[[i]])[2] <- factor_col
+
+  }
+
+  plot_cp <- do.call(rbind, plot_cl_l)
+
+  if(is.null(xlab)) xlab = x[[1]]$exposure_col
+  if(is.null(ylab)) ylab = "RR"
+  if(is.null(title)) title = paste0(x[[1]]$geo_unit, collapse = ":")
+
+  ggplot(plot_cp,
+         aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+    geom_hline(yintercept = 1, linetype = '11') +
+    scale_fill_viridis_d() +
+    scale_color_viridis_d() +
+    theme_classic() +
+    ggtitle(title) +
+    scale_y_continuous(transform = 'log') +
+    geom_ribbon(aes(fill = !!sym(factor_col)), alpha = 0.2) +
+    geom_line(aes(color = !!sym(factor_col))) +
+    xlab(xlab) + ylab(ylab)
+
+}
+
+
 
 #'@export
 #' plot.condPois_1stage
