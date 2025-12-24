@@ -16,8 +16,6 @@ and update this   // *****
   this is the way that that comes back around
 and the bigger smoothness, the fewer spatial networks 
 
-
-
 --> right because again the problem of this is it doesn't actually reduce the number of the problem. so the level of smoothing yes is determined by the user by saying how many levels of neighbors to use but 
 
 --> ah ha, the problem there is (just like EpiEstim) you won't actually get betas
@@ -27,17 +25,7 @@ for everyplace --> but wait, you actually can if you do the poor-man's recursion
 
 --> probably might make sense to do look at how other people do spatial-temporal Poisson rather than doing it yourself. 
 
->> And Damn the log-population offset might be a thing you need to do
->> both here and in the other one ...
->> actually you don't need to do it here because the strata includes city
->> and wait actually the strata includes city so you don't need to do log-offset
->> so when would you need to do log-offset? in time-series if the pop were 
->> changing over the time period
->> Damn ...
 
-Actually its fine, just add a `condPois_1stage` and you'll need it there
-and really all this needs to be in just removing the flag of one for condPois-single
-so you can just add this as a check that is usually TRUE
 
 * spatial plot
 
@@ -45,12 +33,12 @@ I think you should make a basic one then a have additinal per class
 so function(x, ...) usemethod("spatial_plot") or something like that
 
 >> spatial_plot(calcAN, shp, "rate")
-
 >> spatial_plot(ma_model_fct, shp, x = 30)
 
 
-* Attributable number for `condPois_single`
 
+
+* Attributable number for `condPois_1stage
 
 
 

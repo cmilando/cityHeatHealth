@@ -21,7 +21,9 @@ knitr::opts_chunk$set(
 library(cityHeatHealth)
 ```
 
-We can easily extend the functionality from `vignette("singe_zone_demo")` to estimate impacts across many regions.
+We can easily extend the functionality from `vignette("one_stage_demo")` to estimate individual-zone impacts across many zones.
+
+### Model
 
 First create the inputs, using the same `exposure_columns` and `outcome_columns` as before.
 ```{r multi_town_setup}
@@ -52,12 +54,10 @@ Importantly, the estimates in each `geo_unit` are bolstered by those in their `g
 ```{r multi_town_run}
 ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
-
-And now plot
-```{r multi_plot, fig.height=3, fig.width=5}
+You can still view the RR output from a single zone:
+```{r multi_plot_sigle, fig.height=3, fig.width=5}
 plot(ma_model, "BOSTON")
 ```
-
 It does seem like this is a wider confidence interval than the solo model -- Perhaps this is expected given the variables around it? Worth investigating in your dataset, as these are simulated data.
 
 You can also plot by `geo_unit_grp` (TODO -- a way to make this cleaner to get to)
@@ -66,7 +66,23 @@ You can also plot by `geo_unit_grp` (TODO -- a way to make this cleaner to get t
 ma_model$`_`$grp_plt
 ```
 
-#### Model by factor
+
+You can also make a forest plot at a specific exposure value
+```{r multi_plot_multiple, fig.height=5, fig.width=8}
+forest_plot(ma_model, 25.1)
+```
+
+Finally you can also plot how the RR changes at specific expsoure units across space -- for this you need to bring in an `sf` shapefile:
+```{r multi_plot_multiple, fig.height=5, fig.width=8}
+data("ma_towns")
+ma_towns
+head(ma_towns)
+
+spatial_plot(ma_model, ma_towns, exposure_val = 25.1)
+```
+
+
+### Model by factor
 
 Only a small change is required to run the model by factor, e.g., age_grp:
 

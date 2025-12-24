@@ -260,8 +260,24 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
     geom_hline(yintercept = 1, linetype = '11') +
     theme_classic() +
     ggtitle(title) +
+    scale_y_continuous(transform = 'log') +
     geom_ribbon(fill = 'lightblue', alpha = 0.2) +
     geom_line() + xlab(xlab) + ylab(ylab)
 }
 
-
+#'@export
+#' plot.condPois_1stage
+#'
+#' @param x an object of class condPois_1stage
+#' @param ... other elements passed to spatial_plot
+#' @returns
+#' @export
+#'
+#' @examples
+spatial_plot.condPois_1stage <- function(x, ...) {
+  warning("`spatial_plot` method not implemented for objects of class `condPois_1stage`,
+      since there is only one 1_stage relative risk curve so all plot
+      values would be the same. 1stage attributable number results will change
+      over space, so those can be viewed instead by running `spatial_plot` on the
+      output of `calcAN` for a 1stage model!")
+}

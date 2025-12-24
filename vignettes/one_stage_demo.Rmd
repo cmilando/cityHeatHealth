@@ -1,11 +1,11 @@
 ---
-title: "Heat-Health Associations in a Single Town using `cityHeatHealth`"
+title: "One set of Heat-Health Associations for a single or multiple zones using `cityHeatHealth`"
 output:
   rmarkdown::html_vignette:
     fig.retina: 2
     dev: svg
 vignette: >
-  %\VignetteIndexEntry{Heat-Health Associations in a Single Town using `cityHeatHealth`}
+  %\VignetteIndexEntry{One set of Heat-Health Associations for a single or multiple zones using `cityHeatHealth`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Let's use built-in functions to examine heat-health relationships in a single geographic unit. We'll start with a review of DLNM, and then show how its implemented in `cityHeatHealth`.
+Let's use built-in functions to examine a single set of beta coefficients for heat-health relationships in a single or multiple geographic unit. We'll start with a review of DLNM, and then show how its implemented in `cityHeatHealth` for both the single and multi-zone cases.
 
 For testing purposes, start with your largest geographic unit! 
 
@@ -255,11 +255,10 @@ m1 <- condPois_1stage(exposure_matrix = boston_exposure_mat,
 
 ```
 
-And plot
+And plot the relative risk
 ```{r single_plot, fig.height=3, fig.width=5}
 plot(m1)
 ```
-
 ### Multi-zone DLNM (using `cityHeatHealth` functions in `R`)
 
 You can also easily extend to a 1 stage multi-zone case. You don't need to include population offset because within the geo_unit:year:month:dow strata the populations don't change (one of the benefits of the conditional poisson setup -- you would need to include a population offset if you were doing a time-series design).

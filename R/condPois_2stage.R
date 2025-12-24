@@ -384,6 +384,7 @@ condPois_2stage <- function(exposure_matrix,
 
     #
     this_geo <- unique_geos[i, get(outcome_columns$geo_unit)]
+    this_geo_grp <- unique_geos[i, get(outcome_columns$geo_unit_grp)]
 
     # get x
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
@@ -403,12 +404,15 @@ condPois_2stage <- function(exposure_matrix,
     ## make the out
     RRdf <- data.frame(
       geo_unit = this_geo,
+      geo_unit_grp = this_geo_grp,
       x = blup_cp$cp$predvar,
       RR = blup_cp$cp$allRRfit,
       RRlb = blup_cp$cp$allRRlow,
       RRub = blup_cp$cp$allRRhigh
     )
-    names(RRdf)[2] <- exposure_col
+    names(RRdf)[1] <- outcome_columns$geo_unit
+    names(RRdf)[2] <- outcome_columns$geo_unit_grp
+    names(RRdf)[3] <- exposure_col
     setDT(RRdf)
 
     ## attach outcomes vector
@@ -510,6 +514,7 @@ plot.condPois_2stage <- function(x, geo_unit,
   ggplot(obj$RRdf, aes(x = !!sym(obj$exposure_col), y = RR,
                        ymin = RRlb, ymax = RRub)) +
     geom_hline(yintercept = 1, linetype = '11') +
+    scale_x_continuous(transform = 'log') +
     theme_classic() +
     ggtitle(title) +
     geom_ribbon(fill = 'lightblue', alpha = 0.2) +
@@ -560,7 +565,123 @@ plot.condPois_2stage_list <- function(x, geo_unit,
                     fill = !!sym(fct_lab)), alpha = 0.2) +
     geom_line(aes(x = !!sym(exp_lab), y = RR,
                   color = !!sym(fct_lab))) + xlab(xlab) + ylab(ylab) +
+    scale_y_continuous(transform = 'log') +
     scale_color_viridis_d() +
     scale_fill_viridis_d()
+
+}
+
+
+#'@export
+#' forest_plot.condPois_2stage
+#'
+#' @param x an object of class condPois_2stage
+#' @param exposure_val exposure value to plot at
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+forest_plot.condPois_2stage <- function(x, exposure_val) {
+
+  # get subset of X
+  n_geos <- length(x$`_`$blup_out)
+  plt_slice <- vector("list", n_geos)
+  exposure_col <- x$`_`$blup_out[[1]]$exposure_col
+  geo_unit_col <- names(x$`_`$blup_out[[1]]$RRdf)[1]
+  geo_unit_grp_col <- names(x$`_`$blup_out[[1]]$RRdf)[2]
+
+  for(i in 1:n_geos) {
+    rr <- which(x$`_`$blup_out[[i]]$RRdf[[exposure_col]] == exposure_val)
+    if(length(rr) != 1) {
+      stop(paste0("Exposure value '", exposure_val, "' not in the
+                exposure column, try values (with one decimal) between:",
+                  min(x$`_`$blup_out[[i]]$RRdf[[exposure_col]]),
+                  " and ",
+                  max(x$`_`$blup_out[[i]]$RRdf[[exposure_col]])))
+    }
+
+    plt_slice[[i]] <- x$`_`$blup_out[[i]]$RRdf[rr, ]
+  }
+
+  plt_slice <- do.call(rbind, plt_slice)
+
+  # forest_plot
+  if(n_geos > 20) {
+    warning("plotting by group since n_geos > 20")
+    ggplot(plt_slice, aes(x = RR, xmin = RRlb, xmax = RRub,
+                          y = reorder(!!sym(geo_unit_grp_col), RR))) +
+      geom_vline(xintercept = 1.0, linetype = '11') +
+      ylab(!!sym(geo_unit_grp_col)) +
+      theme_classic() +
+      scale_x_continuous(transform = 'log') +
+      geom_pointrange(position = position_jitterdodge()) +
+      ggtitle(paste0(exposure_col, " = ", exposure_val))
+  } else {
+    ggplot(plt_slice, aes(x = RR, xmin = RRlb, xmax = RRub,
+                          y = reorder(!!sym(geo_unit_col), RR))) +
+      geom_vline(xintercept = 1.0, linetype = '11') +
+      theme_classic() +
+      scale_x_continuous(transform = 'log') +
+      geom_pointrange() +
+      ggtitle(paste0(exposure_col, " = ", exposure_val))
+  }
+
+}
+
+
+#'@export
+#' spatial_plot.condPois_2stage
+#'
+#' @param x an object of class condPois_2stage
+#' @param shp an sf shapefile with an appropriate column to join at
+#' @param exposure_val exposure value to plot at
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+spatial_plot.condPois_2stage <- function(x, shp, exposure_val) {
+
+  n_geos <- length(x$`_`$blup_out)
+  plt_slice <- vector("list", n_geos)
+  exposure_col <- x$`_`$blup_out[[1]]$exposure_col
+  geo_unit_col <- names(x$`_`$blup_out[[1]]$RRdf)[1]
+  geo_unit_grp_col <- names(x$`_`$blup_out[[1]]$RRdf)[2]
+
+  for(i in 1:n_geos) {
+    rr <- which(x$`_`$blup_out[[i]]$RRdf[[exposure_col]] == exposure_val)
+    if(length(rr) != 1) {
+      stop(paste0("Exposure value '", this_x, "' not in the
+                  exposure column, try values (with one decimal) between:",
+                  min(x$`_`$blup_out[[i]]$RRdf[[exposure_col]]),
+                  " and ",
+                  max(x$`_`$blup_out[[i]]$RRdf[[exposure_col]])))
+    }
+
+    plt_slice[[i]] <- x$`_`$blup_out[[i]]$RRdf[rr, ]
+  }
+
+  plt_slice <- do.call(rbind, plt_slice)
+
+  # join to sf object
+  stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
+  shp_w_data <- merge(shp, plt_slice)
+
+  ggplot(shp_w_data) +
+    theme_classic() +
+    geom_sf(aes(fill = log(RR))) +
+    scale_fill_gradient2(
+      midpoint = 0,
+      low = "#2166ac",
+      mid = "white",
+      high = "#b2182b",
+      name = "RR",
+      labels = function(x) round(exp(x), 2)
+    ) +
+    theme(axis.text = element_blank(),
+          axis.line = element_blank(),
+          axis.title = element_blank()) +
+    ggtitle(paste0(exposure_col, " = ", exposure_val))
 
 }
