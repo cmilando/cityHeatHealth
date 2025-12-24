@@ -633,4 +633,134 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
 
 }
 
+#'@export
+#' spatial_plot.calcAN
+#'
+#' @param x an object of class condPois_2stage
+#' @param shp an sf shapefile with an appropriate column at which to join
+#' @param exposure_val exposure value at which to plot
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
+
+  stopifnot(table_type %in% c('rate', 'num'))
+  stopifnot(above_MMT %in% c(T, F))
+  geo_unit_col <- attributes(x$`_`)$column_mapping
+  ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
+
+  if(table_type == 'num') {
+
+    byX_df <- x$`_`$number_table
+    rr <- which(byX_df$above_MMT == above_MMT)
+    byX_df <- byX_df[rr, ]
+    x_col <- names(byX_df)[1]
+    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
+
+    # join to SF
+    stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
+    shp_w_data <- merge(shp, byX_df)
+
+    return(ggplot(shp_w_data) +
+             theme_classic() +
+             geom_sf(aes(fill = mean_annual_attr_num_est)) +
+             scale_fill_binned(name = paste0("Annual Temp Attr.\nOutcomes\n",
+                                                ylab_flag, "\n(#)"),
+                               palette = "Purples") +
+             theme(axis.text = element_blank(),
+                   axis.ticks = element_blank(),
+                   axis.line = element_blank(),
+                   axis.title = element_blank()))
+
+  } else {
+
+    byX_df <- x$`_`$rate_table
+    rr <- which(byX_df$above_MMT == above_MMT)
+    byX_df <- byX_df[rr, ]
+    x_col <- names(byX_df)[1]
+    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
+
+    # join to SF
+    stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
+    shp_w_data <- merge(shp, byX_df)
+
+    return(ggplot(shp_w_data) +
+             theme_classic() +
+             geom_sf(aes(fill = mean_annual_attr_rate_est)) +
+             scale_fill_binned(name = paste0("Annual Temp Attr.\nOutcomes Rate\n",
+                                                ylab_flag, "\n(# per 100,000)"),
+                               palette = "Purples") +
+             theme(axis.text = element_blank(),
+                   axis.ticks = element_blank(),
+                   axis.line = element_blank(),
+                   axis.title = element_blank()))
+
+  }
+
+}
+
+#'@export
+#' spatial_plot.condPois_2stage_list
+#'
+#' @param x an object of class condPois_2stage_list
+#' @param shp an sf shapefile with an appropriate column at which to join
+#' @param exposure_val exposure value at which to plot
+#' @import patchwork
+#' @import ggplot2
+#' @returns
+#' @export
+#'
+#' @examples
+spatial_plot.condPois_2stage_list <- function(x, shp, exposure_val) {
+
+  obj_l <- vector("list", length(names(x)))
+  fct_lab <- x[[names(x)[1]]]$factor_col
+
+  for(i in 1:length(names(x))) {
+
+    yy <- x[[names(x)[i]]]$`_`$blup_out
+
+    n_geos <- length(yy)
+    plt_slice <- vector("list", n_geos)
+    exposure_col <- yy[[1]]$exposure_col
+    geo_unit_col <- names(yy[[1]]$RRdf)[1]
+    geo_unit_grp_col <- names(yy[[1]]$RRdf)[2]
+
+    for(j in 1:n_geos) {
+      rr <- which(yy[[j]]$RRdf[[exposure_col]] == exposure_val)
+      if(length(rr) != 1) {
+        stop(paste0("Exposure value '", this_x, "' not in the
+                  exposure column, try values (with one decimal) between:",
+                    min(yy[[j]]$RRdf[[exposure_col]]),
+                    " and ",
+                    max(yy[[j]]$RRdf[[exposure_col]])))
+      }
+
+      plt_slice[[j]] <- yy[[j]]$RRdf[rr, ]
+    }
+
+    plt_slice <- do.call(rbind, plt_slice)
+    plt_slice[[fct_lab]] <- x[[names(x)[i]]]$factor_val
+
+    obj_l[[i]] <- plt_slice
+  }
+
+  obj <- do.call(rbind, obj_l)
+  RRlimits = range(obj$RR)
+
+  obj_split <- split(obj, f = obj[[fct_lab]])
+
+  plt_obj <- vector("list", length(names(x)))
+  for(i in 1: length(names(x))) {
+    plt_obj[[i]] <- spatial_plot(x[[names(x)[i]]], shp,
+                                 exposure_val, RRlimits = RRlimits) +
+      ggtitle(paste0(fct_lab,": ", names(x)[i],"; ",
+                     exposure_col, " = ", exposure_val))
+  }
+
+  wrap_plots(plt_obj, ncol = 1,guides = 'collect')
+
+}
 
