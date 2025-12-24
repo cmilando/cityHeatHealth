@@ -186,3 +186,6 @@ plot(ma_AN_fct, "num", above_MMT = T)
 These results are fictional of course but show what kind of outputs can be made
 easily.
 
+```{r multi_plot3d, fig.height=10, fig.width=6}
+spatial_plot(ma_AN_fct, shp = ma_counties, table_type = "num", above_MMT = T)
+```

@@ -31,12 +31,6 @@ for everyplace --> but wait, you actually can if you do the poor-man's recursion
 --> Essentially, the SB is a bridge between and 1 stage and a 2 stage
 if you want more granularity than a 1 stage, but the data aren't strong enough to do a 2 stage even with blups, you can do an SB model, which is sortof like many overlapping 1 stage models of larger spatial groups fused together
 
-============================================
-## SPATIAL PLOT
-============================================
-
->> spatial_plot(calcAN, shp, "rate")
-
 
 ============================================
 ## Implement factor for `condPois_1stage_list`

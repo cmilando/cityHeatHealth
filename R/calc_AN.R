@@ -638,13 +638,15 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
 #'
 #' @param x an object of class condPois_2stage
 #' @param shp an sf shapefile with an appropriate column at which to join
-#' @param exposure_val exposure value at which to plot
+#' @param table_type showing the rate table "rate" or number table "num"
+#' @param above_MMT plot attributable numbers above or below the MMT
+#' @param pal color palette
 #' @importFrom ggplot2 ggplot
 #' @returns
 #' @export
 #'
 #' @examples
-spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
+spatial_plot.calcAN <- function(x, shp, table_type, above_MMT, pal = 'Purples') {
 
   stopifnot(table_type %in% c('rate', 'num'))
   stopifnot(above_MMT %in% c(T, F))
@@ -657,7 +659,6 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
-    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
 
     # join to SF
     stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
@@ -668,7 +669,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
              geom_sf(aes(fill = mean_annual_attr_num_est)) +
              scale_fill_binned(name = paste0("Annual Temp Attr.\nOutcomes\n",
                                                 ylab_flag, "\n(#)"),
-                               palette = "Purples") +
+                               palette = pal) +
              theme(axis.text = element_blank(),
                    axis.ticks = element_blank(),
                    axis.line = element_blank(),
@@ -680,7 +681,6 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
-    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
 
     # join to SF
     stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
@@ -691,7 +691,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
              geom_sf(aes(fill = mean_annual_attr_rate_est)) +
              scale_fill_binned(name = paste0("Annual Temp Attr.\nOutcomes Rate\n",
                                                 ylab_flag, "\n(# per 100,000)"),
-                               palette = "Purples") +
+                               palette = pal) +
              theme(axis.text = element_blank(),
                    axis.ticks = element_blank(),
                    axis.line = element_blank(),
@@ -702,65 +702,44 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT) {
 }
 
 #'@export
-#' spatial_plot.condPois_2stage_list
+#' spatial_plot.calcAN_list
 #'
 #' @param x an object of class condPois_2stage_list
 #' @param shp an sf shapefile with an appropriate column at which to join
-#' @param exposure_val exposure value at which to plot
+#' @param table_type showing the rate table "rate" or number table "num"
+#' @param above_MMT plot attributable numbers above or below the MMT
 #' @import patchwork
 #' @import ggplot2
+#' @importFrom RColorBrewer brewer.pal.info
 #' @returns
 #' @export
 #'
 #' @examples
-spatial_plot.condPois_2stage_list <- function(x, shp, exposure_val) {
+spatial_plot.calcAN_list <- function(x, shp, table_type, above_MMT) {
 
-  obj_l <- vector("list", length(names(x)))
-  fct_lab <- x[[names(x)[1]]]$factor_col
+  stopifnot(table_type %in% c('rate', 'num'))
+  ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
 
-  for(i in 1:length(names(x))) {
-
-    yy <- x[[names(x)[i]]]$`_`$blup_out
-
-    n_geos <- length(yy)
-    plt_slice <- vector("list", n_geos)
-    exposure_col <- yy[[1]]$exposure_col
-    geo_unit_col <- names(yy[[1]]$RRdf)[1]
-    geo_unit_grp_col <- names(yy[[1]]$RRdf)[2]
-
-    for(j in 1:n_geos) {
-      rr <- which(yy[[j]]$RRdf[[exposure_col]] == exposure_val)
-      if(length(rr) != 1) {
-        stop(paste0("Exposure value '", this_x, "' not in the
-                  exposure column, try values (with one decimal) between:",
-                    min(yy[[j]]$RRdf[[exposure_col]]),
-                    " and ",
-                    max(yy[[j]]$RRdf[[exposure_col]])))
-      }
-
-      plt_slice[[j]] <- yy[[j]]$RRdf[rr, ]
-    }
-
-    plt_slice <- do.call(rbind, plt_slice)
-    plt_slice[[fct_lab]] <- x[[names(x)[i]]]$factor_val
-
-    obj_l[[i]] <- plt_slice
-  }
-
-  obj <- do.call(rbind, obj_l)
-  RRlimits = range(obj$RR)
-
-  obj_split <- split(obj, f = obj[[fct_lab]])
+  fct_names <- names(x)
+  fct_lab <- x[[1]]$factor_col
 
   plt_obj <- vector("list", length(names(x)))
-  for(i in 1: length(names(x))) {
+
+  set.seed(123)
+  tot <- row.names(subset(RColorBrewer::brewer.pal.info,
+                          category == 'seq'))
+
+  color_pals <- sample(tot, length(plt_obj), replace = F)
+
+  for(i in 1:length(plt_obj)) {
+
     plt_obj[[i]] <- spatial_plot(x[[names(x)[i]]], shp,
-                                 exposure_val, RRlimits = RRlimits) +
-      ggtitle(paste0(fct_lab,": ", names(x)[i],"; ",
-                     exposure_col, " = ", exposure_val))
+                                 table_type, above_MMT, color_pals[i]) +
+      ggtitle(paste0(fct_lab, ": ", fct_names[i]))
+
   }
 
-  wrap_plots(plt_obj, ncol = 1,guides = 'collect')
+  wrap_plots(plt_obj, ncol = 1)
 
 }
 
