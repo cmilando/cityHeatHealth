@@ -68,17 +68,17 @@ ma_model$`_`$grp_plt
 
 
 You can also make a forest plot at a specific exposure value
-```{r multi_plot_multiple, fig.height=5, fig.width=8}
+```{r multi_plot_multiple1, fig.height=5, fig.width=8}
 forest_plot(ma_model, 25.1)
 ```
 
 Finally you can also plot how the RR changes at specific expsoure units across space -- for this you need to bring in an `sf` shapefile:
-```{r multi_plot_multiple, fig.height=5, fig.width=8}
+```{r multi_plot_multiple2, fig.height=5, fig.width=8}
 data("ma_towns")
 ma_towns
 head(ma_towns)
 
-spatial_plot(ma_model, ma_towns, exposure_val = 25.1)
+spatial_plot(ma_model, shp = ma_towns, exposure_val = 25.1)
 ```
 
 

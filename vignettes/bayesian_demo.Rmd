@@ -23,7 +23,7 @@ library(cityHeatHealth)
 
 Another way that this model can be solved is by using Bayesian inference, implemented in STAN. We are including this implementation here so that it makes sense why we are including it later on. 
 
-```{r setup}
+```{r setup2}
 exposure_columns <- list(
   "date" = "date",
   "exposure" = "tmax_C",
@@ -48,8 +48,9 @@ outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns,
 
 data("ma_counties")
 shp_sf <- ma_counties
-shp_sf$county_ID <- 1:nrow(shp_sf)
-ggplot(shp_sf) + geom_sf(aes(fill = factor(county_ID)))
+# shp_sf$county_ID <- 1:nrow(shp_sf)
+# 
+# ggplot(shp_sf) + geom_sf(aes(fill = factor(county_ID)))
 
 # join to the county20 level
 

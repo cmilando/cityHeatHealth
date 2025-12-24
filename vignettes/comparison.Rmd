@@ -2,7 +2,7 @@
 title: "Comparison of `cityHeatHealth` to other AN tutorials"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Comparison to `cityHeatHealth` other AN tutorials}
+  %\VignetteIndexEntry{Comparison of `cityHeatHealth` other AN tutorials}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

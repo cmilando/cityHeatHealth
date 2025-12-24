@@ -2,6 +2,13 @@
 
 S3method(forest_plot,condPois_2stage)
 S3method(forest_plot,condPois_2stage_list)
+S3method(plot,calcAN)
+S3method(plot,calcAN_list)
+S3method(plot,condPois_1stage)
+S3method(plot,condPois_2stage)
+S3method(plot,condPois_2stage_list)
+S3method(plot,condPois_sb)
+S3method(plot,condPois_sb_list)
 S3method(print,calcAN)
 S3method(print,calcAN_list)
 S3method(print,condPois_1stage)

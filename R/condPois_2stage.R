@@ -514,7 +514,7 @@ plot.condPois_2stage <- function(x, geo_unit,
   ggplot(obj$RRdf, aes(x = !!sym(obj$exposure_col), y = RR,
                        ymin = RRlb, ymax = RRub)) +
     geom_hline(yintercept = 1, linetype = '11') +
-    scale_x_continuous(transform = 'log') +
+    scale_y_continuous(transform = 'log') +
     theme_classic() +
     ggtitle(title) +
     geom_ribbon(fill = 'lightblue', alpha = 0.2) +
@@ -669,6 +669,8 @@ spatial_plot.condPois_2stage <- function(x, shp, exposure_val,
   stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
   shp_w_data <- merge(shp, plt_slice)
 
+  if(is.null(RRlimits)) RRlimits = range(shp_w_data$RR)
+
 
   return(ggplot(shp_w_data) +
     theme_classic() +
@@ -774,7 +776,7 @@ forest_plot.condPois_2stage_list <- function(x, exposure_val) {
     n_geos <- length(yy)
     plt_slice <- vector("list", n_geos)
     fct <- x[[names(x)[i]]]$factor_val
-
+    exposure_col <- yy[[1]]$exposure_col
     geo_unit_col <- names(yy[[1]]$RRdf)[1]
     geo_unit_grp_col <- names(yy[[1]]$RRdf)[2]
 

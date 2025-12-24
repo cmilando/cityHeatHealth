@@ -1,7 +1,8 @@
 
-## In progress: 
 
-* Bayesian code
+============================================
+## Bayesian code
+============================================
 
 >> need to update to be the number of unique networks, because right now there are too many degree of freedom
 
@@ -23,22 +24,36 @@ for everyplace --> but wait, you actually can if you do the poor-man's recursion
 
 --> and maybe the two stage can be a weighted average?
 
---> probably might make sense to do look at how other people do spatial-temporal Poisson rather than doing it yourself. 
+--> probably might make sense to do look at how other people do spatial-temporal Poisson rather than doing it yourself. ChatGPT had some ideas ("low rank")
 
+--> and its going to do better than EpiEstim because its not going to scale with the dataset. if anything it will get easier with more data.
 
+--> Essentially, the SB is a bridge between and 1 stage and a 2 stage
+if you want more granularity than a 1 stage, but the data aren't strong enough to do a 2 stage even with blups, you can do an SB model, which is sortof like many overlapping 1 stage models of larger spatial groups fused together
 
-* spatial plot
-
-I think you should make a basic one then a have additional per class
-so function(x, ...) usemethod("spatial_plot") or something like that
+============================================
+## SPATIAL PLOT
+============================================
 
 >> spatial_plot(calcAN, shp, "rate")
 
 
-* Attributable number for `condPois_1stage
+============================================
+## Implement factor for `condPois_1stage_list`
+============================================
 
+* 
 
+============================================
+## Attributable number for `condPois_1stage` and `condPois_1stage_list`
+============================================
 
-* Fix the 2_stage BLUP thing ...
+* 
+
+============================================
+## mixmeta blup update from Gasp
+============================================
+
+*
 
 
