@@ -205,7 +205,7 @@ condPois_2stage <- function(exposure_matrix,
 
     # run the model once
     # pass all the main arguments forward
-    cp_list[[i]] <- condPois_single(exposure_matrix = single_exposure_matrix,
+    cp_list[[i]] <- condPois_1stage(exposure_matrix = single_exposure_matrix,
                                     outcomes_tbl = single_outcomes_tbl,
                                     argvar = argvar, arglag = arglag,
                                     maxlag = maxlag, min_n = min_n,

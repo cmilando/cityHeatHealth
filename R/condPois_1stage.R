@@ -13,14 +13,16 @@
 #' @param min_n an integer describing the minimum number of cases for a single region
 #' @param strata_min an integer describing the minimum number of cases for a single strata
 #' @param global_cen global centering point
+#' @param multi_zone are multiple strata being used.
 #'
 #' @returns
 #' @export
 #'
 #' @examples
-condPois_single <- function(exposure_matrix, outcomes_tbl,
+condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                         argvar = NULL, arglag = NULL, maxlag = NULL,
-                       min_n = NULL, strata_min = 0, global_cen = NULL) {
+                       min_n = NULL, strata_min = 0, global_cen = NULL,
+                       multi_zone = FALSE) {
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -40,7 +42,8 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   out_geo_unit <- unlist(unique(outcomes_tbl[, get(out_geo_unit_col)]))
 
   stopifnot(identical(exp_geo_unit, out_geo_unit))
-  stopifnot(length(out_geo_unit) == 1)
+
+  if(!multi_zone) stopifnot(length(out_geo_unit) == 1)
 
   ## Check 2
   ## probably should make sure that exposure_matrix and outcomes_tbl
@@ -57,18 +60,22 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   # get the order correct
   setorderv(
     exposure_matrix,
-    c(exp_date_col)
+    c(exp_geo_unit_col, exp_date_col)
   )
 
   setorderv(
     outcomes_tbl,
-    c(outcome_date_col)
+    c(out_geo_unit_col, outcome_date_col)
   )
 
   # check that it worked
   stopifnot(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])
+
   stopifnot(identical(exposure_matrix[, get(exp_date_col)],
                       outcomes_tbl[, get(outcome_date_col)]))
+
+  stopifnot(identical(exposure_matrix[, get(exp_geo_unit_col)],
+                      outcomes_tbl[, get(out_geo_unit_col)]))
 
   # CHECK 4
   if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
@@ -153,8 +160,10 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
   geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
-  this_geo_unit <- unlist(unique(outcomes_tbl[, get(geo_unit_col)]))
-  this_geo_unit_grp <- unlist(unique(outcomes_tbl[, get(geo_unit_grp_col)]))
+  this_geo_unit <- paste0(out_geo_unit, collapse=":")
+
+  this_geo_unit_grp <- paste0(unlist(
+    unique(outcomes_tbl[, get(geo_unit_grp_col)])), collapse=":")
 
   exp_mean = mean(exposure_matrix[, get(exposure_col)])
   exp_IQR = IQR(exposure_matrix[, get(exposure_col)])
@@ -187,7 +196,8 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
   oo <- list(geo_unit = this_geo_unit,
              geo_unit_grp = this_geo_unit_grp,
              cr = cr,
-             cb = cb,
+             cr_coef = coef(cr),
+             cr_vcov = vcov(cr),
              exposure_col = exposure_col,
              this_exp = exposure_matrix[, get(exposure_col)],
              outcomes = outcomes_tbl[, get(outcome_col)],
@@ -197,30 +207,34 @@ condPois_single <- function(exposure_matrix, outcomes_tbl,
              exp_mean = exp_mean,
              exp_IQR = exp_IQR)
 
-  class(oo) <- 'condPois_single'
+  class(oo) <- 'condPois_1stage'
 
   return(oo)
 
 }
 
+
+
 #'@export
-#' print.condPois_single
+#' print.condPois_1stage
 #'
-#' @param x an object of class condPois_single
+#' @param x an object of class condPois_1stage
 #'
 #' @returns
 #' @export
 #'
 #' @examples
-print.condPois_single <- function(x) {
-  cat("< an object of class `condPois_single` >\n")
+print.condPois_1stage <- function(x) {
+  cat("< an object of class `condPois_1stage` >\n")
   invisible(x)
 }
 
+
+
 #'@export
-#' plot.condPois_single
+#' plot.condPois_1stage
 #'
-#' @param x an object of class condPois_single
+#' @param x an object of class condPois_1stage
 #' @param xlab xlab override
 #' @param ylab ylab override
 #' @param title title override
@@ -229,7 +243,7 @@ print.condPois_single <- function(x) {
 #' @export
 #'
 #' @examples
-plot.condPois_single <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
+plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
 
   plot_cp = data.frame(
     x = x$cr$predvar,

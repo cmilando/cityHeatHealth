@@ -22,3 +22,49 @@ library(cityHeatHealth)
 ```
 
 This is where you can do the `dlnm_sweep` stuff
+
+# DLNM Sweep
+DLNM Sweep uses a custom function called `make_cb_list()` to expand crossbasis options:
+
+```{r DLNM_sweep 1, message=F}
+cb2 <- make_cb_list(x = lndn,
+                    var_list = c('tmean'), 
+                    argvar_list = list(set1 = list(fun="bs", degree = 2, knots = list(vk))) ,
+                    lag_list = maxlag,
+                    arglag_list = list(set1 = list(knots = list(lk))))
+```
+
+You can see that this creates the same `cb` object as in the basic DLNM (with some novel attributes removed):
+
+```{r test1}
+attr(cb2[[1]], 'summary_str') <- NULL
+attr(cb2[[1]], 'var_name') <- NULL
+identical(cb, cb2[[1]])
+```
+
+Ok so now how to use this to its fullest potential. One application might look like this:
+```{r cb_setup}
+var_list <- c('tmean', 'tmin')
+
+cb_all <- list()
+
+for(var in var_list) {
+  
+  # make var knots that vary by var
+  vk2 = equalknots(lndn[, var], fun="bs", degree = 2, df = 4)
+  vk3 = equalknots(lndn[, var], fun="ns", df = 4)
+  k50 = quantile(lndn[, var], probs = .5, na.rm = T)
+  k10 = quantile(lndn[, var], probs = c(1:9)/10, na.rm = T)
+  
+  cb_var = make_cb_list(x = lndn,
+                         var_list = var, 
+                         argvar_list = list(set1 = list(fun="bs", degree = c(2, 3), 
+                                                        knots = list(vk2, k50, k10)),
+                                            set2 = list(fun="ns",  
+                                                        knots = list(vk3, k50, k10))) ,
+                         lag_list = maxlag,
+                         arglag_list = list(set1 = list(knots = list(lk))))
+  
+  cb_all <- append(cb_all, cb_var)
+}
+```

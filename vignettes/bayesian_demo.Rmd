@@ -46,16 +46,10 @@ outcome_columns <- list(
 outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns,
                                    grp_level = T)
 
-shp_sf <- data("ma_towns")
-
-shp_sf_2 <- shp_sf |>
-  group_by(COUNTY20) |>
-  summarise(
-    geometry = st_union(geometry),
-    .groups = "drop"
-  )
-
-plot(shp_sf)
+data("ma_counties")
+shp_sf <- ma_counties
+shp_sf$county_ID <- 1:nrow(shp_sf)
+ggplot(shp_sf) + geom_sf(aes(fill = factor(county_ID)))
 
 # join to the county20 level
 

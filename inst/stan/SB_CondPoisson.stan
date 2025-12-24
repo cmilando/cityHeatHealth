@@ -76,14 +76,7 @@ parameters {
   matrix[K, J] beta_star;  // attribute effects
 }
 
-model {
-
-  // --------------------------------------------------------------------------
-  // PRIORS
-  // --------------------------------------------------------------------------
-  mu ~ std_normal();
-  q ~ std_normal();
-  sigma ~ std_normal();
+transformed parameters {
 
   // --------------------------------------------------------------------------
   // GET BETA STAR
@@ -124,8 +117,7 @@ model {
   // sqrt inside rep so it does fewer calculations
   matrix[K, J] star_sd = rep_matrix(sigma, J) ./ rep_matrix(sqrt(beta_star_denom), K);
 
-  // and Now vectorized to get priors for beta_star
-  to_vector(beta_star) ~ normal(to_vector(star_mean), to_vector(star_sd));
+  // BETA STAR
 
   // --------------------------------------------------------------------------
   // and get the target components
@@ -158,6 +150,20 @@ model {
   // now get theta, you can also get in one shot
   // have to use element division
   matrix[N, J] theta = xBeta ./ theta_denominator;
+
+}
+
+model {
+
+  // --------------------------------------------------------------------------
+  // PRIORS
+  // --------------------------------------------------------------------------
+  mu ~ std_normal();
+  q ~ std_normal();
+  sigma ~ std_normal();
+
+  // and Now vectorized to get priors for beta_star
+  to_vector(beta_star) ~ normal(to_vector(star_mean), to_vector(star_sd));
 
   // --------------------------------------------------------------------------
   // Finally, the target

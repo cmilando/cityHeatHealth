@@ -72,7 +72,7 @@ ma_pop_data_long
 
 We assume that these properties hold for the entire timeframe of our analysis, but you could also make a version of this dataset with a 'year' column. 
 
-Now, quickly get a `condPois_single()` and `condPois_2stage()` objects to use in testing:
+Now, quickly get a `condPois_1stage()` and `condPois_2stage()` objects to use in testing:
 exposures
 ```{r ee}
 exposure_columns <- list(

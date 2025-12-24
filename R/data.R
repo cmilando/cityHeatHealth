@@ -25,10 +25,10 @@
 #'   \item{AWATER}{Numeric. 2020 Census water area in square meters.}
 #'   \item{INTPTLAT}{Character. Latitude of the internal point (2020 Census).}
 #'   \item{INTPTLON}{Character. Longitude of the internal point (2020 Census).}
-#'   \item{TOWN}{Character. Official name of the city or town.}
+#'   \item{TOWN20}{Character. Official name of the city or town.}
 #'   \item{TOWN_ID}{Integer. Town ID assigned to the official town name.}
 #'   \item{FIPS_STCO}{Integer. Federal Information Processing Standard (state/county) code.}
-#'   \item{COUNTY}{Character. Name of the county in which the town is located.}
+#'   \item{COUNTY20}{Character. Name of the county in which the town is located.}
 #'   \item{TYPE}{Character. Municipality type: C = City; T = Town; TC = Town with city form of government.}
 #'   \item{FOURCOLOR}{Integer. Four-color shading code (1–4) such that no adjacent towns share the same code.}
 #'   \item{AREA_ACRES}{Numeric. Area of the town in acres.}
@@ -46,9 +46,43 @@
 #'   \item{HOUSING20}{Integer. 2020 Census count of housing units (PL 94-171).}
 #' }
 #'
+#' @details
+#' This dataset is typically used for environmental exposure assessment and
+#' can be joined to town-level geographic or demographic datasets using
+#' \code{TOWN20}.
 #' @source U.S. Census Bureau, 2020 Decennial Census; TIGER/MAF geographic products.
 #'
 #' @name ma_towns
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Massachusetts Towns and Cities (2020 Census)
+#'
+#' A dataset containing geographic identifiers, administrative classifications,
+#' land and water area, population counts, housing units, and related attributes
+#' for all counties in Massachusetts. See [link](https://www.mass.gov/info-details/massgis-data-counties#downloads)
+#'
+#' @format A shapefile with one row per Massachusetts city or town and the
+#' following variables:
+#' \describe{
+#'   \item{FIPSID}{Character}
+#'   \item{COUNTY20}{Character. 2020 Census county FIPS code.}
+#'   \item{AREA_ACRES}{Numeric.}
+#'   \item{OBJECTID}{Numeric.}
+#'   \item{SHAPE_AREA}{Numeric.}
+#'   \item{SHAPE_LEN}{Numeric.}
+#'   \item{geometry}{Numeric.}
+#' }
+#'
+#' @details
+#' This dataset is typically used for environmental exposure assessment and
+#' can be joined to town-level geographic or demographic datasets using
+#' \code{COUNTY20}.
+#'
+#' @source U.S. Census Bureau, 2020 Decennial Census; TIGER/MAF geographic products.
+#'
+#' @name ma_counties
 #' @docType data
 #' @keywords datasets
 NULL

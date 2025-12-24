@@ -31,6 +31,8 @@ condPois_2stage(
 
 \item{min_n}{an integer describing the minimum number of cases for a single region}
 
+\item{strata_min}{minimum number of cases per strata}
+
 \item{verbose}{whether to print geo_units as they are run}
 }
 \description{

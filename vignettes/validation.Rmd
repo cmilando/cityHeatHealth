@@ -1,0 +1,23 @@
+---
+title: "Validation of spatial methods in `cityHeatHealth`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Validation of spatial methods in `cityHeatHealth`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+need a validation rmd of the data with larger population sizes and low variance and maybe just one lag so its easy to see
+
+or maybe just one populations segment

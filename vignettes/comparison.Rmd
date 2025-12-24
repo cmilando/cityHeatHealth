@@ -1,0 +1,21 @@
+---
+title: "Comparison of `cityHeatHealth` to other AN tutorials"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparison to `cityHeatHealth` other AN tutorials}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+need a comparison rmd to something gasp published that works

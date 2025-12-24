@@ -1,14 +1,56 @@
 
-In progress: 
+## In progress: 
 
 * Bayesian code
 
+>> need to update to be the number of unique networks, because right now there are too many degree of freedom
 
-Wishlist: 
+--> what if you did not just n = 1 neighbors. whats about n = 2 neighbors with
+a weighting factor on neighbors that are 2 away? I think thins should work. but you'll have to rework the STAN code so there are fewer 
+
+so you'll have to have windows
+and update this   // *****
+  matrix[K, J] beta = rep_matrix(mu, J) + beta_star;
+  // *****
+  and update the y[ ] to be compared to multiple versions
+  this is the way that that comes back around
+and the bigger smoothness, the fewer spatial networks 
+
+
+
+--> right because again the problem of this is it doesn't actually reduce the number of the problem. so the level of smoothing yes is determined by the user by saying how many levels of neighbors to use but 
+
+--> ah ha, the problem there is (just like EpiEstim) you won't actually get betas
+for everyplace --> but wait, you actually can if you do the poor-man's recursion. so the point would be you can have a 2-degree neighbor beta expressed in each of the J places, and then you can do just like in otherwise the ys, which would then give you region-specific betas (much like daily R(t)s). 
+
+--> and maybe the two stage can be a weighted average?
+
+--> probably might make sense to do look at how other people do spatial-temporal Poisson rather than doing it yourself. 
+
+>> And Damn the log-population offset might be a thing you need to do
+>> both here and in the other one ...
+>> actually you don't need to do it here because the strata includes city
+>> and wait actually the strata includes city so you don't need to do log-offset
+>> so when would you need to do log-offset? in time-series if the pop were 
+>> changing over the time period
+>> Damn ...
+
+Actually its fine, just add a `condPois_1stage` and you'll need it there
+and really all this needs to be in just removing the flag of one for condPois-single
+so you can just add this as a check that is usually TRUE
+
+* spatial plot
+
+I think you should make a basic one then a have additinal per class
+so function(x, ...) usemethod("spatial_plot") or something like that
+
+>> spatial_plot(calcAN, shp, "rate")
+
+>> spatial_plot(ma_model_fct, shp, x = 30)
+
 
 * Attributable number for `condPois_single`
 
-* test that global_cen works throughout
 
-* demonstration that it works with a Gasparrini example for AN
+
 

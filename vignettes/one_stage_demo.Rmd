@@ -224,7 +224,7 @@ all.equal(t1, t2, tolerance = 1e-8)
 
 ### Basic DLNM (using `cityHeatHealth` functions in `R`)
 
-The functionality above is what is encapsulated in the `condPois_single` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
+The functionality above is what is encapsulated in the `condPois_1stage` function. This is one of the chief innovations of this package. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts in 3 lines.
 
 We have built-in defaults for `argvar`, `arglag`, and `maxlag` for the investigation of warm-season non-fatal health impacts associated with increases in temperature. We don't need to check the dispersion parameter here since this is using `gnm` under the hood.
 
@@ -250,7 +250,7 @@ outcome_columns <- list(
 boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
 
 # run the model
-m1 <- condPois_single(exposure_matrix = boston_exposure_mat, 
+m1 <- condPois_1stage(exposure_matrix = boston_exposure_mat, 
                   outcomes_tbl = boston_deaths_tbl)
 
 ```
@@ -258,4 +258,42 @@ m1 <- condPois_single(exposure_matrix = boston_exposure_mat,
 And plot
 ```{r single_plot, fig.height=3, fig.width=5}
 plot(m1)
+```
+
+### Multi-zone DLNM (using `cityHeatHealth` functions in `R`)
+
+You can also easily extend to a 1 stage multi-zone case. You don't need to include population offset because within the geo_unit:year:month:dow strata the populations don't change (one of the benefits of the conditional poisson setup -- you would need to include a population offset if you were doing a time-series design).
+
+```{r single_zone}
+# create exposure matrix
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+middlesex_exposure <- subset(ma_exposure, COUNTY20 == 'MIDDLESEX')
+middlesex_exposure_mat <- make_exposure_matrix(middlesex_exposure, exposure_columns)
+
+# create outcome table
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+middlesex_deaths   <- subset(ma_deaths, COUNTY20 == 'MIDDLESEX')
+middlesex_deaths_tbl <- make_outcome_table(middlesex_deaths,  outcome_columns)
+
+# run the model
+m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
+                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
+
+```
+
+And plot - notice the tighter confidence interval
+```{r single_plot, fig.height=3, fig.width=5}
+plot(m2)
 ```

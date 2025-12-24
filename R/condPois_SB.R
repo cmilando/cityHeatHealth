@@ -160,6 +160,7 @@ condPois_sb <- function(exposure_matrix,
   }
 
   outcome_columns <- attributes(outcomes_tbl)$column_mapping
+  exposure_columns <- attributes(exposure_matrix)$column_mapping
 
   geo_cols <- c(
     outcome_columns$geo_unit,
@@ -174,6 +175,7 @@ condPois_sb <- function(exposure_matrix,
   outc_list   <- vector("list", n_geos);
   cen_list    <- vector("list", n_geos);
   argvar_list <- vector("list", n_geos);
+  coef_list   <- vector("list", n_geos);
 
   # loop through geos
   for(i in 1:n_geos) {
@@ -188,6 +190,8 @@ condPois_sb <- function(exposure_matrix,
     # this cities exposure matrix
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
     single_exposure_matrix = exposure_matrix[rr, ,drop = FALSE]
+    this_exp <- single_exposure_matrix[, get(exposure_columns$exposure)]
+    x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
 
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
@@ -197,17 +201,26 @@ condPois_sb <- function(exposure_matrix,
     # because it also has a lot of nice validation built into it
     # min_n is set to 0 because you want every region
     # same with strata_min
-    local_cp <- condPois_single(exposure_matrix = single_exposure_matrix,
+    local_cp <- condPois_1stage(exposure_matrix = single_exposure_matrix,
                                     outcomes_tbl = single_outcomes_tbl,
                                     argvar = argvar, arglag = arglag,
                                     maxlag = maxlag, min_n = 1,
                                     strata_min = 0)
 
+    blup_cp <- get_centered_cp(argvar = local_cp$argvar,
+                               xcoef = local_cp$cr_coef,
+                               xvcov = local_cp$cr_vcov,
+                               global_cen = global_cen,
+                               cen = local_cp$cen,
+                               this_exp = this_exp,
+                               x_b = x_b)
+
     # get cb and outcomes lists
-    cb_list[[i]]   <- local_cp$cb
-    outc_list[[i]] <- single_outcomes_tbl
-    cen_list[[i]]  <- local_cp$cen
-    argvar_list[[i]]   <- cp_list[[i]]$argvar
+    coef_list[[i]]   <- local_cp$cr_coef
+    cb_list[[i]]     <- blup_cp$basis_cen
+    outc_list[[i]]   <- single_outcomes_tbl
+    cen_list[[i]]    <- local_cp$cen
+    argvar_list[[i]] <- local_cp$argvar
 
     rm(local_cp)
   }
@@ -232,6 +245,7 @@ condPois_sb <- function(exposure_matrix,
   k_l <- unique(do.call(c, k_l))
   stopifnot(length(k_l) == 1)
   K = as.integer(k_l)
+  if(K > 5) warning("K > 5, times may be slow")
 
   # include the intercept
   X = array(dim = c(dim(cb_list[[1]]), J))
@@ -289,24 +303,53 @@ condPois_sb <- function(exposure_matrix,
   # this is an adjacency matrix that DOES NOT include itself
   # shp_sf <- read_sf(shp)
 
-  shp_sf_safe <- subset(shp_sf, TOWN20 %in% unique(outcomes_tbl$TOWN20))
+  shp_sf_safe <- subset(shp_sf, COUNTY20 %in% unique(outcomes_tbl$COUNTY20))
   shp_sf_safe
   # BUT YOU DON'T KNOW THE ORDER OF THEM .... ..... ..... .....
 
-  shp_sf_safe <- shp_sf_safe[order(shp_sf_safe$TOWN20), ]
-  stopifnot(identical(shp_sf_safe$TOWN20, unique_geos$TOWN20))
+  shp_sf_safe <- shp_sf_safe[order(shp_sf_safe$COUNTY20), ]
+  stopifnot(identical(shp_sf_safe$COUNTY20, unique_geos$COUNTY20))
 
   # Generate a list of spatial structure from the shapefile
   list_neig <- nb2listw(poly2nb(shp_sf_safe), zero.policy = TRUE)
   stopifnot(all(dim(list_neig)))
 
+
+  # 1st-order neighbors
+  nb1 <- poly2nb(shp_sf_safe)
+
+  # 2nd-order neighbors (neighbors of neighbors)
+  nb_lags <- nblag(nb1, 2)
+
+  # nb_lags[[1]] = distance 1
+  # nb_lags[[2]] = distance 2
+
+  nb12 <- vector("list", n_geos)
+  for (i in seq_along(nb12)) {
+    nb12[[i]] <- list(n1 = nb_lags[[1]][[i]],
+                      n2 = nb_lags[[2]][[i]])
+  }
+
+  nb12
+
+
+
+
   neighbors <- lapply(list_neig$neighbours,c)
   Jmat <- matrix(0, nrow = J, ncol = J)
   if(j > 1) {
     for(j in 1:J) {
-      Jmat[j, neighbors[[j]]] <- 1
+      print(j)
+      n1 = nb_lags[[1]][[j]]
+      n2 = nb_lags[[2]][[j]]
+      n1
+      n2
+
+      Jmat[j, n1] <- 1
+      Jmat[j, n2] <- 1
     }
   }
+  Jmat
 
   #' ////////////////////////////////////////////////////////////////////////////
   #' ============================================================================
@@ -338,12 +381,32 @@ condPois_sb <- function(exposure_matrix,
   stan_file <- system.file("stan", "SB_CondPoisson.stan",
                            package = "cityHeatHealth")
 
-  mod <- cmdstanr::cmdstan_model(stan_file)
+  mod <- cmdstanr::cmdstan_model(stan_file,
+                                 cpp_options = list(stan_threads = TRUE))
 
-  out2 <- mod$variational(
+  # (1) Variational
+  out2_var <- mod$variational(
     data = stan_data,
-    iter = 1000,
-    refresh = 10
+    iter = 10000,
+    refresh = 10,
+    threads = 2
+  )
+
+  # (2) LaPLACE
+
+  # MCMC -- Much longer, especially for things with lags
+  #         wait ..... can  you do this just on the crossreduce though ...
+  #         why do you need to do this on
+  out2_mcmc <- mod$sample(
+    data = stan_data,
+    chains = 2,
+    #iter_warmup = 3000,
+    #iter_sampling = 5000,
+    parallel_chains = 2,
+    threads_per_chain = 1,
+    refresh = 10,
+    #adapt_delta = 0.8,
+    #max_treedepth = 7 # .... ?
   )
 
   # or another version here for mcmc
@@ -356,12 +419,20 @@ condPois_sb <- function(exposure_matrix,
   # ****************
 
   # and then finally the draws etc
+  out2 <- out2_var
+  out2 <- out2_mcmc
   out2_data <- posterior::as_draws_df(out2$draws())
   setDT(out2_data)
   beta_reg_all <- out2_data[, .SD, .SDcols = patterns("^beta_out")]
   beta_reg_all <- apply(beta_reg_all, 2, mean)
   beta_mat <- matrix(beta_reg_all, nrow = K, ncol = J, byrow = F)
-  beta_mat[, 1:5]
+
+  # with spatial smoothing
+  t(beta_mat)
+
+  # without spatial smoothing
+  do.call(rbind, coef_list)
+
 
   # and using more threads? doesn't seem like comp is working hard rn
   # but great progress! almost there :)

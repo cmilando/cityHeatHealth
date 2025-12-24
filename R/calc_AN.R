@@ -1,6 +1,6 @@
 #' Calculate attributable number and attributable rates
 #'
-#' @param model a model object of class `condPois_2stage`, `condPois_single`, or `condPois_bayes`
+#' @param model a model object of class `condPois_2stage`, `condPois_1stage`, or `condPois_bayes`
 #' @param outcomes_tbl a table of outcomes, of class `outcomes`
 #' @param pop_data population data
 #' @param agg_type what is the spatial resolution you are aggregating to
