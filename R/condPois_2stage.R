@@ -205,14 +205,14 @@ condPois_2stage <- function(exposure_matrix,
 
     # run the model once
     # pass all the main arguments forward
-    cp_list[[i]] <- condPois_1stage(exposure_matrix = single_exposure_matrix,
+    d1 <- condPois_1stage(exposure_matrix = single_exposure_matrix,
                                     outcomes_tbl = single_outcomes_tbl,
                                     argvar = argvar, arglag = arglag,
                                     maxlag = maxlag, min_n = min_n,
                                     strata_min = strata_min)
 
-    # remove cb for space
-    cp_list[[i]]$cb <- NULL
+    # get the named list object
+    cp_list[[i]] <- d1$`_`$out[[this_geo]]
 
     # get coef and vcov
     coef_list[[i]] <- coef(cp_list[[i]]$cr)
@@ -377,7 +377,7 @@ condPois_2stage <- function(exposure_matrix,
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
   outcomes_col <- attributes(outcomes_tbl)$column_mapping$outcome
 
-  blup_out   <- vector("list", n_geos);
+  out   <- vector("list", n_geos);
 
   # loop through geos
   for(i in seq_along(cp_list)) {
@@ -385,6 +385,10 @@ condPois_2stage <- function(exposure_matrix,
     #
     this_geo <- unique_geos[i, get(outcome_columns$geo_unit)]
     this_geo_grp <- unique_geos[i, get(outcome_columns$geo_unit_grp)]
+
+    if(verbose > 1) {
+      cat(this_geo, '\t')
+    }
 
     # get x
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
@@ -397,7 +401,7 @@ condPois_2stage <- function(exposure_matrix,
                                xcoef = blup_geo[[i]]$blup,
                                xvcov = blup_geo[[i]]$vcov,
                                global_cen = global_cen,
-                               cen = cp_list[[i]]$cr$cen,
+                               cen = cp_list[[i]]$cen,
                                this_exp = this_exp,
                                x_b = x_b)
 
@@ -419,10 +423,10 @@ condPois_2stage <- function(exposure_matrix,
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
     outcomes_vec = single_outcomes_tbl[, get(outcomes_col)]
-    stopifnot(sum(outcomes_vec) == sum(outc_list[[i]]))
+    stopifnot(identical(outcomes_vec, outc_list[[i]]))
 
     #
-    blup_out[[i]] <- list(
+    out[[i]] <- list(
       geo_unit = this_geo,
       basis_cen = blup_cp$basis_cen,
       exposure_col = exposure_col,
@@ -438,7 +442,7 @@ condPois_2stage <- function(exposure_matrix,
   }
 
   # set names
-  names(blup_out) <- unique_geos[, get(outcome_columns$geo_unit)]
+  names(out) <- unique_geos[, get(outcome_columns$geo_unit)]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -450,7 +454,7 @@ condPois_2stage <- function(exposure_matrix,
   # aka, in the recursive call to this function that happens above
   # you could modify this to also output the mixmeta object
   # but not clear that you need that
-  outlist = list(list(meta_fit = meta_fit, blup_out = blup_out,
+  outlist = list(list(meta_fit = meta_fit, out = out,
                       grp_plt = grp_plt))
   names(outlist) = "_"
   class(outlist) = 'condPois_2stage'
@@ -507,7 +511,7 @@ plot.condPois_2stage <- function(x, geo_unit,
   if(is.null(ylab)) ylab = "RR"
   if(is.null(title)) title = geo_unit
 
-  obj <- x$`_`$blup_out[[geo_unit]]
+  obj <- x$`_`$out[[geo_unit]]
 
   if(is.null(xlab)) xlab = obj$exposure_col
 
@@ -543,10 +547,10 @@ plot.condPois_2stage_list <- function(x, geo_unit,
 
   obj_l <- vector("list", length(names(x)))
   fct_lab <- x[[names(x)[1]]]$factor_col
-  exp_lab <- x[[names(x)[1]]]$"_"$blup_out[[geo_unit]]$exposure_col
+  exp_lab <- x[[names(x)[1]]]$"_"$out[[geo_unit]]$exposure_col
 
   for(i in seq_along(obj_l)) {
-    yy <- x[[names(x)[i]]]$"_"$blup_out[[geo_unit]]$RRdf
+    yy <- x[[names(x)[i]]]$"_"$out[[geo_unit]]$RRdf
     fct <- x[[names(x)[i]]]$factor_val
     yy[[fct_lab]] <- fct
     obj_l[[i]] <- yy
@@ -585,23 +589,23 @@ plot.condPois_2stage_list <- function(x, geo_unit,
 forest_plot.condPois_2stage <- function(x, exposure_val) {
 
   # get subset of X
-  n_geos <- length(x$`_`$blup_out)
+  n_geos <- length(x$`_`$out)
   plt_slice <- vector("list", n_geos)
-  exposure_col <- x$`_`$blup_out[[1]]$exposure_col
-  geo_unit_col <- names(x$`_`$blup_out[[1]]$RRdf)[1]
-  geo_unit_grp_col <- names(x$`_`$blup_out[[1]]$RRdf)[2]
+  exposure_col <- x$`_`$out[[1]]$exposure_col
+  geo_unit_col <- names(x$`_`$out[[1]]$RRdf)[1]
+  geo_unit_grp_col <- names(x$`_`$out[[1]]$RRdf)[2]
 
   for(i in 1:n_geos) {
-    rr <- which(x$`_`$blup_out[[i]]$RRdf[[exposure_col]] == exposure_val)
+    rr <- which(x$`_`$out[[i]]$RRdf[[exposure_col]] == exposure_val)
     if(length(rr) != 1) {
       stop(paste0("Exposure value '", exposure_val, "' not in the
                 exposure column, try values (with one decimal) between:",
-                  min(x$`_`$blup_out[[i]]$RRdf[[exposure_col]]),
+                  min(x$`_`$out[[i]]$RRdf[[exposure_col]]),
                   " and ",
-                  max(x$`_`$blup_out[[i]]$RRdf[[exposure_col]])))
+                  max(x$`_`$out[[i]]$RRdf[[exposure_col]])))
     }
 
-    plt_slice[[i]] <- x$`_`$blup_out[[i]]$RRdf[rr, ]
+    plt_slice[[i]] <- x$`_`$out[[i]]$RRdf[rr, ]
   }
 
   plt_slice <- do.call(rbind, plt_slice)
@@ -644,23 +648,23 @@ forest_plot.condPois_2stage <- function(x, exposure_val) {
 spatial_plot.condPois_2stage <- function(x, shp, exposure_val,
                                          RRlimits = NULL) {
 
-  n_geos <- length(x$`_`$blup_out)
+  n_geos <- length(x$`_`$out)
   plt_slice <- vector("list", n_geos)
-  exposure_col <- x$`_`$blup_out[[1]]$exposure_col
-  geo_unit_col <- names(x$`_`$blup_out[[1]]$RRdf)[1]
-  geo_unit_grp_col <- names(x$`_`$blup_out[[1]]$RRdf)[2]
+  exposure_col <- x$`_`$out[[1]]$exposure_col
+  geo_unit_col <- names(x$`_`$out[[1]]$RRdf)[1]
+  geo_unit_grp_col <- names(x$`_`$out[[1]]$RRdf)[2]
 
   for(i in 1:n_geos) {
-    rr <- which(x$`_`$blup_out[[i]]$RRdf[[exposure_col]] == exposure_val)
+    rr <- which(x$`_`$out[[i]]$RRdf[[exposure_col]] == exposure_val)
     if(length(rr) != 1) {
       stop(paste0("Exposure value '", this_x, "' not in the
                   exposure column, try values (with one decimal) between:",
-                  min(x$`_`$blup_out[[i]]$RRdf[[exposure_col]]),
+                  min(x$`_`$out[[i]]$RRdf[[exposure_col]]),
                   " and ",
-                  max(x$`_`$blup_out[[i]]$RRdf[[exposure_col]])))
+                  max(x$`_`$out[[i]]$RRdf[[exposure_col]])))
     }
 
-    plt_slice[[i]] <- x$`_`$blup_out[[i]]$RRdf[rr, ]
+    plt_slice[[i]] <- x$`_`$out[[i]]$RRdf[rr, ]
   }
 
   plt_slice <- do.call(rbind, plt_slice)
@@ -712,7 +716,7 @@ spatial_plot.condPois_2stage_list <- function(x, shp, exposure_val) {
 
   for(i in 1:length(names(x))) {
 
-    yy <- x[[names(x)[i]]]$`_`$blup_out
+    yy <- x[[names(x)[i]]]$`_`$out
 
     n_geos <- length(yy)
     plt_slice <- vector("list", n_geos)
@@ -772,7 +776,7 @@ forest_plot.condPois_2stage_list <- function(x, exposure_val) {
   fct_lab <- x[[names(x)[1]]]$factor_col
 
   for(i in 1:length(names(x))) {
-    yy <- x[[names(x)[i]]]$"_"$blup_out
+    yy <- x[[names(x)[i]]]$"_"$out
     n_geos <- length(yy)
     plt_slice <- vector("list", n_geos)
     fct <- x[[names(x)[i]]]$factor_val

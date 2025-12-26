@@ -19,7 +19,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   ## Check 1 -- that both inputs are the right class of variables
   stopifnot(class(model) %in%
-              c('condPois_2stage', 'condPois_2stage_list',
+              c('condPois_1stage', 'condPois_1stage_list',
+                'condPois_2stage', 'condPois_2stage_list',
                 'condPois_bayes',  'condPois_bayes_list'))
 
   stopifnot("outcome" %in% class(outcomes_tbl))
@@ -34,7 +35,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) &
-     class(model) %in% c("condPois_2stage_list")) {
+     grepl("_list", class(model))) {
 
     factor_col <- attributes(outcomes_tbl)$column_mapping$factor
 
@@ -50,7 +51,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
       # model subset
       sub_model <- model[[ unique_fcts[fct_i] ]]
-      stopifnot(class(sub_model) == 'condPois_2stage')
+      stopifnot(class(sub_model) %in% c('condPois_1stage', 'condPois_2stage',
+                                        'condPois_sb'))
       stopifnot("_" %in% names(sub_model))
 
       # outcomes subset
@@ -124,11 +126,12 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   x <- model$`_`
 
   # get the blup object
-  n_geo_units <- length(x$blup_out)
+  n_geo_units <- length(x$out)
+  stopifnot(n_geo_units >= 1)
   AN <- vector("list", n_geo_units)
 
   #
-  exposure_col     <- x$blup_out[[1]]$exposure_col
+  exposure_col     <- x$out[[1]]$exposure_col
 
   for(i in 1:n_geo_units) {
 
@@ -137,14 +140,14 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     }
 
     # things you need
-    this_geo   <- x$blup_out[[i]]$geo_unit
-    basis_cen  <- x$blup_out[[i]]$basis_cen
-    xcoef      <- x$blup_out[[i]]$coef
-    xvcov      <- x$blup_out[[i]]$vcov
-    outcomes   <- x$blup_out[[i]]$outcomes
-    this_exp   <- x$blup_out[[i]]$this_exp
-    cen        <- x$blup_out[[i]]$cen
-    global_cen <- x$blup_out[[i]]$global_cen
+    this_geo   <- x$out[[i]]$geo_unit
+    basis_cen  <- x$out[[i]]$basis_cen
+    xcoef      <- x$out[[i]]$coef
+    xvcov      <- x$out[[i]]$vcov
+    outcomes   <- x$out[[i]]$outcomes
+    this_exp   <- x$out[[i]]$this_exp
+    cen        <- x$out[[i]]$cen
+    global_cen <- x$out[[i]]$global_cen
 
     # and the outcome database, which should match
     rr <- which(outcomes_tbl[, get(geo_unit_col)] == this_geo)

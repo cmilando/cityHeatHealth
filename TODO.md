@@ -33,18 +33,6 @@ if you want more granularity than a 1 stage, but the data aren't strong enough t
 
 
 ============================================
-## Implement factor for `condPois_1stage_list`
-============================================
-
-* 
-
-============================================
-## Attributable number for `condPois_1stage` and `condPois_1stage_list`
-============================================
-
-* 
-
-============================================
 ## mixmeta blup update from Gasp
 ============================================
 

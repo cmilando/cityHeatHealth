@@ -259,11 +259,11 @@ And plot the relative risk
 ```{r single_plot, fig.height=3, fig.width=5}
 plot(m1)
 ```
-### Multi-zone DLNM (using `cityHeatHealth` functions in `R`)
+### Multi-zone DLNM 
 
 You can also easily extend to a 1 stage multi-zone case. You don't need to include population offset because within the geo_unit:year:month:dow strata the populations don't change (one of the benefits of the conditional poisson setup -- you would need to include a population offset if you were doing a time-series design).
 
-```{r single_zone2}
+```{r single_zone2b}
 # create exposure matrix
 exposure_columns <- list(
   "date" = "date",
@@ -293,45 +293,7 @@ m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 ```
 
 And plot - notice the tighter confidence interval
-```{r single_plot2, fig.height=3, fig.width=5}
-plot(m2)
-```
-
-### Multi-zone DLNM (using `cityHeatHealth` functions in `R`)
-
-You can also easily extend to a 1 stage multi-zone case. You don't need to include population offset because within the geo_unit:year:month:dow strata the populations don't change (one of the benefits of the conditional poisson setup -- you would need to include a population offset if you were doing a time-series design).
-
-```{r single_zone2}
-# create exposure matrix
-exposure_columns <- list(
-  "date" = "date",
-  "exposure" = "tmax_C",
-  "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20"
-)
-middlesex_exposure <- subset(ma_exposure, COUNTY20 == 'MIDDLESEX')
-middlesex_exposure_mat <- make_exposure_matrix(middlesex_exposure, exposure_columns)
-
-# create outcome table
-outcome_columns <- list(
-  "date" = "date",
-  "outcome" = "daily_deaths",
-  "factor" = 'age_grp',
-  "factor" = 'sex',
-  "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20"
-)
-middlesex_deaths   <- subset(ma_deaths, COUNTY20 == 'MIDDLESEX')
-middlesex_deaths_tbl <- make_outcome_table(middlesex_deaths,  outcome_columns)
-
-# run the model
-m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
-                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
-
-```
-
-And plot - notice the tighter confidence interval
-```{r single_plot2, fig.height=3, fig.width=5}
+```{r single_plot2b, fig.height=3, fig.width=5}
 plot(m2)
 ```
 

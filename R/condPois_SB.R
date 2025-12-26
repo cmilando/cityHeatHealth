@@ -480,7 +480,7 @@ condPois_sb <- function(exposure_matrix,
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
   outcomes_col <- attributes(outcomes_tbl)$column_mapping$outcome
 
-  blup_out   <- vector("list", n_geos);
+  out   <- vector("list", n_geos);
 
   # loop through geos
   for(i in 1:n_geos) {
@@ -521,7 +521,7 @@ condPois_sb <- function(exposure_matrix,
     stopifnot(sum(outcomes_vec) == sum(outc_list[[i]]))
 
     #
-    blup_out[[i]] <- list(
+    out[[i]] <- list(
       geo_unit = this_geo,
       basis_cen = blup_cp$basis_cen,
       exposure_col = exposure_col,
@@ -537,7 +537,7 @@ condPois_sb <- function(exposure_matrix,
   }
 
   # set names
-  names(blup_out) <- unique_geos[, get(outcome_columns$geo_unit)]
+  names(out) <- unique_geos[, get(outcome_columns$geo_unit)]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -549,7 +549,7 @@ condPois_sb <- function(exposure_matrix,
   # aka, in the recursive call to this function that happens above
   # you could modify this to also output the mixmeta object
   # but not clear that you need that
-  outlist = list(list(meta_fit = meta_fit, blup_out = blup_out,
+  outlist = list(list(meta_fit = meta_fit, out = out,
                       grp_plt = grp_plt))
   names(outlist) = "_"
   class(outlist) = 'condPois_sb'
@@ -606,7 +606,7 @@ plot.condPois_sb <- function(x, geo_unit,
   if(is.null(ylab)) ylab = "RR"
   if(is.null(title)) title = geo_unit
 
-  obj <- x$`_`$blup_out[[geo_unit]]
+  obj <- x$`_`$out[[geo_unit]]
 
   if(is.null(xlab)) xlab = obj$exposure_col
 
@@ -641,10 +641,10 @@ plot.condPois_sb_list <- function(x, geo_unit,
 
   obj_l <- vector("list", length(names(x)))
   fct_lab <- x[[names(x)[1]]]$factor_col
-  exp_lab <- x[[names(x)[1]]]$"_"$blup_out[[geo_unit]]$exposure_col
+  exp_lab <- x[[names(x)[1]]]$"_"$out[[geo_unit]]$exposure_col
 
   for(i in seq_along(obj_l)) {
-    yy <- x[[names(x)[i]]]$"_"$blup_out[[geo_unit]]$RRdf
+    yy <- x[[names(x)[i]]]$"_"$out[[geo_unit]]$RRdf
     fct <- x[[names(x)[i]]]$factor_val
     yy[[fct_lab]] <- fct
     obj_l[[i]] <- yy
