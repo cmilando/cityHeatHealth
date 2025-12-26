@@ -163,39 +163,19 @@ plot(ma_AN, table_type = 'rate', above_MMT = F)
 ### Estimating the AN - single
 
 check of single
-```{r checkSingle1}
-
-# create exposure matrix
-exposure_columns <- list(
-  "date" = "date",
-  "exposure" = "tmax_C",
-  "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20"
-)
-middlesex_exposure <- subset(ma_exposure, COUNTY20 == 'MIDDLESEX')
-middlesex_exposure_mat <- make_exposure_matrix(middlesex_exposure, exposure_columns)
-
-# create outcome table
-outcome_columns <- list(
-  "date" = "date",
-  "outcome" = "daily_deaths",
-  "factor" = 'age_grp',
-  "factor" = 'sex',
-  "geo_unit" = "TOWN20",
-  "geo_unit_grp" = "COUNTY20"
-)
-middlesex_deaths   <- subset(ma_deaths, COUNTY20 == 'MIDDLESEX')
-middlesex_deaths_tbl <- make_outcome_table(middlesex_deaths,  outcome_columns)
+```{r checkSingle1, fig.height=3, fig.width=8}
 
 # run the model
-m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
-                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
+m2 <- condPois_1stage(exposure_matrix = ma_exposure_matrix, 
+                  outcomes_tbl = ma_outcomes_tbl, 
+                  multi_zone = TRUE)
 
-ma_AN_s1 <- calc_AN(m2, middlesex_deaths_tbl, ma_pop_data_long,
+ma_AN_s1 <- calc_AN(m2, ma_outcomes_tbl, ma_pop_data_long,
                  agg_type = 'COUNTY20', 
                  join_cols = 'TOWN20', 
                  nsim = 100,
                  verbose = 2)
+
 ma_AN_s1$`_`$rate_table
 plot(ma_AN_s1, "num", above_MMT = T)
 
