@@ -214,6 +214,12 @@ condPois_2stage <- function(exposure_matrix,
     # get the named list object
     cp_list[[i]] <- d1$`_`$out[[this_geo]]
 
+    # remove cb and basis_cen for space
+    # thos are only needed for sb testing and AN calc
+    cp_list[[i]]$orig_basis <- NULL
+    cp_list[[i]]$basis_cen <- NULL
+
+
     # get coef and vcov
     coef_list[[i]] <- coef(cp_list[[i]]$cr)
     vcov_list[[i]] <- vcov(cp_list[[i]]$cr)

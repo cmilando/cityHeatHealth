@@ -130,16 +130,15 @@ transformed parameters {
   // THIS CAN'T BE VEcTORIZED FURTHER BEcUASE OF
   // HOW 3D ARRAYS ARE STORED
   // But you can pre-computed it
+  // from Armstrong 2014, equation (4)
+  // theta = exp(X*beta) / sum( exp(X*beta) for all strata)
+  // first get get the numerator: exp(X*beta)
+  // ok so X is N x K, and beta is K x 1
+  // so this turns into N x 1
+  // UPDATE added block to keep exp(inf) or exp(-info)
+  // UPDATE to the UPDATE: that block messes things up ... so don't do it
   matrix[N, J] xBeta;
   for(j in 1:J) {
-    // from Armstrong 2014, equation (4)
-    // theta = exp(X*beta) / sum( exp(X*beta) for all strata)
-
-    // first get get the numerator:
-    // ok so X is N x K, and beta is K x 1
-    // so this turns into N x 1
-    // UPDATE added block to keep exp(inf) or exp(-info)
-    // UPDATE to the UPDATE: that block messes things up ... so don't do it
     xBeta[,j] = exp(to_matrix(X[,,j]) * beta[,j]);
   }
 

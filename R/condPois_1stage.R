@@ -273,13 +273,17 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     single_exposure_matrix = exposure_matrix[rr, ,drop = FALSE]
     this_exp <- single_exposure_matrix[, get(exposure_col)]
     x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
+    this_exp_mean = mean(single_exposure_matrix[, get(exposure_col)])
+    this_exp_IQR = IQR(single_exposure_matrix[, get(exposure_col)])
 
+    # this cities cb
+    rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
+    this_cb <- cb[rr, ]
+
+    # this cities outcome
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
     outcomes <- single_outcomes_tbl[, get(outcome_col)]
-
-    this_exp_mean = mean(single_exposure_matrix[, get(exposure_col)])
-    this_exp_IQR = IQR(single_exposure_matrix[, get(exposure_col)])
 
     # and get centered
     basis1z <- get_centered_cp(argvar = argvar,
@@ -294,6 +298,10 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     oo_list[[i]] <- list(geo_unit = this_geo,     ## individual
                geo_unit_grp = this_geo_grp,       ## individual
                basis_cen = basis1z$basis_cen,
+               strata_vec = single_outcomes_tbl$strata,
+               orig_basis = this_cb,
+               orig_coef = m_coef,
+               orig_vcov = m_vcov,
                cr = cr,                           ## whole group
                coef = coef(cr),                ## whole group
                vcov = vcov(cr),                ## whole group

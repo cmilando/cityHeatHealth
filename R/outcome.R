@@ -45,6 +45,21 @@ make_outcome_table <- function(data,
     stop("some outcomes < 0, investigate")
   }
 
+  if(any(is.na(data))) {
+    warning("check about any NA")
+  }
+
+  #
+  # type checks
+  stopifnot(
+    inherits(data[[column_mapping$date]], "Date"),
+    is.integer(data[[column_mapping$outcome]]),
+    is.character(data[[column_mapping$geo_unit]]),
+    is.character(data[[column_mapping$geo_unit_grp]]),
+    is.character(data[[column_mapping$factor]])
+  )
+
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' COLLAPSE AND SUMMARIZE
@@ -85,6 +100,9 @@ make_outcome_table <- function(data,
       )
 
     } else {
+
+      warning("make type checks  (e.g., so Date == Date),
+         for some reason this doesn't work in some cases? but ok in others?")
 
       data <- data[,.(
         xoutcome = sum(get(outcome_col))
@@ -130,6 +148,9 @@ make_outcome_table <- function(data,
         "factor" = collapse_to
       )
     } else {
+
+      warning("make type checks  (e.g., so Date == Date),
+         for some reason this doesn't work in some cases? but ok in others?")
 
       data <- data[,.(
         xoutcome = sum(get(outcome_col))
