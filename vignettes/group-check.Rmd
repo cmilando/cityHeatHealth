@@ -1,0 +1,59 @@
+---
+title: "group-check"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{group-check}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+```{r test}
+data("ma_exposure")
+data("ma_deaths")
+
+# create exposure matrix
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+TOWNLIST <- c('CHELSEA', 'EVERETT', 'REVERE', 'MALDEN')
+
+exposure <- subset(ma_exposure, TOWN20 %in%  TOWNLIST)
+summary(exposure)
+
+exposure_mat <- make_exposure_matrix(exposure, exposure_columns, 
+                                     grp_level = T)
+
+exposure_mat
+
+# create outcome table
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+deaths   <- subset(ma_deaths, TOWN20 %in%  TOWNLIST)
+deaths_tbl <- make_outcome_table(deaths,  outcome_columns, 
+                                 grp_level = T)
+deaths_tbl
+
+#
+stopifnot(identical(deaths_tbl$date, exposure_mat$date ))
+```

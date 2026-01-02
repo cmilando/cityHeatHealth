@@ -25,6 +25,9 @@ make_outcome_table <- function(data,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
+  ##
+  setDT(data)
+
   # column types
   col_types <- c('date', 'factor', 'outcome', 'geo_unit', 'geo_unit_grp')
 
@@ -38,6 +41,14 @@ make_outcome_table <- function(data,
     stop('Values of column mapping not matched with column names of data.
           Look for a typo')
 
+  # type checks
+  stopifnot(
+    inherits(data[[column_mapping$date]], "Date"),
+    is.integer(data[[column_mapping$outcome]]),
+    is.character(data[[column_mapping$geo_unit]]),
+    is.character(data[[column_mapping$geo_unit_grp]]),
+    is.character(data[[column_mapping$factor]])
+  )
 
   # at the beginning there shouldn't be any outcomes < 0
   outcome_col <- column_mapping$outcome
@@ -49,25 +60,11 @@ make_outcome_table <- function(data,
     warning("check about any NA")
   }
 
-  #
-  # type checks
-  stopifnot(
-    inherits(data[[column_mapping$date]], "Date"),
-    is.integer(data[[column_mapping$outcome]]),
-    is.character(data[[column_mapping$geo_unit]]),
-    is.character(data[[column_mapping$geo_unit_grp]]),
-    is.character(data[[column_mapping$factor]])
-  )
-
-
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' COLLAPSE AND SUMMARIZE
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
-
-  ##
-  setDT(data)
 
   # **************
   ## first collapse to by summing
@@ -176,6 +173,14 @@ make_outcome_table <- function(data,
     }
   }
 
+  # overwrite date
+  data[, (column_mapping$date) :=
+         as.Date(
+           as.integer(get(column_mapping$date)),
+           origin = "1970-01-01"
+         )
+  ]
+
   geo_unit_col = column_mapping$geo_unit
   geo_unit_grp_col = column_mapping$geo_unit_grp
 
@@ -243,7 +248,7 @@ make_outcome_table <- function(data,
   date_col <- column_mapping$date
   setorderv(
     xgrid_comb,
-    c(join_col, date_col)
+    c(date_col, join_col)
   )
 
   # set the class as an exposure

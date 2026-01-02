@@ -26,6 +26,9 @@ make_exposure_matrix <- function(data, column_mapping,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
+  #
+  setDT(data)
+
   # validation block
   # set some arbitrary limits on these but users could always make a local
   # copy and override if they really want to
@@ -62,6 +65,13 @@ make_exposure_matrix <- function(data, column_mapping,
     is.character(data[[column_mapping$geo_unit_grp]])
   )
 
+  # overwrite date
+  data[, (column_mapping$date) :=
+         as.Date(
+           as.integer(get(column_mapping$date)),
+           origin = "1970-01-01"
+         )
+  ]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -170,8 +180,15 @@ make_exposure_matrix <- function(data, column_mapping,
     names(exposure2)[1:2] <- c(column_mapping$geo_unit_grp, column_mapping$date)
 
     # and make the dates ok again
-    warning("make type checks  (e.g., so Date == Date),
-         for some reason this doesn't work in some cases? but ok in others?")
+    # warning("make type checks  (e.g., so Date == Date),
+    #      for some reason this doesn't work in some cases? but ok in others?")
+
+    exposure2[, (column_mapping$date) :=
+           as.Date(
+             as.integer(get(column_mapping$date)),
+             origin = "1970-01-01"
+           )
+    ]
 
     # then in order to set up lags you need to split again
     exposure2_l <- split(exposure2, f = exposure2[, get(geo_grp_col)])
