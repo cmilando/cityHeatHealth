@@ -192,3 +192,9 @@ mx
 
 m_sb3$`_`$beta_mat
 ```
+
+And you can also see that the leroux `q` value is quite high
+
+```{r getQ}
+subset(m_sb3$`_`$stan_summary, variable == 'q')
+```

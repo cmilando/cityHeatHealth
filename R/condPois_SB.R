@@ -383,7 +383,11 @@ condPois_sb <- function(exposure_matrix,
       bym2_sigma = 0.5,
       bym2_rho = 0.5,
       bym2_theta = rep(0, J),
-      bym2_phi = rep(0, J)
+      bym2_phi = rep(0, J),
+      mu = rep(0, K),
+      sigma = rep(1.0, K),
+      q = 0.5,
+      bstar = matrix(0, K, J)
     )
   }
 
@@ -437,9 +441,7 @@ condPois_sb <- function(exposure_matrix,
 
     mcmc_array <- fit_mcmc$draws()
 
-    if(verbose > 1) {
-      print(mcmc_array$summary())
-    }
+    stan_summary <- mcmc_array$summary()
 
     out_df <- posterior::as_draws_df(mcmc_array)
   }
@@ -466,9 +468,7 @@ condPois_sb <- function(exposure_matrix,
 
     laplace_array <- fit_laplace$draws()
 
-    if(verbose > 1) {
-      print(fit_laplace$summary())
-    }
+    stan_summary <- fit_laplace$summary()
 
     out_df <- posterior::as_draws_df(laplace_array)
   }
@@ -484,9 +484,9 @@ condPois_sb <- function(exposure_matrix,
   beta_mat <- matrix(beta_reg_all, nrow = K, ncol = J, byrow = F)
   colnames(beta_mat) = geo_units_in_order
 
-  # ****************
+  # ***********************
   # **** VCOV and CR ******
-  # ****************
+  # ***********************
 
   # so this gives you the coef
   # but then you also need to get VCOV
@@ -658,7 +658,8 @@ condPois_sb <- function(exposure_matrix,
   # aka, in the recursive call to this function that happens above
   # you could modify this to also output the mixmeta object
   # but not clear that you need that
-  outlist = list(list(out = out, beta_mat = beta_mat))
+  outlist = list(list(out = out, beta_mat = beta_mat,
+                      stan_summary = stan_summary))
   names(outlist) = "_"
   class(outlist) = 'condPois_sb'
 
