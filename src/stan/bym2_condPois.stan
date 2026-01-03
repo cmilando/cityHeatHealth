@@ -7,7 +7,7 @@ data {
   int<lower=1> K;               // Number of model coefficients, NO intercept
   array[N, K, J] real X;        // matrix of model parameters, NO intercept
   array[N, J] int<lower=0> y;   // outcomes
-  
+
   // Now for the strata,  you need some way to signal which rows
   // are in the strata and subset to those
   // -- might be easy just to do a matrix multiplication but with 1s and 0s
@@ -16,18 +16,18 @@ data {
   int<lower=1> max_in_strata;
   array[n_strata, max_in_strata] int S_condensed;
   array[N] int<lower=0> stratum_id;
-  
+
   // BYM2 adjacency info
   int<lower=0> N_edges;
   array[N_edges] int<lower=1, upper=J> node1; // node1[i] adjacent to node2[i]
   array[N_edges] int<lower=1, upper=J> node2; // and node1[i] < node2[i]
-  
+
   real<lower=0> scaling_factor; // scales the variance of the spatial effects
 }
 
 transformed data {
-  
-  
+
+
    // -------------------------------
    // https://mc-stan.org/docs/2_21/stan-users-guide/ragged-data-structs-section.html
    // first get all the strata, which include some spurious 0s
@@ -36,7 +36,7 @@ transformed data {
    // -------------------------------
 
   array[n_strata] int strata_len;
-  
+
   for(n in 1:n_strata) {
 
        int k_not_zero = 0;
@@ -45,7 +45,7 @@ transformed data {
        }
       strata_len[n] = k_not_zero;
   }
-  
+
 
   // -------------------------------
   // Re-mapping X into arrays, this actually makes things
@@ -64,27 +64,27 @@ transformed data {
 }
 
 parameters {
-  
-  matrix[K, J] beta;  // attribute effects 
-  
+
+  matrix[K, J] beta;  // attribute effects
+
   // BYM2 components
   // from https://github.com/stan-dev/example-models/blob/master/knitr/car-iar-poisson/bym2_predictor_plus_offset.stan
   real<lower=0> bym2_sigma; // overall standard deviation
   real<lower=0, upper=1> bym2_rho; // proportion unstructured vs. spatially structured variance
-  
+
   vector[J] bym2_theta; // heterogeneous effects
   vector[J] bym2_phi; // spatial effects
-  
+
 
 }
 
 transformed parameters {
-  
+
   // variance of each component should be approximately equal to 1
 
   vector[J] convolved_re;
   convolved_re = sqrt(1 - bym2_rho) * bym2_theta + sqrt(bym2_rho / scaling_factor) * bym2_phi;
-  
+
   vector[J] u;
   u = convolved_re * bym2_sigma;
 
@@ -103,16 +103,16 @@ model {
   // See BYM2 ref above
   // This is the prior for phi! (up to proportionality)
   target += -0.5 * dot_self(bym2_phi[node1] - bym2_phi[node2]);
-  
+
   // soft sum-to-zero constraint on phi)
   sum(bym2_phi) ~ normal(0, 0.001 * J); // equivalent to mean(phi) ~ normal(0,0.001)
-  
+
 
   bym2_theta ~ normal(0.0, 1.0);
   bym2_sigma ~ normal(0, 5);
-  bym2_rho ~ beta(0.5, 0.5);                 
+  bym2_rho ~ beta(0.5, 0.5);
 
-  
+
   // -------------------------------
   // LIKELIHOOD (softmax-style)
   // -------------------------------

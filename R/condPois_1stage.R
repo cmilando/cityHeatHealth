@@ -279,7 +279,10 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     # this cities cb, with attributes!
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
     this_cb <- cb[rr, ]
-    attributes(this_cb) = attributes(cb)
+    cb_att <- attributes(cb)
+    # reset-dim
+    cb_att$dim = dim(this_cb)
+    attributes(this_cb) = cb_att
 
     # this cities outcome
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo

@@ -319,7 +319,7 @@ condPois_sb <- function(exposure_matrix,
 
   exp_geo_unit_col <- exposure_columns$geo_unit
 
-  geo_units_in_order <- unique(exposure[, get(exp_geo_unit_col)])
+  geo_units_in_order <- unique(exposure_matrix[, get(exp_geo_unit_col)])
 
   stopifnot(exp_geo_unit_col %in% names(shp_sf))
 
@@ -377,7 +377,8 @@ condPois_sb <- function(exposure_matrix,
     )
   }
 
-  #
+  # from here: https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758
+  # says you can use instantiate
   if(use_spatial_model) {
     mod <- instantiate::stan_package_model("spatial_condPois","cityHeatHealth")
   } else {
@@ -389,11 +390,20 @@ condPois_sb <- function(exposure_matrix,
   # **** RUN STAN ***
   # ****************
   if(stan_type == 'mcmc') {
-    fit_mcmc <- mod$sample(data = stan_data,
-                           chains = 2,
-                           parallel_chains = 2,
-                           refresh = 100,
-                           init = init_fun)
+
+    default_stan_opts <- list(
+      chains = 2,
+      parallel_chains = 2,
+      refresh = 100,
+      init = init_fun
+    )
+
+    stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
+
+    fit_mcmc <- do.call(
+      mod$sample,
+      c(list(data = stan_data), stan_opts)
+    )
 
     mcmc_array <- fit_mcmc$draws()
 
@@ -402,10 +412,20 @@ condPois_sb <- function(exposure_matrix,
 
 
   if(stan_type == 'laplace') {
-    fit_mode <- mod$optimize(data = stan_data,
-                             init = init_fun,
-                             jacobian = TRUE,
-                             iter = 1e4)
+
+    default_stan_opts <- list(
+      init = init_fun,
+      jacobian = TRUE,
+      iter = 1e4
+    )
+
+    stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
+
+    fit_mode <- do.call(
+      mod$optimize,
+      c(list(data = stan_data), stan_opts)
+    )
+
 
     fit_laplace <- mod$laplace(data = stan_data,
                                mode = fit_mode)
@@ -424,6 +444,7 @@ condPois_sb <- function(exposure_matrix,
   beta_reg_all <- out_df[, .SD, .SDcols = patterns("^beta")]
   beta_reg_all <- apply(beta_reg_all, 2, mean)
   beta_mat <- matrix(beta_reg_all, nrow = K, ncol = J, byrow = F)
+  colnames(beta_mat) = geo_units_in_order
 
   # ****************
   # **** VCOV and CR ******
