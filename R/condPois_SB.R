@@ -5,6 +5,7 @@
 #' @param exposure_matrix a matrix of exposures, with columns for lag, usually created by `make_exposure_matrix`
 #' @param outcomes_tbl a data.table of outcomes, created by `make_outcome_table`
 #' @param shp_sf a shapefile object describing the geo_units
+#' @param stan_type a choice of either laplace or sample
 #' @param stan_opts a list of parameters to send to stan
 #' @param verbose whether to print geo_units as they are run
 #' @param global_cen a global centering point
@@ -19,7 +20,6 @@
 #' @importFrom dlnm crosspred
 #' @import data.table
 #' @import spdep
-#' @import rstan
 #' @import sf
 #' @returns
 #' @export
@@ -28,7 +28,9 @@
 condPois_sb <- function(exposure_matrix,
                         outcomes_tbl,
                         shp_sf,
-                        stan_opts,
+                        stan_type = 'laplace',
+                        use_spatial_model = T,
+                        stan_opts = NULL,
                         global_cen = NULL,
                         argvar = NULL,
                         arglag = NULL,
@@ -37,10 +39,34 @@ condPois_sb <- function(exposure_matrix,
                         strata_min = 0,
                         verbose = 0) {
 
+  # 1. Is the R package installed?
+  if (!requireNamespace("cmdstanr", quietly = TRUE)) {
+    stop(
+      "The 'cmdstanr' package is required but not installed.\n",
+      "Install it with:\n",
+      "  install.packages('cmdstanr', repos = c('https://stan-dev.r-universe.dev', getOption('repos')))",
+      call. = FALSE
+    )
+  }
+
+  # 2. Is CmdStan installed?
+  ver <- cmdstanr::cmdstan_version(error_on_NA = FALSE)
+
+  if (is.na(ver)) {
+    stop(
+      "CmdStan is not installed.\n",
+      "Install it with:\n",
+      "  cmdstanr::install_cmdstan()",
+      call. = FALSE
+    )
+  }
 
   ## Check 1 -- that both inputs are the right class of variables
   stopifnot("exposure" %in% class(exposure_matrix))
   stopifnot("outcome" %in% class(outcomes_tbl))
+
+  #
+  stopifnot(stan_type %in% c('laplace', 'mcmc'))
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -145,6 +171,8 @@ condPois_sb <- function(exposure_matrix,
     stopifnot(is.numeric(global_cen))
   }
 
+
+
   if(verbose > 0) {
     cat("-- validation passed\n")
   }
@@ -207,16 +235,18 @@ condPois_sb <- function(exposure_matrix,
                                     maxlag = maxlag, min_n = 1,
                                     strata_min = 0)
 
+    local_cp <- local_cp$`_`$out[[1]]
+
     blup_cp <- get_centered_cp(argvar = local_cp$argvar,
-                               xcoef = local_cp$cr_coef,
-                               xvcov = local_cp$cr_vcov,
+                               xcoef = local_cp$coef,
+                               xvcov = local_cp$vcov,
                                global_cen = global_cen,
                                cen = local_cp$cen,
                                this_exp = this_exp,
                                x_b = x_b)
 
     # get cb and outcomes lists
-    coef_list[[i]]   <- local_cp$cr_coef
+    coef_list[[i]]   <- local_cp$coef
     cb_list[[i]]     <- blup_cp$basis_cen
     outc_list[[i]]   <- single_outcomes_tbl
     cen_list[[i]]    <- local_cp$cen
@@ -251,31 +281,12 @@ condPois_sb <- function(exposure_matrix,
   X = array(dim = c(dim(cb_list[[1]]), J))
   for(j in 1:J) X[,,j] = as.matrix(cb_list[[j]])
 
-  # outcome in two regions
+  # outcome in J regions
   y = array(dim = c(n_l, J))
   for(j in 1:J) y[,j] = outc_list[[j]][, get(outcome_columns$outcome)]
 
   # create S matrix
-  getSmat <- function(strata_vector, include_self = T) {
-
-    # strata_vector <- data$stratum
-    strata_matrix <- matrix(as.integer(strata_vector),
-                            nrow = length(strata_vector),
-                            ncol = length(strata_vector),
-                            byrow = T)
-
-    for(i in 1:length(strata_vector)) {
-      strata_matrix[i, ] = 1*(strata_matrix[i, ] == as.integer(strata_vector[i]))
-      if(!include_self) {
-        strata_matrix[i, i] = 0
-      }
-    }
-
-    return(strata_matrix)
-  }
-
-  #
-  S <- getSmat(factor(outc_list[[1]]$strata), include_self = T)
+  S <- getSmat(factor(outc_list[[1]]$strata))
   stopifnot(any(S == 1))
 
   # get strata vars
@@ -297,59 +308,34 @@ condPois_sb <- function(exposure_matrix,
   stratum_id = as.integer(factor(outc_list[[1]]$strata))
   stratum_id
 
-  ## *** THIS BECOMES THE J MATRIX
-  # ok now do the same as include self but with J matrix
-  # start simple and you can generalize later
-  # this is an adjacency matrix that DOES NOT include itself
-  # shp_sf <- read_sf(shp)
+  #' ////////////////////////////////////////////////////////////////////////////
+  #' ============================================================================
+  #' Get graph, has to make sure the shp is in the right order!
+  #' ============================================================================
+  #' #' /////////////////////////////////////////////////////////////////////////
 
-  shp_sf_safe <- subset(shp_sf, COUNTY20 %in% unique(outcomes_tbl$COUNTY20))
-  shp_sf_safe
-  # BUT YOU DON'T KNOW THE ORDER OF THEM .... ..... ..... .....
+  exp_geo_unit_col <- exposure_columns$geo_unit
 
-  shp_sf_safe <- shp_sf_safe[order(shp_sf_safe$COUNTY20), ]
-  stopifnot(identical(shp_sf_safe$COUNTY20, unique_geos$COUNTY20))
+  geo_units_in_order <- unique(exposure[, get(exp_geo_unit_col)])
 
-  # Generate a list of spatial structure from the shapefile
-  list_neig <- nb2listw(poly2nb(shp_sf_safe), zero.policy = TRUE)
-  stopifnot(all(dim(list_neig)))
+  stopifnot(exp_geo_unit_col %in% names(shp_sf))
 
+  rr <- sapply(geo_units_in_order, \(x) which(shp_sf[[exp_geo_unit_col]] == x))
+  stopifnot(length(rr) == J)
 
-  # 1st-order neighbors
-  nb1 <- poly2nb(shp_sf_safe)
+  shp_sf_safe <- shp_sf[rr, ]
 
-  # 2nd-order neighbors (neighbors of neighbors)
-  nb_lags <- nblag(nb1, 2)
+  nb_subset = poly2nb(shp_sf_safe);
+  nbs = nb2graph(nb_subset);
 
-  # nb_lags[[1]] = distance 1
-  # nb_lags[[2]] = distance 2
+  node1 = nbs$node1;
+  node2 = nbs$node2;
+  N_edges = nbs$N_edges;
+  scaling_factor = scale_nb_components(nb_subset)[1];
 
-  nb12 <- vector("list", n_geos)
-  for (i in seq_along(nb12)) {
-    nb12[[i]] <- list(n1 = nb_lags[[1]][[i]],
-                      n2 = nb_lags[[2]][[i]])
+  if(verbose > 0) {
+    cat("\n")
   }
-
-  nb12
-
-
-
-
-  neighbors <- lapply(list_neig$neighbours,c)
-  Jmat <- matrix(0, nrow = J, ncol = J)
-  if(j > 1) {
-    for(j in 1:J) {
-      print(j)
-      n1 = nb_lags[[1]][[j]]
-      n2 = nb_lags[[2]][[j]]
-      n1
-      n2
-
-      Jmat[j, n1] <- 1
-      Jmat[j, n2] <- 1
-    }
-  }
-  Jmat
 
   #' ////////////////////////////////////////////////////////////////////////////
   #' ============================================================================
@@ -361,83 +347,80 @@ condPois_sb <- function(exposure_matrix,
     cat("-- run STAN\n")
   }
 
-  # Note: Be REALLY careful about the data types here
   stan_data <- list(
-    J = as.integer(J),  # integer
-    Jmat = Jmat,        # matrix so you can do math on it
-    N = as.integer(N),
-    K = as.integer(K),
-    X = X,              # matrix so you can do math
+    J = J,
+    N = N,
+    K = K,
+    X = X,
     y = y,
-    S = S,              # matrix so you can do math on it
     n_strata = n_strata,
     max_in_strata = max_in_strata,
     S_condensed = S_condensed,
-    stratum_id = stratum_id
+    stratum_id = stratum_id,
+    N_edges = N_edges,
+    node1 = node1,
+    node2 = node2,
+    scaling_factor = scaling_factor
   )
 
-  # from here https://github.com/rok-cesnovar/misc/blob/master/democmdstanr/R/bernoulli.R
-  # and here https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758
-  stan_file <- system.file("stan", "SB_CondPoisson.stan",
-                           package = "cityHeatHealth")
 
-  mod <- cmdstanr::cmdstan_model(stan_file,
-                                 cpp_options = list(stan_threads = TRUE))
+  init_fun <- function() {
+    list(
+      beta = as.matrix(do.call(cbind, coef_list)),
+      bym2_sigma = 0.5,
+      bym2_rho = 0.5,
+      bym2_theta = rep(0, J),
+      bym2_phi = rep(0, J)
+    )
+  }
 
-  # (1) Variational
-  out2_var <- mod$variational(
-    data = stan_data,
-    iter = 10000,
-    refresh = 10,
-    threads = 2
-  )
+  #
+  if(use_spatial_model) {
+    mod <- instantiate::stan_package_model("spatial_condPois","cityHeatHealth")
+  } else {
+    mod <- instantiate::stan_package_model("condPois","cityHeatHealth")
+  }
 
-  # (2) LaPLACE
 
-  # MCMC -- Much longer, especially for things with lags
-  #         wait ..... can  you do this just on the crossreduce though ...
-  #         why do you need to do this on
-  out2_mcmc <- mod$sample(
-    data = stan_data,
-    chains = 2,
-    #iter_warmup = 3000,
-    #iter_sampling = 5000,
-    parallel_chains = 2,
-    threads_per_chain = 1,
-    refresh = 10,
-    #adapt_delta = 0.8,
-    #max_treedepth = 7 # .... ?
-  )
+  # ****************
+  # **** RUN STAN ***
+  # ****************
+  if(stan_type == 'mcmc') {
+    fit_mcmc <- mod$sample(data = stan_data,
+                           chains = 2,
+                           parallel_chains = 2,
+                           refresh = 100,
+                           init = init_fun)
 
-  # or another version here for mcmc
+    mcmc_array <- fit_mcmc$draws()
 
-  # or laplace i guess
+    out_df <- posterior::as_draws_df(mcmc_array)
+  }
 
+
+  if(stan_type == 'laplace') {
+    fit_mode <- mod$optimize(data = stan_data,
+                             init = init_fun,
+                             jacobian = TRUE,
+                             iter = 1e4)
+
+    fit_laplace <- mod$laplace(data = stan_data,
+                               mode = fit_mode)
+
+    laplace_array <- fit_laplace$draws()
+
+    out_df <- posterior::as_draws_df(laplace_array)
+  }
 
   # ****************
   # **** COEF ******
   # ****************
 
   # and then finally the draws etc
-  out2 <- out2_var
-  out2 <- out2_mcmc
-  out2_data <- posterior::as_draws_df(out2$draws())
-  setDT(out2_data)
-  beta_reg_all <- out2_data[, .SD, .SDcols = patterns("^beta_out")]
+  setDT(out_df)
+  beta_reg_all <- out_df[, .SD, .SDcols = patterns("^beta")]
   beta_reg_all <- apply(beta_reg_all, 2, mean)
   beta_mat <- matrix(beta_reg_all, nrow = K, ncol = J, byrow = F)
-
-  # with spatial smoothing
-  t(beta_mat)
-
-  # without spatial smoothing
-  do.call(rbind, coef_list)
-
-
-  # and using more threads? doesn't seem like comp is working hard rn
-  # but great progress! almost there :)
-
-  # and obv you have to compare to the non-SB data but this is pretty good
 
   # ****************
   # **** VCOV ******
@@ -445,25 +428,45 @@ condPois_sb <- function(exposure_matrix,
 
   # so this gives you the coef
   # but then you also need to get VCOV
-  # calc_vcov <- function(y, X, beta, stratum_vector)
-  # calc_dispersion <- function(y, X, beta, stratum_vector)
-  #
-  # dispersion <- calc_dispersion(y = boston_deaths_tbl$daily_deaths,
-  #                               X = cb,
-  #                               stratum_vector = boston_deaths_tbl$strata,
-  #                               beta = coef(m_sub))
-  #
-  # vcov_beta <- calc_vcov(y = boston_deaths_tbl$daily_deaths,
-  #                        X = cb,
-  #                        stratum_vector = boston_deaths_tbl$strata,
-  #                        beta = coef(m_sub))
-  #
-  # # update with the dipserion parameter
-  # t1 <- vcov_beta * dispersion
 
+  vcov_l <- vector("list", n_geos)
 
-  # xcoef = sb_geo[[i]]$coef
-  # xvcov = sb_geo[[i]]$vcov
+  outcomes_col <- attributes(outcomes_tbl)$column_mapping$outcome
+
+  for(ni in 1:n_geos) {
+
+    # get the name, which you know exists in both datasets
+    this_geo <- unique_geos[ni, get(outcome_columns$geo_unit)]
+
+    if(verbose > 1) {
+      cat(this_geo, '\t')
+    }
+
+    # this cities exposure matrix
+    rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
+    single_exposure_matrix = exposure_matrix[rr, ,drop = FALSE]
+    this_exp <- single_exposure_matrix[, get(exposure_columns$exposure)]
+    x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
+
+    rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
+    single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
+
+    dispersion <- calc_dispersion(y = single_outcomes_tbl[, get(outcomes_col)],
+                                  X = cb_list[[ni]],
+                                  stratum_vector = single_outcomes_tbl$strata,
+                                  beta = beta_mat[,ni])
+
+    vcov_beta <- calc_vcov(y = single_outcomes_tbl[, get(outcomes_col)],
+                           X = cb_list[[ni]],
+                           stratum_vector = single_outcomes_tbl$strata,
+                           beta = beta_mat[,ni])
+
+    vcov_l[[ni]] <- vcov_beta * dispersion
+  }
+
+  if(verbose > 0) {
+    cat("\n")
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -496,8 +499,8 @@ condPois_sb <- function(exposure_matrix,
 
     # get centered basis
     blup_cp <- get_centered_cp(argvar = argvar_list[[i]],
-                               xcoef = sb_geo[[i]]$coef,
-                               xvcov = sb_geo[[i]]$vcov,
+                               xcoef = beta_mat[,i],
+                               xvcov = vcov_l[[i]],
                                global_cen = global_cen,
                                cen = cen_list[[i]],
                                this_exp = this_exp,
@@ -518,7 +521,7 @@ condPois_sb <- function(exposure_matrix,
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
     outcomes_vec = single_outcomes_tbl[, get(outcomes_col)]
-    stopifnot(sum(outcomes_vec) == sum(outc_list[[i]]))
+    stopifnot(sum(outcomes_vec) == sum(outc_list[[i]][, get(outcomes_col)]))
 
     #
     out[[i]] <- list(
@@ -529,8 +532,8 @@ condPois_sb <- function(exposure_matrix,
       cen = blup_cp$cp$cen,
       global_cen = global_cen,
       outcomes = outc_list[[i]],
-      coef = sb_geo[[i]]$coef,
-      vcov = sb_geo[[i]]$vcov,
+      coef = beta_mat[,i],
+      vcov = vcov_l[[i]],
       RRdf = RRdf
     )
 
@@ -538,6 +541,10 @@ condPois_sb <- function(exposure_matrix,
 
   # set names
   names(out) <- unique_geos[, get(outcome_columns$geo_unit)]
+
+  if(verbose > 0) {
+    cat("\n")
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -549,8 +556,7 @@ condPois_sb <- function(exposure_matrix,
   # aka, in the recursive call to this function that happens above
   # you could modify this to also output the mixmeta object
   # but not clear that you need that
-  outlist = list(list(meta_fit = meta_fit, out = out,
-                      grp_plt = grp_plt))
+  outlist = list(list(out = out))
   names(outlist) = "_"
   class(outlist) = 'condPois_sb'
 
@@ -668,3 +674,253 @@ plot.condPois_sb_list <- function(x, geo_unit,
 
 }
 
+#'@export
+#' forest_plot.condPois_sb
+#'
+#' @param x an object of class condPois_sb
+#' @param exposure_val exposure value at which to plot
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+forest_plot.condPois_sb <- function(x, exposure_val) {
+
+  # get subset of X
+  n_geos <- length(x$`_`$out)
+  plt_slice <- vector("list", n_geos)
+  exposure_col <- x$`_`$out[[1]]$exposure_col
+  geo_unit_col <- names(x$`_`$out[[1]]$RRdf)[1]
+  geo_unit_grp_col <- names(x$`_`$out[[1]]$RRdf)[2]
+
+  for(i in 1:n_geos) {
+    rr <- which(x$`_`$out[[i]]$RRdf[[exposure_col]] == exposure_val)
+    if(length(rr) != 1) {
+      stop(paste0("Exposure value '", exposure_val, "' not in the
+                exposure column, try values (with one decimal) between:",
+                  min(x$`_`$out[[i]]$RRdf[[exposure_col]]),
+                  " and ",
+                  max(x$`_`$out[[i]]$RRdf[[exposure_col]])))
+    }
+
+    plt_slice[[i]] <- x$`_`$out[[i]]$RRdf[rr, ]
+  }
+
+  plt_slice <- do.call(rbind, plt_slice)
+
+  # forest_plot
+  if(n_geos > 20) {
+    warning("plotting by group since n_geos > 20")
+    ggplot(plt_slice, aes(x = RR, xmin = RRlb, xmax = RRub,
+                          y = reorder(!!sym(geo_unit_grp_col), RR))) +
+      geom_vline(xintercept = 1.0, linetype = '11') +
+      ylab(geo_unit_grp_col) +
+      theme_classic() +
+      scale_x_continuous(transform = 'log') +
+      geom_pointrange(position = position_jitterdodge()) +
+      ggtitle(paste0(exposure_col, " = ", exposure_val))
+  } else {
+    ggplot(plt_slice, aes(x = RR, xmin = RRlb, xmax = RRub,
+                          y = reorder(!!sym(geo_unit_col), RR))) +
+      geom_vline(xintercept = 1.0, linetype = '11') +
+      theme_classic() +
+      scale_x_continuous(transform = 'log') +
+      geom_pointrange() +
+      ggtitle(paste0(exposure_col, " = ", exposure_val))
+  }
+
+}
+
+
+#'@export
+#' spatial_plot.condPois_sb
+#'
+#' @param x an object of class condPois_sb
+#' @param shp an sf shapefile with an appropriate column at which to join
+#' @param exposure_val exposure value at which to plot
+#' @importFrom ggplot2 ggplot
+#' @returns
+#' @export
+#'
+#' @examples
+spatial_plot.condPois_sb <- function(x, shp, exposure_val,
+                                         RRlimits = NULL) {
+
+  n_geos <- length(x$`_`$out)
+  plt_slice <- vector("list", n_geos)
+  exposure_col <- x$`_`$out[[1]]$exposure_col
+  geo_unit_col <- names(x$`_`$out[[1]]$RRdf)[1]
+  geo_unit_grp_col <- names(x$`_`$out[[1]]$RRdf)[2]
+
+  for(i in 1:n_geos) {
+    rr <- which(x$`_`$out[[i]]$RRdf[[exposure_col]] == exposure_val)
+    if(length(rr) != 1) {
+      stop(paste0("Exposure value '", this_x, "' not in the
+                  exposure column, try values (with one decimal) between:",
+                  min(x$`_`$out[[i]]$RRdf[[exposure_col]]),
+                  " and ",
+                  max(x$`_`$out[[i]]$RRdf[[exposure_col]])))
+    }
+
+    plt_slice[[i]] <- x$`_`$out[[i]]$RRdf[rr, ]
+  }
+
+  plt_slice <- do.call(rbind, plt_slice)
+
+  # join to sf object
+  stopifnot(geo_unit_col %in% names(shp)) # not a bad first check
+  shp_w_data <- merge(shp, plt_slice)
+
+  if(is.null(RRlimits)) RRlimits = range(shp_w_data$RR)
+
+
+  return(ggplot(shp_w_data) +
+           theme_classic() +
+           geom_sf(aes(fill = log(RR))) +
+           scale_fill_gradient2(
+             midpoint = 0,
+             limits = log(RRlimits),
+             low = "#2166ac",
+             mid = "white",
+             high = "#b2182b",
+             name = "RR",
+             labels = function(x) round(exp(x), 2)
+           ) +
+           theme(axis.text = element_blank(),
+                 axis.ticks = element_blank(),
+                 axis.line = element_blank(),
+                 axis.title = element_blank()) +
+           ggtitle(paste0(exposure_col, " = ", exposure_val)))
+
+
+}
+
+#'@export
+#' spatial_plot.condPois_sb_list
+#'
+#' @param x an object of class condPois_sb_list
+#' @param shp an sf shapefile with an appropriate column at which to join
+#' @param exposure_val exposure value at which to plot
+#' @import patchwork
+#' @import ggplot2
+#' @returns
+#' @export
+#'
+#' @examples
+spatial_plot.condPois_sb_list <- function(x, shp, exposure_val) {
+
+  obj_l <- vector("list", length(names(x)))
+  fct_lab <- x[[names(x)[1]]]$factor_col
+
+  for(i in 1:length(names(x))) {
+
+    yy <- x[[names(x)[i]]]$`_`$out
+
+    n_geos <- length(yy)
+    plt_slice <- vector("list", n_geos)
+    exposure_col <- yy[[1]]$exposure_col
+    geo_unit_col <- names(yy[[1]]$RRdf)[1]
+    geo_unit_grp_col <- names(yy[[1]]$RRdf)[2]
+
+    for(j in 1:n_geos) {
+      rr <- which(yy[[j]]$RRdf[[exposure_col]] == exposure_val)
+      if(length(rr) != 1) {
+        stop(paste0("Exposure value '", this_x, "' not in the
+                  exposure column, try values (with one decimal) between:",
+                    min(yy[[j]]$RRdf[[exposure_col]]),
+                    " and ",
+                    max(yy[[j]]$RRdf[[exposure_col]])))
+      }
+
+      plt_slice[[j]] <- yy[[j]]$RRdf[rr, ]
+    }
+
+    plt_slice <- do.call(rbind, plt_slice)
+    plt_slice[[fct_lab]] <- x[[names(x)[i]]]$factor_val
+
+    obj_l[[i]] <- plt_slice
+  }
+
+  obj <- do.call(rbind, obj_l)
+  RRlimits = range(obj$RR)
+
+  obj_split <- split(obj, f = obj[[fct_lab]])
+
+  plt_obj <- vector("list", length(names(x)))
+  for(i in 1: length(names(x))) {
+    plt_obj[[i]] <- spatial_plot(x[[names(x)[i]]], shp,
+                                 exposure_val, RRlimits = RRlimits) +
+      ggtitle(paste0(fct_lab,": ", names(x)[i],"; ",
+                     exposure_col, " = ", exposure_val))
+  }
+
+  wrap_plots(plt_obj, ncol = 1,guides = 'collect')
+
+}
+
+
+#'@export
+#' forest_plot.condPois_sb_list
+#'
+#' @param x an object of class condPois_sb_list
+#' @param exposure_val exposure value at which to plot
+#' @returns
+#' @export
+#'
+#' @examples
+forest_plot.condPois_sb_list <- function(x, exposure_val) {
+
+  obj_l <- vector("list", length(names(x)))
+  fct_lab <- x[[names(x)[1]]]$factor_col
+
+  for(i in 1:length(names(x))) {
+    yy <- x[[names(x)[i]]]$"_"$out
+    n_geos <- length(yy)
+    plt_slice <- vector("list", n_geos)
+    fct <- x[[names(x)[i]]]$factor_val
+    exposure_col <- yy[[1]]$exposure_col
+    geo_unit_col <- names(yy[[1]]$RRdf)[1]
+    geo_unit_grp_col <- names(yy[[1]]$RRdf)[2]
+
+    for(j in 1:n_geos) {
+      rr <- which(yy[[j]]$RRdf[[exposure_col]] == exposure_val)
+      if(length(rr) != 1) {
+        stop(paste0("Exposure value '", exposure_val, "' not in the
+                exposure column, try values (with one decimal) between:",
+                    min(yy[[j]]$RRdf[[exposure_col]]),
+                    " and ",
+                    max(yy[[j]]$RRdf[[exposure_col]])))
+      }
+      plt_slice[[j]] <- yy[[j]]$RRdf[rr, ]
+    }
+
+    plt_slice <- do.call(rbind, plt_slice)
+    plt_slice[[fct_lab]] <- fct
+
+    obj_l[[i]] <- plt_slice
+  }
+
+  obj <- do.call(rbind, obj_l)
+
+  # forest_plot
+  if(n_geos > 20) {
+    warning("plotting by group since n_geos > 20")
+    ggplot(obj, aes(x = RR, xmin = RRlb, xmax = RRub,
+                    color = !!sym(fct_lab),
+                    y = reorder(!!sym(geo_unit_grp_col), RR))) +
+      geom_vline(xintercept = 1.0, linetype = '11') +
+      ylab(geo_unit_grp_col) +
+      theme_classic() +
+      scale_x_continuous(transform = 'log') +
+      geom_pointrange(position = position_jitterdodge()) +
+      ggtitle(paste0(exposure_col, " = ", exposure_val))
+  } else {
+    ggplot(obj, aes(x = RR, xmin = RRlb, xmax = RRub,
+                    y = reorder(!!sym(geo_unit_col), RR))) +
+      geom_vline(xintercept = 1.0, linetype = '11') +
+      theme_classic() +
+      scale_x_continuous(transform = 'log') +
+      geom_pointrange() +
+      ggtitle(paste0(exposure_col, " = ", exposure_val))
+  }
+}

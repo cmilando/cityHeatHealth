@@ -4,7 +4,7 @@
 #'
 #' @name cityHeatHealth-package
 #' @aliases cityHeatHealth
-#' @useDynLib cityHeatHealth, .registration = TRUE
+#' @useDynLib cityHeatHealth
 #' @import methods
 #' @import Rcpp
 #' @import sf

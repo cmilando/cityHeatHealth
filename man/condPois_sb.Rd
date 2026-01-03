@@ -8,7 +8,9 @@ condPois_sb(
   exposure_matrix,
   outcomes_tbl,
   shp_sf,
-  stan_opts,
+  stan_type = "laplace",
+  use_spatial_model = T,
+  stan_opts = NULL,
   global_cen = NULL,
   argvar = NULL,
   arglag = NULL,
@@ -24,6 +26,8 @@ condPois_sb(
 \item{outcomes_tbl}{a data.table of outcomes, created by \code{make_outcome_table}}
 
 \item{shp_sf}{a shapefile object describing the geo_units}
+
+\item{stan_type}{a choice of either laplace or sample}
 
 \item{stan_opts}{a list of parameters to send to stan}
 
@@ -63,6 +67,11 @@ STAGE 1
 ////////////////////////////////////////////////////////////////////////////
 ============================================================================
 SETUP inputs
+============================================================================
+#' /////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+============================================================================
+Get graph, has to make sure the shp is in the right order!
 ============================================================================
 #' /////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////

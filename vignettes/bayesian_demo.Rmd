@@ -31,11 +31,9 @@ This requires bringing in a shapefile, so you can define the network
 
 The standard application is using MCMC
 
-You can also experiment with speeding things up (at the risk of less precise estimates) using the variational method. see Jack's notes as so what is going on here
+You can also experiment with speeding things up (at the risk of less precise estimates) using the laplace or variational method. see Jack's notes as so what is going on here
 
-
-
-```{r setup2}
+```{r setup2, fig.height=3, fig.width=5}
 data("ma_exposure")
 data("ma_deaths")
 
@@ -49,22 +47,9 @@ exposure_columns <- list(
 
 TOWNLIST <- c('CHELSEA', 'EVERETT', 'REVERE', 'MALDEN')
 
-##########
-data("ma_towns")
-
-library(dplyr)
-local_shp <- subset(ma_towns, TOWN20 %in%  TOWNLIST)
-local_shp <- local_shp %>% arrange(TOWN20)
-local_shp$TOWN20
-local_shp$TOWNID <- 1:nrow(local_shp)
-
-library(ggplot2)
-ggplot(local_shp) + geom_sf(aes(fill = TOWN20))
-###########
-
-exposure <- subset(ma_exposure, TOWN20 %in%  TOWNLIST)
+exposure <- subset(ma_exposure, TOWN20 %in%  TOWNLIST &
+                     year(date) %in% 2012:2015)
 exposure_mat <- make_exposure_matrix(exposure, exposure_columns)
-exposure_mat
 
 # create outcome table
 outcome_columns <- list(
@@ -75,38 +60,20 @@ outcome_columns <- list(
   "geo_unit" = "TOWN20",
   "geo_unit_grp" = "COUNTY20"
 )
-deaths   <- subset(ma_deaths, TOWN20 %in%  TOWNLIST)
+deaths   <- subset(ma_deaths, TOWN20 %in%  TOWNLIST & 
+                     year(date) %in% 2012:2015)
 deaths_tbl <- make_outcome_table(deaths,  outcome_columns)
-deaths_tbl
 
-## weird but ok
-# deaths_tbl$date <- as.POSIXct(deaths_tbl$date)
-# exposure_mat$date <- as.POSIXct(exposure_mat$date)
-# identical(deaths_tbl$date, exposure_mat$date )
+# plot
+data("ma_towns")
 
-# # 
-# m1 <- condPois_1stage(exposure_matrix = exposure_mat, 
-#                       outcomes_tbl = deaths_tbl, multi_zone = T)
-# 
-# m1 <- condPois_2stage(exposure_matrix = exposure_mat, 
-#                       outcomes_tbl = deaths_tbl)
-# 
-# plot(m1)
-# 
-# library(patchwork)
-# 
-# plot(m2, TOWNLIST[1]) + plot(m2, TOWNLIST[2]) + 
-#   plot(m2, TOWNLIST[3]) + plot(m2, TOWNLIST[4])
-# 
-# # based on this, get the beta coefficient seeds
-# beta_l <- vector("list", 4) 
-# for(bb in 1:4) {
-#   beta_l[[bb]] <- condPois_1stage(
-#     subset(exposure_mat, TOWN20 == TOWNLIST[bb]),
-#     subset(deaths_tbl, TOWN20 == TOWNLIST[bb]))$`_`$out[[1]]$coef
-# }
-# do.call(cbind, beta_l)
+library(ggplot2)
+local_shp <- subset(ma_towns, TOWN20 %in%  TOWNLIST)
+ggplot(local_shp) + geom_sf(aes(fill = TOWN20))
+```
 
+Now get initial estimates for each `geo_unit`
+```{r b2}
 beta_l <- vector("list", 4) 
 cr_l <- vector("list", 4) 
 plot_l <- vector("list", 4)
@@ -133,474 +100,38 @@ do.call(cbind, beta_l) # COEFS NOT THE SAME
 do.call(cbind, cr_l)   # COEFS THE SAME
 library(patchwork)
 wrap_plots(plot_l)
+```
 
-## *************** so
-# the cr coefs are similar
-# the orig_coefs are not, which is why marcos method doesn't work
-# so, is there a way to encourage cr to be similar? 
-# maybe you pass in the overall value + std_normal() for each beta_(j)
-# and the params are
-# 
-# right so marco's method is wrong because the orig betas dont need to be similar
-# the cr betas are
-# 
-## ***************
 
+the cr coefs are similar
+the orig_coefs are not, which is why SBDLNM method doesn't work
 
-# refs
-# * https://mc-stan.org/learn-stan/case-studies/icar_stan.html
-# * https://mc-stan.org/learn-stan/case-studies/icar_stan.html
-# * https://chatgpt.com/c/69547c03-b2c4-832d-8ba0-9d8bf3918e23
-# * https://link.springer.com/article/10.1186/1476-072X-4-31
-# * https://github.com/stan-dev/example-models/blob/e5b7d9e2e9ecc375805c7e49e4a4d4c1882b5e3b/knitr/car-iar-poisson/bym2_predictor_plus_offset.stan#L4 
+So, instead of forcing Beta to be similar, we can use bym2
 
-# ok here's the ref of how LAPLACE works
-# https://mc-stan.org/cmdstanr/reference/model-method-laplace.html
+refs:
+ 
+ * https://mc-stan.org/learn-stan/case-studies/icar_stan.html
+ * https://link.springer.com/article/10.1186/1476-072X-4-31
+ * https://github.com/stan-dev/example-models/blob/e5b7d9e2e9ecc375805c7e49e4a4d4c1882b5e3b/knitr/car-iar-poisson/bym2_predictor_plus_offset.stan#L4 
 
-# more about LAPLACE
-# https://statmodeling.stat.columbia.edu/2023/02/08/implementing-laplace-approximation-in-stan-whats-happening-under-the-hood/
-# I think this makes for a good candidate because beta is normal
+ok here's the ref of how LAPLACE works:
 
+* https://mc-stan.org/cmdstanr/reference/model-method-laplace.html
+* https://statmodeling.stat.columbia.edu/2023/02/08/implementing-laplace-approximation-in-stan-whats-happening-under-the-hood/
 
+I think this makes for a good candidate because betas are normal and the model is not hierarchical
 
 
+```{r b3}
+m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
+                     stan_type = 'mcmc',
+                     verbose = 2,
+                     use_spatial_model = F)
 
-#' ////////////////////////////////////////////////////////////////////////////
-#' ============================================================================
-#' SETUP inputs
-#' ============================================================================
-#' #' /////////////////////////////////////////////////////////////////////////
+```
 
-# nb2subgraph
-# for a given subcomponent, return graph as lists of node1, node2 pairs
-#
-# inputs:
-# x: nb object
-# c_id: subcomponent id
-# comp_ids: vector of subcomponent ids
-# offsets: vector of subcomponent node numberings
-# returns: list of node1, node2 ids
-#
-nb2subgraph = function(x, c_id, comp_ids, offsets) {
-  N = length(x);
-  n_links = 0;
-  for (i in 1:N) {
-    if (comp_ids[i] == c_id) {
-      if (x[[i]][1] != 0) {
-        n_links = n_links + length(x[i]);
-      }
-    }
-  }
-  N_edges = n_links / 2;
-  node1 = vector(mode="numeric", length=N_edges);
-  node2 = vector(mode="numeric", length=N_edges);
-  idx = 0;
-  for (i in 1:N) {
-    if (comp_ids[i] == c_id) {
-      if (x[[i]][1] != 0) {
-        for (j in 1:length(x[[i]])) {
-          n2 = unlist(x[[i]][j]);    
-          if (i < n2) {
-            idx = idx + 1;
-            node1[idx] = offsets[i];
-            node2[idx] = offsets[n2];
-          }
-        }
-      }
-    }
-  }
-  return (list("node1"=node1,"node2"=node2));
-}
-
-# nb2graph
-#
-# input: nb_object
-# returns: dataframe containing num nodes, num edges,
-#          and a list of graph edges from node1 to node2.
-#
-nb2graph = function(x) {
-  N = length(x);
-  n_links = 0;
-  for (i in 1:N) {
-    if (x[[i]][1] != 0) {
-      n_links = n_links + length(x[[i]]);
-    }
-  }
-  N_edges = n_links / 2;
-  node1 = vector(mode="numeric", length=N_edges);
-  node2 = vector(mode="numeric", length=N_edges);
-  idx = 0;
-  for (i in 1:N) {
-    if (x[[i]][1] > 0) {
-      for (j in 1:length(x[[i]])) {
-        n2 = unlist(x[[i]][j]);
-        if (i < n2) {
-          idx = idx + 1;
-          node1[idx] = i;
-          node2[idx] = n2;
-        }
-      }
-    }
-  }
-  return (list("N"=N,"N_edges"=N_edges,"node1"=node1,"node2"=node2));
-}
-
-# indexByComponent
-#
-# input: vector of component ids
-# returns: vector of per-component consecutive node ids
-#
-indexByComponent = function(x) {
-  y = x;
-  comps = as.matrix(table(x));
-  num_comps = nrow(comps);
-  for (i in 1:nrow(comps)) {
-    idx = 1;
-    rel_idx = 1;
-    while (idx <= length(x)) {
-      if (x[idx] == i) {
-        y[idx] = rel_idx;
-        rel_idx = rel_idx + 1;
-      }
-      idx = idx + 1;
-    }
-  }
-  return(y);
-}
-
-# scale_nb_components
-#
-# input: nb_object
-# returns: vector of per-component scaling factor (for BYM2 model)
-# scaling factor for singletons is 0
-#
-scale_nb_components = function(x) {
-  require(Matrix)
-  require(INLA)
-  N = length(x);
-  comp_ids = n.comp.nb(x)[[2]];
-  offsets = indexByComponent(comp_ids);
-  
-  comps = as.matrix(table(comp_ids));
-  num_comps = nrow(comps);
-  scales = vector("numeric", length=num_comps);
-  for (i in 1:num_comps) {
-    N_subregions = comps[i,1];
-    scales[i] = 0.0;
-    if (N_subregions > 1) {
-      # get adj matrix for this component
-      drops = comp_ids != i;
-      nb_tmp = droplinks(x, drops);      
-      nb_graph = nb2subgraph(nb_tmp, i, comp_ids, offsets);
-      adj.matrix = sparseMatrix( i=nb_graph$node1, j=nb_graph$node2, x=1, dims=c(N_subregions,N_subregions), symmetric=TRUE);
-      # compute ICAR precision matrix
-      Q =  Diagonal(N_subregions, rowSums(adj.matrix)) - adj.matrix;
-      # Add a small jitter to the diagonal for numerical stability (optional but recommended)
-      Q_pert = Q + Diagonal(N_subregions) * max(diag(Q)) * sqrt(.Machine$double.eps)
-      # Compute the diagonal elements of the covariance matrix subject to the 
-      # constraint that the entries of the ICAR sum to zero.
-      Q_inv = INLA::inla.qinv(Q_pert, constr=list(A = matrix(1,1,N_subregions),e=0))
-      # Compute the geometric mean of the variances, which are on the diagonal of Q.inv
-      scaling_factor = exp(mean(log(diag(Q_inv))))
-      scales[i] = scaling_factor;
-    }
-  }
-  return(scales);
-}
-
-nb_subset = poly2nb(local_shp);
-nbs=nb2graph(nb_subset);
-# N = nbs$N;
-node1 = nbs$node1;
-node2 = nbs$node2;
-N_edges = nbs$N_edges;
-scaling_factor = scale_nb_components(nb_subset)[1];
-
-# Generate a list of spatial structure from the shapefile
-
-# N-order neighbors (neighbors of neighbors)
-
-WW = 2
-
-# step 1: get all 2 length neighbors
-
-
-# step 2:
-# n2 <- vector("list", nrow(local_shp))
-# for(i in 1:length(n2)) n2[[i]] <- c(i, xx[[i]])
-# n2
-# duplicated(n2)
-# 
-# # ok now from these, all length 3 neighbors can be made
-# n3 <- vector("list", nrow(local_shp))
-# for(i in 1:length(n3)) {
-#   s1 <- do.call(c, lapply(n2[[i]], \(x) n2[[x]]))
-#   n3[[i]] <- sort(unique(c(i, s1)))
-# }
-# duplicated(n4)
-# 
-# n4 <- vector("list", nrow(local_shp))
-# for(i in 1:length(n4)) {
-#   s1 <- do.call(c, lapply(n3[[i]], \(x) n3[[x]]))
-#   n4[[i]] <- sort(unique(c(i, s1)))
-# }
-# duplicated(n4)
-
-getSW <- function(shp, ni, include_self = T) {
-  
-
-  #
-  warning("has to be one polygon per row in `shp`")
-  J <- nrow(shp)
-  
-  if(ni == 0) {
-    return(diag(J))
-  }
-  
-  #
-  nb <- poly2nb(local_shp)
-  lb <- nb2listw(nb, style = 'B', zero.policy = TRUE)
-  xx <- lb$neighbours
-  
-  # get all neighbor lists
-  nxi <- nx(xx, ni, include_self)
-  
-  # get ones that aren't duplicated
-  ## nx <- nxi[which(!duplicated(nxi))]
-  # if you don't do this, you can use SW as the Jmatrix
-  nx <- nxi
-  
-  # turn it into a matrix
-  s_rows <- length(nx)
-
-  SW <- matrix(0, nrow  = s_rows, ncol = J)
-  for(i in 1:nrow(SW)) {
-    SW[i, nx[[i]]] <- 1
-  }
-  
-  # class(SW) = 'SW'
-  
-  return(SW)
-  
-}
-
-nx <- function(xx, ni, include_self = T) {
-  
-  ##
-  if(ni == 1) {
-      if(include_self) {
-        return(lapply(1:length(xx), \(i) sort(c(i, xx[[i]]))))
-      } else{
-        return(lapply(1:length(xx), \(i) sort(c(xx[[i]]))))
-      }
-  
-  } else {
-    
-    n_out <- vector("list", length(xx))
-    
-    for(i in 1:length(xx)) {
-      
-      n_minus_1 <- nx(xx, ni = ni - 1)
-      
-      s1 <- do.call(c, lapply(n_minus_1[[i]], \(x) n_minus_1[[x]]))
-      
-      if(include_self) {
-        n_out[[i]] <- sort(unique(c(i, s1)))
-      } else {
-        n_out[[i]] <- sort(unique(c(s1)))
-      }
-      
-    }
-    
-    return(n_out)
-    
-  } 
-  
-  ##
-  
-}
-
-# doesn't really matter, this could be made any number of ways
-# the main point is that it `should` have fewer rows than J
-# SW <- getSW(shp = local_shp, ni = 3)
-# SW
-
-SW <- getSW(shp = local_shp, ni = 1, include_self = F)
-SW
-
-
-#' ////////////////////////////////////////////////////////////////////////////
-#' ============================================================================
-#' SETUP inputs
-#' ============================================================================
-#' #' /////////////////////////////////////////////////////////////////////////
-
-# create S matrix 
-getSmat <- function(strata_vector) {
-  
-  # strata_vector <- data$stratum 
-  strata_matrix <- matrix(as.integer(strata_vector), 
-                          nrow = length(strata_vector),
-                          ncol = length(strata_vector), 
-                          byrow = T)
-  
-  for(i in 1:length(strata_vector)) {
-    strata_matrix[i, ] = 1*(strata_matrix[i, ] == as.integer(strata_vector[i]))
-  }
-  
-  return(strata_matrix)
-}
-
-
-J = as.integer(nrow(local_shp))
-J
-
-test_basis <- cb_list[[1]]
-## >> hmm this has to be just the subset that belongs to this sub-unit
-
-# nrows
-N = as.integer(nrow(test_basis))
-N
-
-# beta and the intercept
-K = as.integer(ncol(test_basis))
-K
-
-# include the intercept
-# this has to be one for each region 
-X = array(dim = c(dim(as.matrix(test_basis)), J))
-for(j in 1:J) X[,,j] <- as.matrix(cb_list[[j]])
-
-# outcome
-y = array(dim = c(N, J))
-for(j in 1:J) y[,j] = oo_list[[j]]
-y
-
-# just one
-sv <- m1$`_`$out[[1]]$strata_vec
-S <- getSmat(factor(sv))
-dim(S)
-
-# get strata vars
-n_strata <- as.integer(length(unique(sv))) # 72, cool
-n_strata
-
-S_list <- apply(S, 1, function(x) which(x == 1))
-
-max_in_strata <- max(sapply(S_list, length))
-max_in_strata
-
-S_list <- lapply(S_list, function(l) {
-  if(length(l) == max_in_strata) {
-    return(l)
-  } else {
-    diff_n = max_in_strata - length(l)
-    return(c(l, rep(0, times = diff_n)))
-  }
-})
-
-S_condensed <- unique(do.call(rbind, S_list))
-dim(S_condensed)
-
-#
-stratum_id = as.integer(factor(sv))
-unique(stratum_id)
-
-## *** THIS BECOMES THE J MATRIX
-# Jmat <- matrix(0, nrow = 1, ncol = 1)
-# # Jmat
-
-#' ////////////////////////////////////////////////////////////////////////////
-#' ============================================================================
-#' SETUP inputs
-#' ============================================================================
-#' #' /////////////////////////////////////////////////////////////////////////
-
-
-stan_data <- list(
-  J = J,
-  # W = as.integer(nrow(SW)),
-  Jmat = SW,
-  N = N, 
-  K = K, 
-  X = X, 
-  y = y,
-  S = S,
-  n_strata = n_strata,
-  max_in_strata = max_in_strata,
-  S_condensed = S_condensed,
-  stratum_id = stratum_id,
-  grainsize = as.integer(3),
-  N_edges = N_edges,
-  node1 = node1,
-  node2 = node2,
-  scaling_factor = scaling_factor
-)
-
-
-init_fun <- function() {
-  list(
-    beta = as.matrix(do.call(cbind, beta_l)),
-    bym2_sigma = 0.5,
-    bym2_rho = 0.5,
-    bym2_theta = rep(0, J),
-    bym2_phi = rep(0, J)
-  )
-}
-
-# Set path to model
-library(cmdstanr)
-
-stan_model <- cmdstan_model("condPois.stan")
-
-stan_model <- cmdstan_model("spatial_condPois.stan")
-
-# -------------------------
-
-## MCMC
-## honestly not unreasonable
-fit_mcmc <- stan_model$sample(data = stan_data,
-                              chains = 2,
-                              parallel_chains = 2,
-                              refresh = 100,
-                              init = init_fun)
-
-fit_mcmc$summary(variables = c('beta'))
-
-# draws2_array <- fit_car$draws()
-mcmc_array <- fit_mcmc$draws()
-
-# Convert to data.frame (flattened, easier to use like extract())
-mcmc_df <- posterior::as_draws_df(mcmc_array)
-
-# -------------------------
-
-## LAPLACE
-## much faster
-fit_mode <- stan_model$optimize(data = stan_data, 
-                                init = init_fun,
-                                jacobian = TRUE, 
-                                iter = 1e4)
-
-fit_laplace <- stan_model$laplace(data = stan_data, 
-                                  mode = fit_mode)
-
-fit_laplace$summary(variables = c('beta'))
-
-# draws2_array <- fit_car$draws()
-laplace_array <- fit_laplace$draws()
-
-# Convert to data.frame (flattened, easier to use like extract())
-laplace_df <- posterior::as_draws_df(laplace_array)
-
-
-#' ////////////////////////////////////////////////////////////////////////////
-#' ============================================================================
-#' COMPARE
-#' ============================================================================
-#' #' /////////////////////////////////////////////////////////////////////////
-
-
+Compare 
+```{r compare2}
 library(dplyr)
 
 do.call(cbind, beta_l)
@@ -614,4 +145,55 @@ t(matrix(apply(xx, 2, median), nrow = J, ncol = K, byrow = T))
 ```
 
 
+# Note: Be REALLY careful about the data types here
+  stan_data <- list(
+    J = as.integer(J),  # integer
+    Jmat = Jmat,        # matrix so you can do math on it
+    N = as.integer(N),
+    K = as.integer(K),
+    X = X,              # matrix so you can do math
+    y = y,
+    S = S,              # matrix so you can do math on it
+    n_strata = n_strata,
+    max_in_strata = max_in_strata,
+    S_condensed = S_condensed,
+    stratum_id = stratum_id
+  )
+
+  # from here https://github.com/rok-cesnovar/misc/blob/master/democmdstanr/R/bernoulli.R
+  # and here https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758
+  # stan_file <- system.file("stan", "SB_CondPoisson.stan",
+  #                          package = "cityHeatHealth")
+  #
+  # mod <- cmdstanr::cmdstan_model(stan_file,
+  #                                cpp_options = list(stan_threads = TRUE))
+
+  # (1) Variational
+  out2_var <- mod$variational(
+    data = stan_data,
+    iter = 10000,
+    refresh = 10,
+    threads = 2
+  )
+
+  # (2) LaPLACE
+
+  # MCMC -- Much longer, especially for things with lags
+  #         wait ..... can  you do this just on the crossreduce though ...
+  #         why do you need to do this on
+  out2_mcmc <- mod$sample(
+    data = stan_data,
+    chains = 2,
+    #iter_warmup = 3000,
+    #iter_sampling = 5000,
+    parallel_chains = 2,
+    threads_per_chain = 1,
+    refresh = 10,
+    #adapt_delta = 0.8,
+    #max_treedepth = 7 # .... ?
+  )
+
+  # or another version here for mcmc
+
+  # or laplace i guess
 
