@@ -121,79 +121,26 @@ ok here's the ref of how LAPLACE works:
 
 I think this makes for a good candidate because betas are normal and the model is not hierarchical
 
-
-```{r b3}
-m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
-                     stan_type = 'mcmc',
-                     verbose = 2,
-                     use_spatial_model = F)
-
-```
-
-Compare 
-```{r compare2}
-library(dplyr)
-
-do.call(cbind, beta_l)
-
-xx <- mcmc_df %>% select(starts_with("beta"))
-t(matrix(apply(xx, 2, median), nrow = J, ncol = K, byrow = T))
-
-xx <- laplace_df %>% select(starts_with("beta"))
-t(matrix(apply(xx, 2, median), nrow = J, ncol = K, byrow = T))
-
-```
-
-
-# Note: Be REALLY careful about the data types here
-  stan_data <- list(
-    J = as.integer(J),  # integer
-    Jmat = Jmat,        # matrix so you can do math on it
-    N = as.integer(N),
-    K = as.integer(K),
-    X = X,              # matrix so you can do math
-    y = y,
-    S = S,              # matrix so you can do math on it
-    n_strata = n_strata,
-    max_in_strata = max_in_strata,
-    S_condensed = S_condensed,
-    stratum_id = stratum_id
-  )
-
-  # from here https://github.com/rok-cesnovar/misc/blob/master/democmdstanr/R/bernoulli.R
   # and here https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758
   # stan_file <- system.file("stan", "SB_CondPoisson.stan",
   #                          package = "cityHeatHealth")
   #
   # mod <- cmdstanr::cmdstan_model(stan_file,
-  #                                cpp_options = list(stan_threads = TRUE))
+  #    
 
-  # (1) Variational
-  out2_var <- mod$variational(
-    data = stan_data,
-    iter = 10000,
-    refresh = 10,
-    threads = 2
-  )
+```{r b3}
+m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
+                     stan_type = 'mcmc',
+                     verbose = 2,
+                     use_spatial_model = T)
 
-  # (2) LaPLACE
+```
 
-  # MCMC -- Much longer, especially for things with lags
-  #         wait ..... can  you do this just on the crossreduce though ...
-  #         why do you need to do this on
-  out2_mcmc <- mod$sample(
-    data = stan_data,
-    chains = 2,
-    #iter_warmup = 3000,
-    #iter_sampling = 5000,
-    parallel_chains = 2,
-    threads_per_chain = 1,
-    refresh = 10,
-    #adapt_delta = 0.8,
-    #max_treedepth = 7 # .... ?
-  )
+Compare 
+```{r compare2}
+do.call(cbind, beta_l)
 
-  # or another version here for mcmc
+m_sb1$`_`$beta_mat
+```
 
-  # or laplace i guess
 

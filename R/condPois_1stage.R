@@ -276,9 +276,10 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     this_exp_mean = mean(single_exposure_matrix[, get(exposure_col)])
     this_exp_IQR = IQR(single_exposure_matrix[, get(exposure_col)])
 
-    # this cities cb
+    # this cities cb, with attributes!
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
     this_cb <- cb[rr, ]
+    attributes(this_cb) = attributes(cb)
 
     # this cities outcome
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo

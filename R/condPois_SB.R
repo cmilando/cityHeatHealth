@@ -200,6 +200,8 @@ condPois_sb <- function(exposure_matrix,
 
   # get things you need
   cb_list     <- vector("list", n_geos);
+  orig_basis  <- vector("list", n_geos);
+  orig_coef   <- vector("list", n_geos);
   outc_list   <- vector("list", n_geos);
   cen_list    <- vector("list", n_geos);
   argvar_list <- vector("list", n_geos);
@@ -246,6 +248,8 @@ condPois_sb <- function(exposure_matrix,
                                x_b = x_b)
 
     # get cb and outcomes lists
+    orig_basis[[i]]  <- local_cp$orig_basis
+    orig_coef[[i]]   <- local_cp$orig_coef
     coef_list[[i]]   <- local_cp$coef
     cb_list[[i]]     <- blup_cp$basis_cen
     outc_list[[i]]   <- single_outcomes_tbl
@@ -271,15 +275,14 @@ condPois_sb <- function(exposure_matrix,
   N = as.integer(n_l)
 
   # beta values, withouth the intercept
-  k_l <- lapply(cb_list, \(x) ncol(as.matrix(x)))
+  k_l <- lapply(orig_basis, \(x) ncol(as.matrix(x)))
   k_l <- unique(do.call(c, k_l))
   stopifnot(length(k_l) == 1)
   K = as.integer(k_l)
-  if(K > 5) warning("K > 5, times may be slow")
 
   # include the intercept
-  X = array(dim = c(dim(cb_list[[1]]), J))
-  for(j in 1:J) X[,,j] = as.matrix(cb_list[[j]])
+  X = array(dim = c(dim(orig_basis[[1]]), J))
+  for(j in 1:J) X[,,j] = as.matrix(orig_basis[[j]])
 
   # outcome in J regions
   y = array(dim = c(n_l, J))
@@ -366,7 +369,7 @@ condPois_sb <- function(exposure_matrix,
 
   init_fun <- function() {
     list(
-      beta = as.matrix(do.call(cbind, coef_list)),
+      beta = as.matrix(do.call(cbind, orig_coef)),
       bym2_sigma = 0.5,
       bym2_rho = 0.5,
       bym2_theta = rep(0, J),
@@ -423,15 +426,20 @@ condPois_sb <- function(exposure_matrix,
   beta_mat <- matrix(beta_reg_all, nrow = K, ncol = J, byrow = F)
 
   # ****************
-  # **** VCOV ******
+  # **** VCOV and CR ******
   # ****************
 
   # so this gives you the coef
   # but then you also need to get VCOV
 
-  vcov_l <- vector("list", n_geos)
+  cr_coef <- vector("list", n_geos)
+  cr_vcov <- vector("list", n_geos)
+  cen_list_updated <- vector("list", n_geos)
 
   outcomes_col <- attributes(outcomes_tbl)$column_mapping$outcome
+
+  geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
   for(ni in 1:n_geos) {
 
@@ -446,22 +454,58 @@ condPois_sb <- function(exposure_matrix,
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
     single_exposure_matrix = exposure_matrix[rr, ,drop = FALSE]
     this_exp <- single_exposure_matrix[, get(exposure_columns$exposure)]
+    exp_mean = mean(this_exp)
     x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
 
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
 
+    # dispersion param
     dispersion <- calc_dispersion(y = single_outcomes_tbl[, get(outcomes_col)],
-                                  X = cb_list[[ni]],
+                                  X = orig_basis[[ni]],
                                   stratum_vector = single_outcomes_tbl$strata,
                                   beta = beta_mat[,ni])
 
+    # VCOV
     vcov_beta <- calc_vcov(y = single_outcomes_tbl[, get(outcomes_col)],
-                           X = cb_list[[ni]],
+                           X = orig_basis[[ni]],
                            stratum_vector = single_outcomes_tbl$strata,
                            beta = beta_mat[,ni])
 
-    vcov_l[[ni]] <- vcov_beta * dispersion
+    vcov_beta <- vcov_beta * dispersion
+
+    # now -- get CROSSREDUCE Object !
+
+    # the crossreduce coefficients are not affected by the centering point
+    # but it does make a message if you dont put something there
+    # so i center on the min to avoid that fate
+    cb = orig_basis[[ni]]
+
+    cp <- crosspred(basis = cb,
+                    coef = beta_mat[,ni],
+                    vcov = vcov_beta,
+                    model.link = "log",
+                    cen = exp_mean,
+                    by = 0.1)
+
+    if(!is.null(global_cen)) {
+      cen = global_cen
+    } else {
+      cen = cp$predvar[which.min(cp$allRRfit)]
+    }
+
+    # now apply to cr and export
+    cr <- crossreduce(basis = orig_basis[[ni]],
+                      coef = beta_mat[,ni],
+                      vcov = vcov_beta,
+                      model.link = "log",
+                      cen = cen,
+                      by = 0.1)
+
+    cr_coef[[ni]] <- coef(cr)
+    cr_vcov[[ni]] <- vcov(cr)
+    cen_list_updated[[ni]] = cen
+
   }
 
   if(verbose > 0) {
@@ -499,13 +543,12 @@ condPois_sb <- function(exposure_matrix,
 
     # get centered basis
     blup_cp <- get_centered_cp(argvar = argvar_list[[i]],
-                               xcoef = beta_mat[,i],
-                               xvcov = vcov_l[[i]],
+                               xcoef = cr_coef[[i]],
+                               xvcov = cr_vcov[[i]],
                                global_cen = global_cen,
-                               cen = cen_list[[i]],
+                               cen = cen_list_updated[[i]],
                                this_exp = this_exp,
                                x_b = x_b)
-
     ## make the out
     RRdf <- data.frame(
       geo_unit = this_geo,
@@ -532,8 +575,8 @@ condPois_sb <- function(exposure_matrix,
       cen = blup_cp$cp$cen,
       global_cen = global_cen,
       outcomes = outc_list[[i]],
-      coef = beta_mat[,i],
-      vcov = vcov_l[[i]],
+      coef = cr_coef[[i]],
+      vcov = cr_vcov[[i]],
       RRdf = RRdf
     )
 
@@ -556,7 +599,7 @@ condPois_sb <- function(exposure_matrix,
   # aka, in the recursive call to this function that happens above
   # you could modify this to also output the mixmeta object
   # but not clear that you need that
-  outlist = list(list(out = out))
+  outlist = list(list(out = out, beta_mat = beta_mat))
   names(outlist) = "_"
   class(outlist) = 'condPois_sb'
 
