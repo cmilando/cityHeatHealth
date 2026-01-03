@@ -136,7 +136,7 @@ I think this makes for a good candidate because betas are normal and the model i
   # mod <- cmdstanr::cmdstan_model(stan_file,
   #    
 
-```{r b3}
+```{r b3a}
 m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
                      stan_type = 'mcmc',
                      verbose = 2,
@@ -177,7 +177,7 @@ m_sb2$`_`$beta_mat
 
 using laplace in this case, but you could try mcmc
 
-```{r b3}
+```{r b4}
 m_sb3 <- condPois_sb(exposure_mat, 
                      deaths_tbl, local_shp, 
                      stan_type = 'laplace',
