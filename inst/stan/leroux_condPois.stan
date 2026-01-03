@@ -31,7 +31,7 @@ transformed data {
   row_vector[J] n_a;
 
   for(j in 1:J) {
-    n_a[j] = sum(Jmat[j, ]);
+    n_a[j] = sum(Jmat[j, ]) + 1;
   }
   //// ********************************************************
 
@@ -80,13 +80,13 @@ parameters {
   // Ok so instead, there is a single centering value for each beta
   //  and a single centering value for sigma
   vector[K] mu;
-  vector<lower=0>[K] sigma; // lower limit is 1e-6 so it can NEver be 0
+ vector<lower=1e-6>[K] sigma; // lower limit is 1e-6 so it can NEver be 0
 
   // the Leroux value, just one
-  real<lower=0,upper=1> q;
+  real<lower=0, upper=0.999> q;
 
   // and then you need Beta* which has dimension K by J
-  matrix[K, J] beta_star;  // attribute effects
+  matrix[K, J] bstar;  // attribute effects
 }
 
 model {
@@ -95,8 +95,8 @@ model {
   // PRIORS
   // --------------------------------------------------------------------------
   mu ~ std_normal();
-  q ~ std_normal();
-  sigma ~ std_normal();
+  sigma ~ exponential(1);
+  q ~ beta(2, 2);
 
   // --------------------------------------------------------------------------
   // GET BETA STAR
@@ -111,41 +111,41 @@ model {
   // furhter vectorized
   // So FIRST, get the sum of BETA STAR neighors that aren't the current one
   // this gets the dot product
-  // beta_star needs to be WITHIN k because you are going within each coefficient
+  // bstar needs to be WITHIN k because you are going within each coefficient
   // but across space (so across the j dimension), and then ` transpose
   // hmm - this is updated each time, which is probably not correct
   // Jmat[, j] is  x J
-  // beta_star is K x J so transpose is J x K
+  // bstar is K x J so transpose is J x K
   // to product is 1 x K;
   // it likes it in vectors so tranpose again? this might be too expensive
-  // this works because beta_star has initial values because its a parameter
-  matrix[K, J] beta_star_sum = beta_star * Jmat;
+  // this works because bstar has initial values because its a parameter
+  matrix[K, J] bstar_sum = bstar * Jmat;
 
   // in each J a single value for the denominator applied to
   // beta star mean and st_dev
-  row_vector[J] beta_star_denom = 1 - q + q * n_a;
+  row_vector[J] bstar_denom = 1 - q + q * n_a + 1e-6;;
 
   // Now contruct the beta star mean and sigma
   // remember to square root denom in sigma
   // since in the paper its for the variance
   // make sure to use element division and multiplication
   // broadcast as a row_vector
-  matrix[K,J] star_mean = rep_matrix(q ./ beta_star_denom, K) .* beta_star_sum;
+  matrix[K,J] star_mean = rep_matrix(q ./ bstar_denom, K) .* bstar_sum;
 
   // ok so sigma is a K vector, so assume is K x 1
   // and beta*_denom is a J row_vector, so assume its 1 x J
   // sqrt inside rep so it does fewer calculations
-  matrix[K, J] star_sd = rep_matrix(sigma, J) ./ rep_matrix(sqrt(beta_star_denom), K);
+  matrix[K, J] star_sd = rep_matrix(sigma, J) ./ rep_matrix(sqrt(bstar_denom), K);
 
-  // and Now vectorized to get priors for beta_star
-  to_vector(beta_star) ~ normal(to_vector(star_mean), to_vector(star_sd));
+  // and Now vectorized to get priors for bstar
+  to_vector(bstar) ~ normal(to_vector(star_mean), to_vector(star_sd));
 
   // --------------------------------------------------------------------------
   // and get the target
   // --------------------------------------------------------------------------
   // FIRST GET BETA
   // *****
-  matrix[K, J] beta = rep_matrix(mu, J) + beta_star;
+  matrix[K, J] beta = rep_matrix(mu, J) + bstar;
   // *****
 
   // -------------------------------
@@ -192,12 +192,12 @@ model {
 
 generated quantities {
 
-  // (1) make a new BETA by randomly sampling from mu and beta_star
-  matrix[K, J] beta_out;
+  // (1) make a new BETA by randomly sampling from mu and bstar
+  matrix[K, J] beta;
 
   for(k in 1:K) {
     for(j in 1:J) {
-      beta_out[k,j] = mu[k] + beta_star[k,j]; // probably some additional variance here
+      beta[k,j] = mu[k] + bstar[k,j]; // probably some additional variance here
     }
   }
 }

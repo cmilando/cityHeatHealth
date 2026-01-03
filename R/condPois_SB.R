@@ -29,7 +29,7 @@ condPois_sb <- function(exposure_matrix,
                         outcomes_tbl,
                         shp_sf,
                         stan_type = 'laplace',
-                        use_spatial_model = T,
+                        use_spatial_model = 'none',
                         stan_opts = NULL,
                         global_cen = NULL,
                         argvar = NULL,
@@ -67,6 +67,9 @@ condPois_sb <- function(exposure_matrix,
 
   #
   stopifnot(stan_type %in% c('laplace', 'mcmc'))
+
+  #
+  stopifnot(use_spatial_model %in% c('none', 'bym2', 'leroux'))
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -336,9 +339,15 @@ condPois_sb <- function(exposure_matrix,
   N_edges = nbs$N_edges;
   scaling_factor = scale_nb_components(nb_subset)[1];
 
+
+  SW <- getSW(shp = local_shp, ni = 1, include_self = F)
+  print(SW)
+
   if(verbose > 0) {
     cat("\n")
   }
+
+
 
   #' ////////////////////////////////////////////////////////////////////////////
   #' ============================================================================
@@ -352,6 +361,7 @@ condPois_sb <- function(exposure_matrix,
 
   stan_data <- list(
     J = J,
+    Jmat = SW,
     N = N,
     K = K,
     X = X,
@@ -379,10 +389,30 @@ condPois_sb <- function(exposure_matrix,
 
   # from here: https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758
   # says you can use instantiate
-  if(use_spatial_model) {
-    mod <- instantiate::stan_package_model("spatial_condPois","cityHeatHealth")
-  } else {
-    mod <- instantiate::stan_package_model("condPois","cityHeatHealth")
+  if(use_spatial_model == 'bym2') {
+
+    stan_file <- system.file("stan", "bym2_condPois.stan",
+                             package = "cityHeatHealth")
+
+    mod <- cmdstanr::cmdstan_model(stan_file)
+
+  }
+
+  if(use_spatial_model == 'leroux') {
+
+    stan_file <- system.file("stan", "leroux_condPois.stan",
+                             package = "cityHeatHealth")
+
+    mod <- cmdstanr::cmdstan_model(stan_file)
+  }
+
+  if(use_spatial_model == 'none') {
+
+    stan_file <- system.file("stan", "condPois.stan",
+                             package = "cityHeatHealth")
+
+    mod <- cmdstanr::cmdstan_model(stan_file)
+
   }
 
 

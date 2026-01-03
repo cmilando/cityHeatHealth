@@ -141,7 +141,7 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
                      stan_type = 'mcmc',
                      verbose = 2,
                      stan_opts = list(refresh = 200),
-                     use_spatial_model = F)
+                     use_spatial_model = 'none')
 
 ```
 
@@ -153,3 +153,42 @@ m_sb1$`_`$beta_mat
 ```
 
 
+### Compare with spatial model
+
+using laplace in this case, but you could try mcmc
+
+```{r b3}
+m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
+                     stan_type = 'laplace',
+                     verbose = 2,
+                     stan_opts = list(refresh = 200),
+                     use_spatial_model = 'bym2')
+
+```
+
+Compare, now you can see these are different
+
+```{r compare2}
+mx
+
+m_sb2$`_`$beta_mat
+```
+### Compare with spatial model for leroux
+
+using laplace in this case, but you could try mcmc
+
+```{r b3}
+m_sb3 <- condPois_sb(exposure_mat, 
+                     deaths_tbl, local_shp, 
+                     stan_type = 'laplace',
+                     verbose = 2,
+                     stan_opts = list(refresh = 200),
+                     use_spatial_model = 'leroux')
+
+```
+As you can see, lots of smoothing to a central estimate
+```{r compare3}
+mx
+
+m_sb3$`_`$beta_mat
+```
