@@ -437,6 +437,10 @@ condPois_sb <- function(exposure_matrix,
 
     mcmc_array <- fit_mcmc$draws()
 
+    if(verbose > 1) {
+      print(mcmc_array$summary())
+    }
+
     out_df <- posterior::as_draws_df(mcmc_array)
   }
 
@@ -461,6 +465,10 @@ condPois_sb <- function(exposure_matrix,
                                mode = fit_mode)
 
     laplace_array <- fit_laplace$draws()
+
+    if(verbose > 1) {
+      print(fit_laplace$summary())
+    }
 
     out_df <- posterior::as_draws_df(laplace_array)
   }

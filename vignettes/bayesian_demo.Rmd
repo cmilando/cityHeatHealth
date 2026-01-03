@@ -186,7 +186,7 @@ m_sb3 <- condPois_sb(exposure_mat,
                      use_spatial_model = 'leroux')
 
 ```
-As you can see, lots of smoothing to a central estimate
+As you can see, lots of smoothing to a central estimate !
 ```{r compare3}
 mx
 
