@@ -6,7 +6,7 @@ This package can be used in three main ways:
 |----------------|----------------|---------------|
 | A 1-stage conditional poisson model when estimating a *single set of beta coefficients* for heat-health impacts across single or multiple zones | A 2-stage design is used when estimating heat-health impacts across many zones, but where *individual zone models* are desired  | If numbers are very small in the 2-stage design, spatial bayesian methods can be used to tighten confidence intervals |
 
-Essentially, the SB is a bridge between and 1 stage and a 2 stage
+Essentially, the spatial bayes (SB) method is a bridge between and 1 stage and a 2 stage
 if you want more granularity than a 1 stage, but the data aren't strong enough to do a 2 stage even with blups, you can do an SB model, which is sort of like many overlapping 1 stage models of groups of spatial units fused together.
 
 The vignettes for these are:
