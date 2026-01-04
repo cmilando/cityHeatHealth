@@ -40,6 +40,7 @@ Suggests:
     testthat (>= 3.0.0)
 Additional_repositories:
   https://mc-stan.org/r-packages/
+  https://inla.r-inla-download.org/R/stable/
 SystemRequirements: CmdStan (https://mc-stan.org/users/interfaces/cmdstan)
 LazyData: true
 VignetteBuilder: knitr
