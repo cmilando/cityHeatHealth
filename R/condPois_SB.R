@@ -441,7 +441,7 @@ condPois_sb <- function(exposure_matrix,
 
     mcmc_array <- fit_mcmc$draws()
 
-    stan_summary <- mcmc_array$summary()
+    stan_summary <- fit_mcmc$summary()
 
     out_df <- posterior::as_draws_df(mcmc_array)
   }

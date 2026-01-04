@@ -168,7 +168,7 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 
 Compare, now you can see these are different
 
-```{r compare2}
+```{r compare2b}
 mx
 
 m_sb2$`_`$beta_mat
