@@ -1,6 +1,6 @@
 # Title
 
-Title
+Helper function to get neighbors
 
 ## Usage
 

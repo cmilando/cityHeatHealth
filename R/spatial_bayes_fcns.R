@@ -1,5 +1,7 @@
 #' Title
 #'
+#' https://github.com/stan-dev/example-models/blob/master/knitr/car-iar-poisson/nb_data_funs.R
+#'
 #' @param x
 #' @param c_id
 #' @param comp_ids
@@ -53,6 +55,8 @@ nb2subgraph = function(x, c_id, comp_ids, offsets) {
 
 #' Title
 #'
+#' https://github.com/stan-dev/example-models/blob/master/knitr/car-iar-poisson/nb_data_funs.R
+#'
 #' @param x
 #'
 #' @returns
@@ -94,6 +98,8 @@ nb2graph = function(x) {
 
 
 #' Title
+#'
+#' https://github.com/stan-dev/example-models/blob/master/knitr/car-iar-poisson/nb_data_funs.R
 #'
 #' @param x
 #'
@@ -170,6 +176,8 @@ scale_nb_components = function(x) {
 
 #' Title
 #'
+#' Helper function to get neighbors
+#'
 #' @param shp
 #' @param ni
 #' @param include_self
@@ -217,6 +225,8 @@ getSW <- function(shp, ni, include_self = T) {
 }
 
 #' Title
+#'
+#' Facilitates recursive calls get neighbors
 #'
 #' @param xx
 #' @param ni

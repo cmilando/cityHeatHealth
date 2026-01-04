@@ -1,4 +1,24 @@
 url: http://chadmilando.com/cityHeatHealth/
+
 template:
   bootstrap: 5
 
+articles:
+- title: Main vignettes
+  navbar: ~
+  contents:
+  - one_stage_demo
+  - two_stage_demo
+  - bayesian_demo
+  - attributable_number
+
+- title: Additional vignettes
+  desc: Vignettes aimed at advanced users
+  contents:
+  - faq
+  - get_pop_estimates
+  - validation
+  - dlnm_sensitivity
+  - comparison
+  - group-check
+  - TODO

@@ -7,8 +7,10 @@
 #' May through September (5 through 9)
 #' @param collapse_to which factors to collapse across
 #' @param grp_level whether to summarize to the group level or not (default)
+#'
 #' @import data.table
 #' @importFrom lubridate days_in_month
+#'
 #' @returns
 #' @export
 #'

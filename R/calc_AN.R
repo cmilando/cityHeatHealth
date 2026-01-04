@@ -1,6 +1,6 @@
 #' Calculate attributable number and attributable rates
 #'
-#' @param model a model object of class `condPois_2stage`, `condPois_1stage`, or `condPois_bayes`
+#' @param model a model object of class `condPois_2stage`, `condPois_1stage`, or `condPois_sb`
 #' @param outcomes_tbl a table of outcomes, of class `outcomes`
 #' @param pop_data population data
 #' @param agg_type what is the spatial resolution you are aggregating to
@@ -232,7 +232,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   unique_years <- unique(year(outcomes_tbl[, get(date_col)]))
 
   ## now expand_grid for every year and above_MMT = c(T, F)
-  xgrid <- expand_grid(data.frame(unique_geos),
+  xgrid <- tidyr::expand_grid(data.frame(unique_geos),
                        year = unique_years,
                        above_MMT = c(T, F),
                        nsim = 1:nsim)
@@ -711,7 +711,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT, pal = 'Purples') 
 #' @param shp an sf shapefile with an appropriate column at which to join
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
-#' @import patchwork
+#' @importFrom patchwork wrap_plots
 #' @import ggplot2
 #' @importFrom RColorBrewer brewer.pal.info
 #' @returns
@@ -742,7 +742,7 @@ spatial_plot.calcAN_list <- function(x, shp, table_type, above_MMT) {
 
   }
 
-  wrap_plots(plt_obj, ncol = 1)
+  patchwork::wrap_plots(plt_obj, ncol = 1)
 
 }
 

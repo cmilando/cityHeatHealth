@@ -16,5 +16,6 @@ calc_dispersion(y, X, beta, stratum_vector)
 \item{stratum_vector}{a vector describing the stratum}
 }
 \description{
-Converted from STATA from armstrong 2014 supplement with guidance from ChatGPT
+Converted from STATA from armstrong 2014 supplement with LLM guidance.
+Minimal error checking of these inputs at present.
 }

@@ -6,12 +6,22 @@
 \alias{cityHeatHealth}
 \title{The 'cityHeatHealth' package.}
 \description{
-A DESCRIPTION OF THE PACKAGE
+Tools for estimating heat-related health impacts using daily exposure and
+outcome data at small spatial scales. The package supports one-stage
+conditional Poisson models, two-stage meta-analytic designs, and spatial
+Bayesian approaches that borrow strength across neighboring geographic
+units when case counts are small. Methods include distributed lag
+non-linear models and attributable number calculations, with workflows
+designed for messy real-world epidemiologic data.
 }
-\references{
-Stan Development Team (NA). RStan: the R interface to Stan. R package version 2.32.7. https://mc-stan.org
+\seealso{
+Useful links:
+\itemize{
+  \item \url{http://chadmilando.com/cityHeatHealth/}
+}
+
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com}
+\strong{Maintainer}: Chad Milando \email{cmilando@bu.edu}
 
 }

@@ -10,5 +10,5 @@ nx(xx, ni, include_self = T)
 \item{include_self}{}
 }
 \description{
-Title
+Facilitates recursive calls get neighbors
 }

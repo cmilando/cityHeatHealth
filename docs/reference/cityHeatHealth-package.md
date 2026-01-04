@@ -1,12 +1,19 @@
 # The 'cityHeatHealth' package.
 
-A DESCRIPTION OF THE PACKAGE
+Tools for estimating heat-related health impacts using daily exposure
+and outcome data at small spatial scales. The package supports one-stage
+conditional Poisson models, two-stage meta-analytic designs, and spatial
+Bayesian approaches that borrow strength across neighboring geographic
+units when case counts are small. Methods include distributed lag
+non-linear models and attributable number calculations, with workflows
+designed for messy real-world epidemiologic data.
 
-## References
+## See also
 
-Stan Development Team (NA). RStan: the R interface to Stan. R package
-version 2.32.7. https://mc-stan.org
+Useful links:
+
+- <http://chadmilando.com/cityHeatHealth/>
 
 ## Author
 
-**Maintainer**: First Last <first.last@example.com>
+**Maintainer**: Chad Milando <cmilando@bu.edu>

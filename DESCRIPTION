@@ -31,8 +31,7 @@ Imports:
     zoo,
     patchwork,
     sf,
-    spdep,
-    INLA
+    spdep
 Suggests:
     tidycensus,
     knitr,

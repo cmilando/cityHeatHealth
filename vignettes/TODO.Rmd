@@ -1,0 +1,23 @@
+---
+title: "Todo"
+output:
+  rmarkdown::html_vignette:
+    fig.retina: 2
+    dev: svg
+vignette: >
+  %\VignetteIndexEntry{Todo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+* mixmeta blup update from Gasp
+
+
+

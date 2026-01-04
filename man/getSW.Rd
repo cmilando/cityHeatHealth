@@ -10,5 +10,5 @@ getSW(shp, ni, include_self = T)
 \item{include_self}{}
 }
 \description{
-Title
+Helper function to get neighbors
 }

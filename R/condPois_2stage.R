@@ -24,11 +24,13 @@
 #' @param maxlag an integer of the maximum lag
 #' @param min_n an integer describing the minimum number of cases for a single region
 #' @param strata_min minimum number of cases per strata
+#'
 #' @importFrom mixmeta mixmeta
 #' @importFrom mixmeta blup
 #' @importFrom dlnm onebasis
 #' @importFrom dlnm crosspred
 #' @import data.table
+#'
 #' @returns
 #' @export
 #'
@@ -709,7 +711,7 @@ spatial_plot.condPois_2stage <- function(x, shp, exposure_val,
 #' @param x an object of class condPois_2stage_list
 #' @param shp an sf shapefile with an appropriate column at which to join
 #' @param exposure_val exposure value at which to plot
-#' @import patchwork
+#' @importFrom patchwork wrap_plots
 #' @import ggplot2
 #' @returns
 #' @export
@@ -762,7 +764,7 @@ spatial_plot.condPois_2stage_list <- function(x, shp, exposure_val) {
                      exposure_col, " = ", exposure_val))
   }
 
-  wrap_plots(plt_obj, ncol = 1,guides = 'collect')
+  patchwork::wrap_plots(plt_obj, ncol = 1,guides = 'collect')
 
 }
 

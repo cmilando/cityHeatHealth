@@ -11,6 +11,8 @@
 #' @param global_cen
 #' @param cen
 #'
+#' @importFrom dlnm onebasis
+#' @importFrom dlnm crosspred
 #' @returns
 #'
 #' @examples

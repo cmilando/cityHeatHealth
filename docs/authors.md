@@ -2,18 +2,18 @@
 
 ## Authors
 
-- **First Last**. Author, maintainer.
+- **Chad Milando**. Author, maintainer.
 
 ## Citation
 
-Last F (2026). *cityHeatHealth: What the Package Does (One Line, Title
-Case)*. R package version 0.0.0.9000,
+Milando C (2026). *cityHeatHealth: Estimating Heat-Health Impacts at
+Small Spatial Scales*. R package version 0.1.0,
 <http://chadmilando.com/cityHeatHealth/>.
 
     @Manual{,
-      title = {cityHeatHealth: What the Package Does (One Line, Title Case)},
-      author = {First Last},
+      title = {cityHeatHealth: Estimating Heat-Health Impacts at Small Spatial Scales},
+      author = {Chad Milando},
       year = {2026},
-      note = {R package version 0.0.0.9000},
+      note = {R package version 0.1.0},
       url = {http://chadmilando.com/cityHeatHealth/},
     }

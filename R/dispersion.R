@@ -1,6 +1,7 @@
 #' Calculate the dispersion parameter for a quasi-poisson model
 #'
-#' Converted from STATA from armstrong 2014 supplement with guidance from ChatGPT
+#' Converted from STATA from armstrong 2014 supplement with LLM guidance.
+#' Minimal error checking of these inputs at present.
 #'
 #' @param y a vector of outcomes
 #' @param X a matrix of predictors, typically the crossbasis output

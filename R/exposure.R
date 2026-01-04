@@ -8,8 +8,10 @@
 #' @param maxgaps the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)
 #' @param maxlag the number of lags for the exposure variable (default is 5)
 #' @param grp_level whether to summarize to the group level or not (default)
+#'
 #' @import data.table
 #' @importFrom zoo na.approx
+#'
 #' @returns a data.table of class("exposure")
 #' @export
 #'

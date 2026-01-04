@@ -7,13 +7,15 @@
 make_cb_list(x, var_list, argvar_list, lag_list, arglag_list)
 }
 \arguments{
+\item{x}{the data.frame with the var_list data in it}
+
 \item{arglag_list}{}
 }
 \description{
-make_cb_list
+This function is work in progress, will be updated soon
 }
 \examples{
-x:           the data.frame with the var_list data in it
+x:
 var_list:    character vector of columns of X that you use, e.g., c('tmean')
 argvar_list: list(set1 = list(fun="bs", degree = 2, knots = list(vk)))
 lag_list:    c(5, 30)

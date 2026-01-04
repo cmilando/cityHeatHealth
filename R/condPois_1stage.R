@@ -1,11 +1,5 @@
 #' Run a conditional poisson model for a single geographic unit
 #'
-#' @import data.table
-#' @importFrom dlnm crossbasis
-#' @importFrom dlnm crosspred
-#' @importFrom dlnm crossreduce
-#' @importFrom dlnm logknots
-#' @importFrom gnm gnm
 #' @param exposure_matrix a matrix of exposures, with columns for lag, usually created by `make_exposure_matrix`
 #' @param outcomes_tbl a data.table of outcomes, created by `make_outcome_table`
 #' @param argvar a list containing the `argvar` components for the `crossbasis`
@@ -15,6 +9,13 @@
 #' @param strata_min an integer describing the minimum number of cases for a single strata
 #' @param global_cen global centering point
 #' @param multi_zone are multiple strata being used.
+#'
+#' @import data.table
+#' @importFrom dlnm crossbasis
+#' @importFrom dlnm crosspred
+#' @importFrom dlnm crossreduce
+#' @importFrom dlnm logknots
+#' @importFrom gnm gnm
 #'
 #' @returns
 #' @export

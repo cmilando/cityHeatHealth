@@ -1,6 +1,8 @@
 #' make_cb_list
 #'
-#' @param x
+#' This function is work in progress, will be updated soon
+#'
+#' @param x the data.frame with the var_list data in it
 #' @param var_list
 #' @param argvar_list
 #' @param lag_list
@@ -11,7 +13,7 @@
 #'
 #' @examples
 make_cb_list <- function(x, var_list, argvar_list, lag_list, arglag_list) {
-  #' x:           the data.frame with the var_list data in it
+  #' x:
   #' var_list:    character vector of columns of X that you use, e.g., c('tmean')
   #' argvar_list: list(set1 = list(fun="bs", degree = 2, knots = list(vk)))
   #' lag_list:    c(5, 30)

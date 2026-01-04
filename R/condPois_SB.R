@@ -14,13 +14,14 @@
 #' @param maxlag an integer of the maximum lag
 #' @param min_n an integer describing the minimum number of cases for a single region
 #' @param strata_min minimum number of cases per strata
+#'
 #' @importFrom mixmeta mixmeta
 #' @importFrom mixmeta blup
 #' @importFrom dlnm onebasis
 #' @importFrom dlnm crosspred
+#' @importFrom spdep poly2nb
 #' @import data.table
-#' @import spdep
-#' @import sf
+#'
 #' @returns
 #' @export
 #'
@@ -331,7 +332,8 @@ condPois_sb <- function(exposure_matrix,
 
   shp_sf_safe <- shp_sf[rr, ]
 
-  nb_subset = poly2nb(shp_sf_safe);
+  nb_subset = spdep::poly2nb(shp_sf_safe);
+
   nbs = nb2graph(nb_subset);
 
   node1 = nbs$node1;
@@ -904,7 +906,7 @@ spatial_plot.condPois_sb <- function(x, shp, exposure_val,
 #' @param x an object of class condPois_sb_list
 #' @param shp an sf shapefile with an appropriate column at which to join
 #' @param exposure_val exposure value at which to plot
-#' @import patchwork
+#' @importFrom patchwork wrap_plots
 #' @import ggplot2
 #' @returns
 #' @export
@@ -957,7 +959,7 @@ spatial_plot.condPois_sb_list <- function(x, shp, exposure_val) {
                      exposure_col, " = ", exposure_val))
   }
 
-  wrap_plots(plt_obj, ncol = 1,guides = 'collect')
+  patchwork::wrap_plots(plt_obj, ncol = 1,guides = 'collect')
 
 }
 

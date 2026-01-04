@@ -15,7 +15,7 @@ calc_AN(
 )
 }
 \arguments{
-\item{model}{a model object of class \code{condPois_2stage}, \code{condPois_1stage}, or \code{condPois_bayes}}
+\item{model}{a model object of class \code{condPois_2stage}, \code{condPois_1stage}, or \code{condPois_sb}}
 
 \item{outcomes_tbl}{a table of outcomes, of class \code{outcomes}}
 

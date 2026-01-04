@@ -21,7 +21,7 @@ calc_AN(
 - model:
 
   a model object of class `condPois_2stage`, `condPois_1stage`, or
-  `condPois_bayes`
+  `condPois_sb`
 
 - outcomes_tbl:
 
