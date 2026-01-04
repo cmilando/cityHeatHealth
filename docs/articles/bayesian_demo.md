@@ -40,8 +40,7 @@ exposure_columns <- list(
 
 TOWNLIST <- c('CHELSEA', 'EVERETT', 'REVERE', 'MALDEN')
 
-exposure <- subset(ma_exposure, TOWN20 %in%  TOWNLIST &
-                     year(date) %in% 2012:2015)
+exposure <- subset(ma_exposure, TOWN20 %in%  TOWNLIST & year(date) %in% 2012:2015)
 
 exposure_mat <- make_exposure_matrix(exposure, exposure_columns)
 #> Warning in make_exposure_matrix(exposure, exposure_columns): check about any NA, some corrections for this later,
@@ -56,8 +55,7 @@ outcome_columns <- list(
   "geo_unit" = "TOWN20",
   "geo_unit_grp" = "COUNTY20"
 )
-deaths   <- subset(ma_deaths, TOWN20 %in%  TOWNLIST & 
-                     year(date) %in% 2012:2015)
+deaths   <- subset(ma_deaths, TOWN20 %in% TOWNLIST & year(date) %in% 2012:2015)
 deaths_tbl <- make_outcome_table(deaths,  outcome_columns)
 
 # plot
@@ -149,11 +147,6 @@ ok here’s the ref of how LAPLACE works:
 I think this makes for a good candidate because betas are normal and the
 model is not hierarchical
 
-\# and here
-<https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758> \#
-stan_file \<- system.file(“stan”, “SB_CondPoisson.stan”, \# package =
-“cityHeatHealth”) \# \# mod \<- cmdstanr::cmdstan_model(stan_file, \#
-
 ``` r
 
 m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
@@ -166,11 +159,6 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
-#>      [,1] [,2] [,3] [,4]
-#> [1,]    0    1    1    0
-#> [2,]    1    0    1    1
-#> [3,]    1    1    0    1
-#> [4,]    0    1    1    0
 #> 
 #> -- run STAN
 #> Running MCMC with 2 parallel chains...
@@ -191,20 +179,20 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
 #> Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
 #> Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
-#> Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
 #> Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
-#> Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+#> Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
 #> Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
-#> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+#> Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+#> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 29.2 seconds.
+#> Chain 2 finished in 28.4 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 29.2 seconds.
+#> Chain 1 finished in 28.7 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 29.2 seconds.
-#> Total execution time: 29.4 seconds.
+#> Mean chain execution time: 28.6 seconds.
+#> Total execution time: 28.8 seconds.
 #> 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
@@ -262,11 +250,6 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
-#>      [,1] [,2] [,3] [,4]
-#> [1,]    0    1    1    0
-#> [2,]    1    0    1    1
-#> [3,]    1    1    0    1
-#> [4,]    0    1    1    0
 #> 
 #> -- run STAN
 #> Initial log joint probability = -6739.06 
@@ -345,11 +328,6 @@ m_sb3 <- condPois_sb(exposure_mat,
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
-#>      [,1] [,2] [,3] [,4]
-#> [1,]    0    1    1    0
-#> [2,]    1    0    1    1
-#> [3,]    1    1    0    1
-#> [4,]    0    1    1    0
 #> 
 #> -- run STAN
 #> Initial log joint probability = -7000.25 
@@ -399,7 +377,7 @@ m_sb3 <- condPois_sb(exposure_mat,
 #> iteration: 700 
 #> iteration: 800 
 #> iteration: 900 
-#> Finished in  0.8 seconds.
+#> Finished in  0.9 seconds.
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
 ```
@@ -449,44 +427,3 @@ subset(m_sb3$`_`$stan_summary, variable == 'q')
 #>   <chr>    <dbl>  <dbl> <dbl>   <dbl> <dbl> <dbl>
 #> 1 q        0.936  0.998 0.181 0.00129 0.474 0.999
 ```
-
-Other bayesian notes
-
-> > need to update to be the number of unique networks, because right
-> > now there are too many degree of freedom
-
-–\> what if you did not just n = 1 neighbors. whats about n = 2
-neighbors with a weighting factor on neighbors that are 2 away? I think
-thins should work. but you’ll have to rework the STAN code so there are
-fewer
-
-so you’ll have to have windows and update this // \*\*\*\*\* matrix\[K,
-J\] beta = rep_matrix(mu, J) + beta_star; // \*\*\*\*\* and update the
-y\[ \] to be compared to multiple versions this is the way that that
-comes back around and the bigger smoothness, the fewer spatial networks
-
-–\> right because again the problem of this is it doesn’t actually
-reduce the number of the problem. so the level of smoothing yes is
-determined by the user by saying how many levels of neighbors to use but
-
-–\> ah ha, the problem there is (just like EpiEstim) you won’t actually
-get betas for everyplace –\> but wait, you actually can if you do the
-poor-man’s recursion. so the point would be you can have a 2-degree
-neighbor beta expressed in each of the J places, and then you can do
-just like in otherwise the ys, which would then give you region-specific
-betas (much like daily R(t)s).
-
-–\> and maybe the two stage can be a weighted average?
-
-–\> probably might make sense to do look at how other people do
-spatial-temporal Poisson rather than doing it yourself. ChatGPT had some
-ideas (“low rank”)
-
-–\> and its going to do better than EpiEstim because its not going to
-scale with the dataset. if anything it will get easier with more data.
-
-–\> Essentially, the SB is a bridge between and 1 stage and a 2 stage if
-you want more granularity than a 1 stage, but the data aren’t strong
-enough to do a 2 stage even with blups, you can do an SB model, which is
-sortof like many overlapping 1 stage models of larger spatial groups
-fused together

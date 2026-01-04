@@ -341,15 +341,11 @@ condPois_sb <- function(exposure_matrix,
   N_edges = nbs$N_edges;
   scaling_factor = scale_nb_components(nb_subset)[1];
 
-
   SW <- getSW(shp = local_shp, ni = 1, include_self = F)
-  print(SW)
 
   if(verbose > 0) {
     cat("\n")
   }
-
-
 
   #' ////////////////////////////////////////////////////////////////////////////
   #' ============================================================================

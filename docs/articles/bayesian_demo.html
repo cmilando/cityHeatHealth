@@ -99,8 +99,7 @@ notes as so what is going on here</p>
 <span></span>
 <span><span class="va">TOWNLIST</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'CHELSEA'</span>, <span class="st">'EVERETT'</span>, <span class="st">'REVERE'</span>, <span class="st">'MALDEN'</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_exposure</span>, <span class="va">TOWN20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span>  <span class="va">TOWNLIST</span> <span class="op">&amp;</span></span>
-<span>                     <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span></span>
+<span><span class="va">exposure</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_exposure</span>, <span class="va">TOWN20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span>  <span class="va">TOWNLIST</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">exposure_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_exposure_matrix.html">make_exposure_matrix</a></span><span class="op">(</span><span class="va">exposure</span>, <span class="va">exposure_columns</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in make_exposure_matrix(exposure, exposure_columns): check about any NA, some corrections for this later,</span></span>
@@ -115,8 +114,7 @@ notes as so what is going on here</p>
 <span>  <span class="st">"geo_unit"</span> <span class="op">=</span> <span class="st">"TOWN20"</span>,</span>
 <span>  <span class="st">"geo_unit_grp"</span> <span class="op">=</span> <span class="st">"COUNTY20"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">deaths</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>, <span class="va">TOWN20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span>  <span class="va">TOWNLIST</span> <span class="op">&amp;</span> </span>
-<span>                     <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span></span>
+<span><span class="va">deaths</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>, <span class="va">TOWN20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">TOWNLIST</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span></span>
 <span><span class="va">deaths_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span><span class="va">deaths</span>,  <span class="va">outcome_columns</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># plot</span></span>
@@ -196,9 +194,6 @@ produce similar curves.</p>
 </ul>
 <p>I think this makes for a good candidate because betas are normal and
 the model is not hierarchical</p>
-<p># and here <a href="https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758" class="external-link uri">https://discourse.mc-stan.org/t/r-package-using-cmdstanr/32758</a>
-# stan_file &lt;- system.file(“stan”, “SB_CondPoisson.stan”, # package =
-“cityHeatHealth”) # # mod &lt;- cmdstanr::cmdstan_model(stan_file, #</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m_sb1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_sb.html">condPois_sb</a></span><span class="op">(</span><span class="va">exposure_mat</span>, <span class="va">deaths_tbl</span>, <span class="va">local_shp</span>, </span>
 <span>                     stan_type <span class="op">=</span> <span class="st">'mcmc'</span>,</span>
@@ -210,11 +205,6 @@ the model is not hierarchical</p>
 <span><span class="co">#&gt; CHELSEA  EVERETT     MALDEN  REVERE  </span></span>
 <span><span class="co">#&gt; Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one</span></span>
 <span><span class="co">#&gt; polygon per row in `shp`</span></span>
-<span><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
-<span><span class="co">#&gt; [1,]    0    1    1    0</span></span>
-<span><span class="co">#&gt; [2,]    1    0    1    1</span></span>
-<span><span class="co">#&gt; [3,]    1    1    0    1</span></span>
-<span><span class="co">#&gt; [4,]    0    1    1    0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- run STAN</span></span>
 <span><span class="co">#&gt; Running MCMC with 2 parallel chains...</span></span>
@@ -235,20 +225,20 @@ the model is not hierarchical</p>
 <span><span class="co">#&gt; Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) </span></span>
 <span><span class="co">#&gt; Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) </span></span>
 <span><span class="co">#&gt; Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) </span></span>
-<span><span class="co">#&gt; Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) </span></span>
 <span><span class="co">#&gt; Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) </span></span>
-<span><span class="co">#&gt; Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) </span></span>
+<span><span class="co">#&gt; Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) </span></span>
 <span><span class="co">#&gt; Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) </span></span>
-<span><span class="co">#&gt; Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) </span></span>
+<span><span class="co">#&gt; Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) </span></span>
 <span><span class="co">#&gt; Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) </span></span>
+<span><span class="co">#&gt; Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) </span></span>
 <span><span class="co">#&gt; Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) </span></span>
-<span><span class="co">#&gt; Chain 2 finished in 29.2 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2 finished in 28.4 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) </span></span>
-<span><span class="co">#&gt; Chain 1 finished in 29.2 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1 finished in 28.7 seconds.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Both chains finished successfully.</span></span>
-<span><span class="co">#&gt; Mean chain execution time: 29.2 seconds.</span></span>
-<span><span class="co">#&gt; Total execution time: 29.4 seconds.</span></span>
+<span><span class="co">#&gt; Mean chain execution time: 28.6 seconds.</span></span>
+<span><span class="co">#&gt; Total execution time: 28.8 seconds.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; CHELSEA  EVERETT     MALDEN  REVERE  </span></span>
 <span><span class="co">#&gt; -- apply estimates</span></span></code></pre></div>
@@ -299,11 +289,6 @@ similarity in beta coefs</p>
 <span><span class="co">#&gt; CHELSEA  EVERETT     MALDEN  REVERE  </span></span>
 <span><span class="co">#&gt; Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one</span></span>
 <span><span class="co">#&gt; polygon per row in `shp`</span></span>
-<span><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
-<span><span class="co">#&gt; [1,]    0    1    1    0</span></span>
-<span><span class="co">#&gt; [2,]    1    0    1    1</span></span>
-<span><span class="co">#&gt; [3,]    1    1    0    1</span></span>
-<span><span class="co">#&gt; [4,]    0    1    1    0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- run STAN</span></span>
 <span><span class="co">#&gt; Initial log joint probability = -6739.06 </span></span>
@@ -376,11 +361,6 @@ similarity in beta coefs</p>
 <span><span class="co">#&gt; CHELSEA  EVERETT     MALDEN  REVERE  </span></span>
 <span><span class="co">#&gt; Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one</span></span>
 <span><span class="co">#&gt; polygon per row in `shp`</span></span>
-<span><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
-<span><span class="co">#&gt; [1,]    0    1    1    0</span></span>
-<span><span class="co">#&gt; [2,]    1    0    1    1</span></span>
-<span><span class="co">#&gt; [3,]    1    1    0    1</span></span>
-<span><span class="co">#&gt; [4,]    0    1    1    0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- run STAN</span></span>
 <span><span class="co">#&gt; Initial log joint probability = -7000.25 </span></span>
@@ -430,7 +410,7 @@ similarity in beta coefs</p>
 <span><span class="co">#&gt; iteration: 700 </span></span>
 <span><span class="co">#&gt; iteration: 800 </span></span>
 <span><span class="co">#&gt; iteration: 900 </span></span>
-<span><span class="co">#&gt; Finished in  0.8 seconds.</span></span>
+<span><span class="co">#&gt; Finished in  0.9 seconds.</span></span>
 <span><span class="co">#&gt; CHELSEA  EVERETT     MALDEN  REVERE  </span></span>
 <span><span class="co">#&gt; -- apply estimates</span></span></code></pre></div>
 <p>As you can see, lots of smoothing to a central estimate !</p>
@@ -472,43 +452,6 @@ high</p>
 <span><span class="co">#&gt;   variable  mean median    sd     mad    q5   q95</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> q        0.936  0.998 0.181 0.001<span style="text-decoration: underline;">29</span> 0.474 0.999</span></span></code></pre></div>
-<p>Other bayesian notes</p>
-<blockquote>
-<blockquote>
-<p>need to update to be the number of unique networks, because right now
-there are too many degree of freedom</p>
-</blockquote>
-</blockquote>
-<p>–&gt; what if you did not just n = 1 neighbors. whats about n = 2
-neighbors with a weighting factor on neighbors that are 2 away? I think
-thins should work. but you’ll have to rework the STAN code so there are
-fewer</p>
-<p>so you’ll have to have windows and update this // ***** matrix[K, J]
-beta = rep_matrix(mu, J) + beta_star; // ***** and update the y[ ] to be
-compared to multiple versions this is the way that that comes back
-around and the bigger smoothness, the fewer spatial networks</p>
-<p>–&gt; right because again the problem of this is it doesn’t actually
-reduce the number of the problem. so the level of smoothing yes is
-determined by the user by saying how many levels of neighbors to use
-but</p>
-<p>–&gt; ah ha, the problem there is (just like EpiEstim) you won’t
-actually get betas for everyplace –&gt; but wait, you actually can if
-you do the poor-man’s recursion. so the point would be you can have a
-2-degree neighbor beta expressed in each of the J places, and then you
-can do just like in otherwise the ys, which would then give you
-region-specific betas (much like daily R(t)s).</p>
-<p>–&gt; and maybe the two stage can be a weighted average?</p>
-<p>–&gt; probably might make sense to do look at how other people do
-spatial-temporal Poisson rather than doing it yourself. ChatGPT had some
-ideas (“low rank”)</p>
-<p>–&gt; and its going to do better than EpiEstim because its not going
-to scale with the dataset. if anything it will get easier with more
-data.</p>
-<p>–&gt; Essentially, the SB is a bridge between and 1 stage and a 2
-stage if you want more granularity than a 1 stage, but the data aren’t
-strong enough to do a 2 stage even with blups, you can do an SB model,
-which is sortof like many overlapping 1 stage models of larger spatial
-groups fused together</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

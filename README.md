@@ -1,4 +1,9 @@
+
+# cityHeatHealth
+
 The package `cityHeatHealth` makes it simple to estimate heat-health impacts at small spatial scales. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts.
+
+## Usage 
 
 This package can be used in three main ways:
 
@@ -29,9 +34,4 @@ This package comes pre-loaded with sample datasets of each type (e.g., `ma_expos
 
 ## Additional vignettes
 
-We also provide several additional vignettes for common questions:
-
-* `vignette("comparison")`: a comparison between our methods and outputs from other tutorials
-* `vignette("dlnm_sensitivity")`: shows how to assess dlnm sensitivity
-* `vignette("get_pop_estimates")`: sample code for how to get population estimates from `tidycensus`
-* vignette("validation")`: showing that the spatial bayesian methods work when case numbers become very small
+We also provide several additional vignettes for common questions -- see "More articles""
