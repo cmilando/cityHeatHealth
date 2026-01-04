@@ -27,6 +27,7 @@ We can easily extend the functionality from `vignette("one_stage_demo")` to esti
 
 First create the inputs, using the same `exposure_columns` and `outcome_columns` as before.
 ```{r multi_town_setup}
+library(data.table)
 exposure_columns <- list(
   "date" = "date",
   "exposure" = "tmax_C",
@@ -34,7 +35,8 @@ exposure_columns <- list(
   "geo_unit_grp" = "COUNTY20"
 )
 
-ma_exposure_matrix <- make_exposure_matrix(ma_exposure, exposure_columns)
+ma_exposure_matrix <- make_exposure_matrix(subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+           year(date) %in% 2012:2015), exposure_columns)
 
 outcome_columns <- list(
   "date" = "date",
@@ -44,7 +46,8 @@ outcome_columns <- list(
   "geo_unit" = "TOWN20",
   "geo_unit_grp" = "COUNTY20"
 )
-ma_outcomes_tbl <- make_outcome_table(ma_deaths, outcome_columns)
+ma_outcomes_tbl <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+           year(date) %in% 2012:2015), outcome_columns)
 ```
 
 Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 1 function from these inputs and defaults for `argvar`, `arglag` and `maxlag`. 
@@ -87,7 +90,8 @@ spatial_plot(ma_model, shp = ma_towns, exposure_val = 25.1)
 Only a small change is required to run the model by factor, e.g., age_grp:
 
 ```{r multi_town_setup_factor}
-ma_outcomes_tbl_fct <- make_outcome_table(ma_deaths, 
+ma_outcomes_tbl_fct <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+           year(date) %in% 2012:2015), 
                                       outcome_columns,
                                       collapse_to = 'age_grp')
 head(ma_outcomes_tbl_fct)
