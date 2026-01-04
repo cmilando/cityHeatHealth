@@ -28,12 +28,12 @@ Imports:
     mixmeta,
     scales,
     tidyr,
-    zoo
-Suggests:
+    zoo,
+    patchwork,
     sf,
-    spdep,
+    spdep
+Suggests:
     tidycensus,
-    data.table,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
