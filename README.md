@@ -17,12 +17,9 @@ In implementations, an attributable number calculation is applied to model outpu
 
 To start a new analysis, you will need the following **4** datasets:
 
-
-::: {.smalltable}
 | Exposure | Outcomes | Populations | Spatial |
 |----------|----------|----------|----------|
 | Exposures at the daily scale for each `geo_unit` | Health outcomes at the daily scale for each `geo_unit` | Population data for each subdivision of the health outcome data that you want results for | A map showing how the various `geo_unit`s are neighbors |
-:::
 
 This package comes pre-loaded with sample datasets of each type (e.g., `ma_exposure`, `ma_deaths`, `ma_pop_data`, and `ma_towns` respectively) so each of these methods can be explored. 
 

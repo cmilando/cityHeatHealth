@@ -205,41 +205,65 @@ the mininum RR will be used</li>
 </h4>
 <p>Now you have several options for running the conditional poisson
 model:</p>
-<table tbl-colwidths="[10,10,80]" class="table">
+<table style="width:100%; border-collapse: collapse;" class="table">
 <colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
+<col style="width:15%;">
+<col style="width:15%;">
+<col style="width:70%;">
 </colgroup>
-<thead><tr class="header">
-<th>Design</th>
-<th>Function</th>
-<th>Description</th>
+<thead><tr>
+<th align="left">
+Design
+</th>
+<th align="left">
+Function
+</th>
+<th align="left">
+Description
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td><strong>1-stage design</strong></td>
-<td><code>condPois_1stage</code></td>
-<td>Produces a single set beta coefficients across all included spatial
+<tr>
+<td>
+<strong>1-stage design</strong>
+</td>
+<td>
+<code>condPois_1stage</code>
+</td>
+<td>
+Produces a single set of beta coefficients across all included spatial
 units. If multiple <code>geo_units</code> are present in the input
 objects, <code>multi_zone = TRUE</code> must be set. This option does
-not use <code>mixmeta</code> or <code>blup</code>.</td>
+not use <code>mixmeta</code> or <code>blup</code>.
+</td>
 </tr>
-<tr class="even">
-<td><strong>2-stage design</strong></td>
-<td><code>condPois_2stage</code></td>
-<td>Estimates beta coefficients for each spatial unit and then uses
+<tr>
+<td>
+<strong>2-stage design</strong>
+</td>
+<td>
+<code>condPois_2stage</code>
+</td>
+<td>
+Estimates beta coefficients for each spatial unit and then uses
 <code>mixmeta</code> and <code>blup</code> to obtain more stable
-estimates.</td>
+estimates.
+</td>
 </tr>
-<tr class="odd">
-<td><strong>Spatial Bayes</strong></td>
-<td><code>condPois_sb</code></td>
-<td>Also estimates beta coefficients for each spatial unit, but applies
+<tr>
+<td>
+<strong>Spatial Bayes</strong>
+</td>
+<td>
+<code>condPois_sb</code>
+</td>
+<td>
+Also estimates beta coefficients for each spatial unit, but applies
 Bayesian methods to stabilize estimates by borrowing information from
 neighboring spatial units, rather than from the full dataset as in
 <code>mixmeta</code>. This approach is especially useful in settings
-with small outcome numbers.</td>
+with small outcome numbers.
+</td>
 </tr>
 </tbody>
 </table>

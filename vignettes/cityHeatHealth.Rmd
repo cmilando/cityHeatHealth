@@ -107,13 +107,51 @@ You can also affect the global centering point:
 
 Now you have several options for running the conditional poisson model: 
 
-| Design | Function | Description |
-|-------|-------|-------|
-| **1-stage design** | `condPois_1stage` | Produces a single set beta coefficients across all included spatial units. If multiple `geo_units` are present in the input objects, `multi_zone = TRUE` must be set. This option does not use `mixmeta` or `blup`. |
-| **2-stage design** | `condPois_2stage` | Estimates beta coefficients for each spatial unit and then uses `mixmeta` and `blup` to obtain more stable estimates. |
-| **Spatial Bayes** | `condPois_sb` | Also estimates beta coefficients for each spatial unit, but applies Bayesian methods to stabilize estimates by borrowing information from neighboring spatial units, rather than from the full dataset as in `mixmeta`. This approach is especially useful in settings with small outcome numbers. |
+<table style="width:100%; border-collapse: collapse;">
+  <colgroup>
+    <col style="width:15%;">
+    <col style="width:15%;">
+    <col style="width:70%;">
+  </colgroup>
+  <thead>
+    <tr>
+      <th align="left">Design</th>
+      <th align="left">Function</th>
+      <th align="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1-stage design</strong></td>
+      <td><code>condPois_1stage</code></td>
+      <td>
+        Produces a single set of beta coefficients across all included spatial units.
+        If multiple <code>geo_units</code> are present in the input objects,
+        <code>multi_zone = TRUE</code> must be set.
+        This option does not use <code>mixmeta</code> or <code>blup</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>2-stage design</strong></td>
+      <td><code>condPois_2stage</code></td>
+      <td>
+        Estimates beta coefficients for each spatial unit and then uses
+        <code>mixmeta</code> and <code>blup</code> to obtain more stable estimates.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Spatial Bayes</strong></td>
+      <td><code>condPois_sb</code></td>
+      <td>
+        Also estimates beta coefficients for each spatial unit, but applies Bayesian
+        methods to stabilize estimates by borrowing information from neighboring
+        spatial units, rather than from the full dataset as in <code>mixmeta</code>.
+        This approach is especially useful in settings with small outcome numbers.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-: {tbl-colwidths="[10,10,80]"}
 
 We show code for each but just run `condPois_2stage` in this vignette.
 

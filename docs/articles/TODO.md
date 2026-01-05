@@ -7,4 +7,9 @@ Running list of ToDos \[1.5.2026\]:
 - add an argument to `condPois_sb` that allows you to increase the
   neighbors included in `SW`
 
-- implement variational or pathfinder as other `condPois_sb` options
+- extend to include the estimation of future impacts
+
+- Check out the Anderson AN impulse from Darren and Kate re hurricanes
+  to avoid double-counting?
+
+- have a how to install section
