@@ -195,13 +195,13 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 31.0 seconds.
+#> Chain 2 finished in 30.3 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 31.2 seconds.
+#> Chain 1 finished in 30.5 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 31.1 seconds.
-#> Total execution time: 31.3 seconds.
+#> Mean chain execution time: 30.4 seconds.
+#> Total execution time: 30.7 seconds.
 #> 
 #>  ...mcmc draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
@@ -270,7 +270,7 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #>      139      -6737.26   0.000348121      0.731762           1           1      169    
 #> Optimization terminated normally:  
 #>   Convergence detected: relative gradient magnitude is below tolerance 
-#> Finished in  0.1 seconds.
+#> Finished in  0.3 seconds.
 #>  ...laplace sample... 
 #> Calculating Hessian 
 #> Calculating inverse of Cholesky factor 

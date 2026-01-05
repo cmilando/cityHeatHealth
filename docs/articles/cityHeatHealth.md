@@ -120,10 +120,13 @@ we then run a conditional poisson model.
 #### Cross-basis arguments
 
 There are built-in arguments for `argvar` and `arglag` that you can
-override if you’d like, but the defaults are: \* `maxlag`: default is 5
-(days) \* `argvar`: default is `ns()` and knots at the 50th and 90th
-percentile of unit-specific exposure. \* `arglag`: default is
-`list(fun = 'ns', knots = logknots(maxlag, nk = 2))`
+override if you’d like, but the defaults are:
+
+- `maxlag`: default is 5 (days)
+- `argvar`: default is `ns()` and knots at the 50th and 90th percentile
+  of unit-specific exposure.
+- `arglag`: default is
+  `list(fun = 'ns', knots = logknots(maxlag, nk = 2))`
 
 You can also affect the global centering point:
 
@@ -331,6 +334,12 @@ varnames$sex[rr] <- 'M'
 ma_pop_data_long$sex = varnames$sex
 ma_pop_data_long$age_grp = varnames$age_grp
 ma_pop_data_long$sex_age <- NULL
+```
+
+Lets look at it:
+
+``` r
+
 ma_pop_data_long
 #>                TOWN20 population    sex age_grp
 #>                <char>      <num> <char>  <char>
@@ -370,7 +379,7 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  agg_type = 'TOWN20', join_cols = 'TOWN20')
 ```
 
-From this you get a `rate_table` and a `number_table`:
+From this you get a `rate_table` :
 
 ``` r
 
@@ -401,6 +410,12 @@ ma_AN$`_`$rate_table
 #> 226:                  0.00000                  0.00000
 #> 227:                 15.26067                 34.07675
 #> 228:                  0.00000                  0.00000
+```
+
+and a `number_table`:
+
+``` r
+
 ma_AN$`_`$number_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_num_est
 #>          <char>    <char>      <num>    <lgcl>                    <num>
@@ -465,6 +480,11 @@ We can easily do this, by using the `collapse_to` argument:
 
 ma_outcomes_tbl_fct <- make_outcome_table(
   deaths_sub, outcome_columns, collapse_to = 'age_grp')
+```
+
+Lets look at the result:
+
+``` r
 
 head(ma_outcomes_tbl_fct)
 #>          date    TOWN20  COUNTY20 age_grp daily_deaths
