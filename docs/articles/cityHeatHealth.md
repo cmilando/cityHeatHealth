@@ -138,9 +138,11 @@ You can also affect the global centering point:
 
 Now you have several options for running the conditional poisson model:
 
-| 1-stage design | 2-stage design | Spatial Bayes |
+| Design | Function | Description |
 |----|----|----|
-| `condPois_1stage` would be if you wanted just 1 estimate of beta coefficients across all the spatial units you included (if there are multiple `geo_units` in the objects you pass in, you would need to set `multi_zone = TRUE`). There is no `mixmeta` or `blup` in this option | `condPois_2stage` creates a set of beta coefficients for each spatial unit, and uses `mixmeta` and `blup` to create more stable estimates | `condPois_sb` also creates beta coefficients for each spatial unit, but uses a selection of bayesian methods to create more stable estimates by borrowing information from each spatial unit’s neighbor, rather than mixmeta which uses all the data in the dataset. This can be especially useful in settings with small numbers. |
+| **1-stage design** | `condPois_1stage` | Produces a single set beta coefficients across all included spatial units. If multiple `geo_units` are present in the input objects, `multi_zone = TRUE` must be set. This option does not use `mixmeta` or `blup`. |
+| **2-stage design** | `condPois_2stage` | Estimates beta coefficients for each spatial unit and then uses `mixmeta` and `blup` to obtain more stable estimates. |
+| **Spatial Bayes** | `condPois_sb` | Also estimates beta coefficients for each spatial unit, but applies Bayesian methods to stabilize estimates by borrowing information from neighboring spatial units, rather than from the full dataset as in `mixmeta`. This approach is especially useful in settings with small outcome numbers. |
 
 We show code for each but just run `condPois_2stage` in this vignette.
 
@@ -167,16 +169,12 @@ information from the RR plot.
 And for `condPois_sb`, the only additional information you’d need is a
 shapefile showing how the `geo_unit`s are arranged, in this case
 `ma_towns` (in a test run this code took 20 minutes to complete for the
-full MA dataset \[with maybe some additional bugs to work out\], so
-subsetting for 1 year for vignette purposes):
+full MA dataset \[with maybe some additional bugs to work out\]):
 
 ``` r
 
 data("ma_towns")
-ma_model <- condPois_sb(
-  subset(ma_exposure_matrix, year(date) == 2012),
-  subset(ma_outcomes_tbl, year(date) == 2012), 
-  ma_towns)
+ma_model <- condPois_sb(ma_exposure_matrix, ma_outcomes_tbl, ma_towns)
 ```
 
 See
@@ -362,7 +360,7 @@ population data:
 
 - `agg_type` - what spatial resolution are you summarizing to:
   ‘geo_unit’, ‘geo_unit_grp’, or ‘all’
-- `join_col` - which columns in `ma_outcomes_tbl` are you joining
+- `join_cols` - which columns in `ma_outcomes_tbl` are you joining
   `ma_pop_data_long` by
 
 ``` r
