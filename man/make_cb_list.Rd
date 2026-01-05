@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_cb_list.R
 \name{make_cb_list}
 \alias{make_cb_list}
-\title{make_cb_list}
+\title{IN-PROGRESS functions that creates a list of cross-basis objects to try}
 \usage{
 make_cb_list(x, var_list, argvar_list, lag_list, arglag_list)
 }
@@ -12,7 +12,7 @@ make_cb_list(x, var_list, argvar_list, lag_list, arglag_list)
 \item{arglag_list}{}
 }
 \description{
-This function is work in progress, will be updated soon
+IN-PROGRESS functions that creates a list of cross-basis objects to try
 }
 \examples{
 x:

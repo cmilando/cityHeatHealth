@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_bayes_fcns.R
 \name{getSW}
 \alias{getSW}
-\title{Title}
+\title{Creates the list of spatial neighbors used in the \code{condPois_sb} Leroux model}
 \usage{
 getSW(shp, ni, include_self = T)
 }

@@ -2,9 +2,9 @@
 
 ## Getting started with `cityHeatHealth`
 
-Here is code (not run with outputs) that shows the basic skeleton of how
-this package works. We can run the model and then calculate attributable
-numbers easily, and provide a number of outputs.
+Here is code that shows the basic skeleton of how this package works. We
+can run the model and then calculate attributable numbers easily, and
+provide a number of outputs.
 
 ``` r
 
@@ -138,17 +138,9 @@ You can also affect the global centering point:
 
 Now you have several options for running the conditional poisson model:
 
-- `condPois_1stage` would be if you wanted just 1 estimate of beta
-  coefficients across all the spatial units you included (if there are
-  multiple `geo_units` in the objects you pass in, you would need to set
-  `multi_zone = TRUE`). There is no `mixmeta` or `blup` in this option
-- `condPois_2stage` creates a set of beta coefficients for each spatial
-  unit, and uses `mixmeta` and `blup` to create more stable estimates
-- `condPois_sb` also creates beta coefficients for each spatial unit,
-  but uses a selection of bayesian methods to create more stable
-  estimates by borrowing information from each spatial unit’s neighbor,
-  rather than mixmeta which uses all the data in the dataset. This can
-  be especially useful in settings with small numbers.
+| 1-stage design | 2-stage design | Spatial Bayes |
+|----|----|----|
+| `condPois_1stage` would be if you wanted just 1 estimate of beta coefficients across all the spatial units you included (if there are multiple `geo_units` in the objects you pass in, you would need to set `multi_zone = TRUE`). There is no `mixmeta` or `blup` in this option | `condPois_2stage` creates a set of beta coefficients for each spatial unit, and uses `mixmeta` and `blup` to create more stable estimates | `condPois_sb` also creates beta coefficients for each spatial unit, but uses a selection of bayesian methods to create more stable estimates by borrowing information from each spatial unit’s neighbor, rather than mixmeta which uses all the data in the dataset. This can be especially useful in settings with small numbers. |
 
 We show code for each but just run `condPois_2stage` in this vignette.
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_bayes_fcns.R
 \name{getSmat}
 \alias{getSmat}
-\title{Title}
+\title{Gets the matrix of strata, used in \code{condPois_sb}}
 \usage{
 getSmat(strata_vector)
 }
@@ -10,5 +10,5 @@ getSmat(strata_vector)
 \item{strata_vector}{}
 }
 \description{
-Title
+Gets the matrix of strata, used in \code{condPois_sb}
 }

@@ -73,9 +73,9 @@
 <div class="section level2">
 <h2 id="getting-started-with-cityheathealth">Getting started with <code>cityHeatHealth</code><a class="anchor" aria-label="anchor" href="#getting-started-with-cityheathealth"></a>
 </h2>
-<p>Here is code (not run with outputs) that shows the basic skeleton of
-how this package works. We can run the model and then calculate
-attributable numbers easily, and provide a number of outputs.</p>
+<p>Here is code that shows the basic skeleton of how this package works.
+We can run the model and then calculate attributable numbers easily, and
+provide a number of outputs.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://chadmilando.com/cityHeatHealth/">cityHeatHealth</a></span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -205,24 +205,36 @@ the mininum RR will be used</li>
 </h4>
 <p>Now you have several options for running the conditional poisson
 model:</p>
-<ul>
-<li>
+<table class="table">
+<colgroup>
+<col width="34%">
+<col width="34%">
+<col width="31%">
+</colgroup>
+<thead><tr class="header">
+<th>1-stage design</th>
+<th>2-stage design</th>
+<th>Spatial Bayes</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td>
 <code>condPois_1stage</code> would be if you wanted just 1 estimate
 of beta coefficients across all the spatial units you included (if there
 are multiple <code>geo_units</code> in the objects you pass in, you
 would need to set <code>multi_zone = TRUE</code>). There is no
-<code>mixmeta</code> or <code>blup</code> in this option</li>
-<li>
+<code>mixmeta</code> or <code>blup</code> in this option</td>
+<td>
 <code>condPois_2stage</code> creates a set of beta coefficients for
 each spatial unit, and uses <code>mixmeta</code> and <code>blup</code>
-to create more stable estimates</li>
-<li>
+to create more stable estimates</td>
+<td>
 <code>condPois_sb</code> also creates beta coefficients for each
 spatial unit, but uses a selection of bayesian methods to create more
 stable estimates by borrowing information from each spatial unit’s
 neighbor, rather than mixmeta which uses all the data in the dataset.
-This can be especially useful in settings with small numbers.</li>
-</ul>
+This can be especially useful in settings with small numbers.</td>
+</tr></tbody>
+</table>
 <p>We show code for each but just run <code>condPois_2stage</code> in
 this vignette.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -619,7 +631,7 @@ but fine for diagnostics.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

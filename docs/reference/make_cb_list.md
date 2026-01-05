@@ -1,6 +1,6 @@
-# make_cb_list
+# IN-PROGRESS functions that creates a list of cross-basis objects to try
 
-This function is work in progress, will be updated soon
+IN-PROGRESS functions that creates a list of cross-basis objects to try
 
 ## Usage
 

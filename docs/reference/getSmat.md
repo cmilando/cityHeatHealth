@@ -1,6 +1,6 @@
-# Title
+# Gets the matrix of strata, used in `condPois_sb`
 
-Title
+Gets the matrix of strata, used in `condPois_sb`
 
 ## Usage
 

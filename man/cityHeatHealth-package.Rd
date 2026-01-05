@@ -24,4 +24,12 @@ Useful links:
 \author{
 \strong{Maintainer}: Chad Milando \email{cmilando@bu.edu}
 
+Authors:
+\itemize{
+  \item Emma Gause \email{egause@bu.edu}
+  \item Quinn Adams \email{qadams@bu.edu}
+  \item Zachary Popp \email{zpopp@bu.edu}
+  \item Gregory Wellenius \email{wellenius@bu.edu}
+}
+
 }

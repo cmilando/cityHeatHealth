@@ -1,8 +1,13 @@
 Package: cityHeatHealth
 Title: Estimating Heat-Health Impacts at Small Spatial Scales
 Version: 0.1.0
-Authors@R: 
-    person("Chad", "Milando", , "cmilando@bu.edu", role = c("aut", "cre"))
+Authors@R: c(
+    person("Chad", "Milando", , "cmilando@bu.edu", role = c("aut", "cre")),
+    person("Emma", "Gause", , "egause@bu.edu", role = c("aut")),
+    person("Quinn", "Adams", , "qadams@bu.edu", role = c("aut")),
+    person("Zachary", "Popp", , "zpopp@bu.edu", role = c("aut")),
+    person("Gregory", "Wellenius", , "wellenius@bu.edu", role = c("aut"))
+    )
 Description: 
     Tools for estimating heat-related health impacts using daily exposure and
     outcome data at small spatial scales. The package supports one-stage

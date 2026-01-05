@@ -17,3 +17,13 @@ Useful links:
 ## Author
 
 **Maintainer**: Chad Milando <cmilando@bu.edu>
+
+Authors:
+
+- Emma Gause <egause@bu.edu>
+
+- Quinn Adams <qadams@bu.edu>
+
+- Zachary Popp <zpopp@bu.edu>
+
+- Gregory Wellenius <wellenius@bu.edu>

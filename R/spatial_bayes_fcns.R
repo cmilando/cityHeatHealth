@@ -8,7 +8,6 @@
 #' @param offsets
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 nb2subgraph = function(x, c_id, comp_ids, offsets) {
@@ -60,7 +59,6 @@ nb2subgraph = function(x, c_id, comp_ids, offsets) {
 #' @param x
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 nb2graph = function(x) {
@@ -104,7 +102,6 @@ nb2graph = function(x) {
 #' @param x
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 indexByComponent = function(x) {
@@ -138,7 +135,6 @@ indexByComponent = function(x) {
 #' @param x
 #'
 #' @returns
-#' @export
 #' @import Matrix
 #' @importFrom INLA inla.qinv
 #' @examples
@@ -174,7 +170,7 @@ scale_nb_components = function(x) {
   return(scales);
 }
 
-#' Title
+#' Creates the list of spatial neighbors used in the `condPois_sb` Leroux model
 #'
 #' Helper function to get neighbors
 #'
@@ -183,7 +179,6 @@ scale_nb_components = function(x) {
 #' @param include_self
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 getSW <- function(shp, ni, include_self = T) {
@@ -233,7 +228,6 @@ getSW <- function(shp, ni, include_self = T) {
 #' @param include_self
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 nx <- function(xx, ni, include_self = T) {
@@ -273,12 +267,11 @@ nx <- function(xx, ni, include_self = T) {
 }
 
 
-#' Title
+#' Gets the matrix of strata, used in `condPois_sb`
 #'
 #' @param strata_vector
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 getSmat <- function(strata_vector) {

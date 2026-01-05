@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 # Getting started with `cityHeatHealth`
 
-Here is code (not run with outputs) that shows the basic skeleton 
+Here is code that shows the basic skeleton 
 of how this package works. We can run the model and then calculate attributable numbers easily, and provide a number of outputs.
 
 ```{r setup}
@@ -107,9 +107,9 @@ You can also affect the global centering point:
 
 Now you have several options for running the conditional poisson model: 
 
-* `condPois_1stage` would be if you wanted just 1 estimate of beta coefficients across all the spatial units you included (if there are multiple `geo_units` in the objects you pass in, you would need to set `multi_zone = TRUE`). There is no `mixmeta` or `blup` in this option
-* `condPois_2stage` creates a set of beta coefficients for each spatial unit, and uses `mixmeta` and `blup` to create more stable estimates
-* `condPois_sb` also creates beta coefficients for each spatial unit, but uses a selection of bayesian methods to create more stable estimates by borrowing information from each spatial unit's neighbor, rather than mixmeta which uses all the data in the dataset. This can be especially useful in settings with small numbers.
+| 1-stage design | 2-stage design | Spatial Bayes |
+|----------------|----------------|---------------|
+| `condPois_1stage` would be if you wanted just 1 estimate of beta coefficients across all the spatial units you included (if there are multiple `geo_units` in the objects you pass in, you would need to set `multi_zone = TRUE`). There is no `mixmeta` or `blup` in this option| `condPois_2stage` creates a set of beta coefficients for each spatial unit, and uses `mixmeta` and `blup` to create more stable estimates| `condPois_sb` also creates beta coefficients for each spatial unit, but uses a selection of bayesian methods to create more stable estimates by borrowing information from each spatial unit's neighbor, rather than mixmeta which uses all the data in the dataset. This can be especially useful in settings with small numbers.|
 
 We show code for each but just run `condPois_2stage` in this vignette.
 
@@ -125,14 +125,11 @@ ma_model <- condPois_1stage(ma_exposure_matrix, ma_outcomes_tbl, multi_zone = T)
 
 See `vignette("one_stage_demo")` for more details. Note that `forest_plot` and `spatial_plot` are not implemented for `condPois_1stage` since you can get all of that information from the RR plot.
 
-And for `condPois_sb`, the only additional information you'd need is a shapefile showing how the `geo_unit`s are arranged, in this case `ma_towns` (in a test run this code took 20 minutes to complete for the full MA dataset [with maybe some additional bugs to work out], so subsetting for 1 year for vignette purposes):
+And for `condPois_sb`, the only additional information you'd need is a shapefile showing how the `geo_unit`s are arranged, in this case `ma_towns` (in a test run this code took 20 minutes to complete for the full MA dataset [with maybe some additional bugs to work out]):
 
 ```{r runModel3, eval=FALSE}
 data("ma_towns")
-ma_model <- condPois_sb(
-  subset(ma_exposure_matrix, year(date) == 2012),
-  subset(ma_outcomes_tbl, year(date) == 2012), 
-  ma_towns)
+ma_model <- condPois_sb(ma_exposure_matrix, ma_outcomes_tbl, ma_towns)
 ```
 
 See `vignette("bayesian_demo")` for more details.

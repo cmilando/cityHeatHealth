@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_cb_list.R
 \name{expand_arglist}
 \alias{expand_arglist}
-\title{Title}
+\title{IN-PROGRESS functions that creates a list of cross-basis objects to try}
 \usage{
 expand_arglist(arglist)
 }
@@ -10,5 +10,5 @@ expand_arglist(arglist)
 \item{arglist}{}
 }
 \description{
-Title
+IN-PROGRESS functions that creates a list of cross-basis objects to try
 }

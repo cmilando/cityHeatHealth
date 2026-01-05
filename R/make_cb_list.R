@@ -1,6 +1,4 @@
-#' make_cb_list
-#'
-#' This function is work in progress, will be updated soon
+#' IN-PROGRESS functions that creates a list of cross-basis objects to try
 #'
 #' @param x the data.frame with the var_list data in it
 #' @param var_list
@@ -9,7 +7,6 @@
 #' @param arglag_list
 #'
 #' @returns
-#' @export
 #'
 #' @examples
 make_cb_list <- function(x, var_list, argvar_list, lag_list, arglag_list) {
@@ -86,7 +83,7 @@ make_cb_list <- function(x, var_list, argvar_list, lag_list, arglag_list) {
 
 }
 
-#' Title
+#' IN-PROGRESS functions that creates a list of cross-basis objects to try
 #'
 #' @param arglist
 #'
