@@ -130,7 +130,7 @@ exposure_columns <- list(
 )
 
 ma_exposure_matrix <- make_exposure_matrix(
-  subset(ma_exposure, COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+  subset(ma_exposure, COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), 
   exposure_columns)
 #> Warning in make_exposure_matrix(subset(ma_exposure, COUNTY20 %in% c("MIDDLESEX", : check about any NA, some corrections for this later,
@@ -150,7 +150,8 @@ outcome_columns <- list(
   "geo_unit_grp" = "COUNTY20"
 )
 
-ma_outcomes_tbl <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_outcomes_tbl <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), outcome_columns)
 ```
 
@@ -200,63 +201,63 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  verbose = 2)
 #> -- validation passed
 #> -- estimate in each geo_unit
-#> 5    10  15  20  25  30  35  40  45  50  55  
+#> 5    10  15  20  25  30  35  40  45  50  55  60  65  70  75  80  85  90  95  100     105     110     
 #> -- summarize by simulation
 #> 5    10  15  20  25  30  35  40  45  50  55  60  65  70  75  80  85  90  95  100     
 ma_AN$`_`$rate_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>          <char>    <char>      <num>    <lgcl>                     <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                  82.79207
+#>   1:      ACTON MIDDLESEX      23864      TRUE                  74.11792
 #>   2:      ACTON MIDDLESEX      23864     FALSE                   0.00000
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                  87.53758
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                  87.58659
 #>   4:  ARLINGTON MIDDLESEX      45906     FALSE                   0.00000
-#>   5:      ASHBY MIDDLESEX       3187      TRUE                  78.12990
+#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  66.65220
 #>  ---                                                                    
-#> 112: WINCHESTER MIDDLESEX      22809     FALSE                   0.00000
-#> 113:   WINTHROP   SUFFOLK      19031      TRUE                  89.63008
-#> 114:   WINTHROP   SUFFOLK      19031     FALSE                   0.00000
-#> 115:     WOBURN MIDDLESEX      40992      TRUE                  68.91284
-#> 116:     WOBURN MIDDLESEX      40992     FALSE                   0.00000
+#> 224: WINCHESTER MIDDLESEX      22809     FALSE                   0.00000
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                  67.07406
+#> 226:     WOBURN MIDDLESEX      40992     FALSE                   0.00000
+#> 227:  WORCESTER WORCESTER     204191      TRUE                  78.29373
+#> 228:  WORCESTER WORCESTER     204191     FALSE                   0.00000
 #>      mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                         <num>                    <num>
-#>   1:                 61.87982                105.07014
+#>   1:                 44.05904                105.08978
 #>   2:                  0.00000                  0.00000
-#>   3:                 70.11379                103.99185
+#>   3:                 61.92845                111.78904
 #>   4:                  0.00000                  0.00000
-#>   5:                 53.73588                 98.09578
+#>   5:                 36.47428                 88.35214
 #>  ---                                                  
-#> 112:                  0.00000                  0.00000
-#> 113:                 71.92081                105.98464
-#> 114:                  0.00000                  0.00000
-#> 115:                 56.00071                 85.22928
-#> 116:                  0.00000                  0.00000
+#> 224:                  0.00000                  0.00000
+#> 225:                 42.88703                 86.28635
+#> 226:                  0.00000                  0.00000
+#> 227:                 52.33853                107.70131
+#> 228:                  0.00000                  0.00000
 ma_AN$`_`$number_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_num_est
 #>          <char>    <char>      <num>    <lgcl>                    <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                 19.75750
+#>   1:      ACTON MIDDLESEX      23864      TRUE                 17.68750
 #>   2:      ACTON MIDDLESEX      23864     FALSE                  0.00000
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 40.18500
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 40.20750
 #>   4:  ARLINGTON MIDDLESEX      45906     FALSE                  0.00000
-#>   5:      ASHBY MIDDLESEX       3187      TRUE                  2.49000
+#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  4.22375
 #>  ---                                                                   
-#> 112: WINCHESTER MIDDLESEX      22809     FALSE                  0.00000
-#> 113:   WINTHROP   SUFFOLK      19031      TRUE                 17.05750
-#> 114:   WINTHROP   SUFFOLK      19031     FALSE                  0.00000
-#> 115:     WOBURN MIDDLESEX      40992      TRUE                 28.24875
-#> 116:     WOBURN MIDDLESEX      40992     FALSE                  0.00000
+#> 224: WINCHESTER MIDDLESEX      22809     FALSE                  0.00000
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                 27.49500
+#> 226:     WOBURN MIDDLESEX      40992     FALSE                  0.00000
+#> 227:  WORCESTER WORCESTER     204191      TRUE                159.86875
+#> 228:  WORCESTER WORCESTER     204191     FALSE                  0.00000
 #>      mean_annual_attr_num_lb mean_annual_attr_num_ub
 #>                        <num>                   <num>
-#>   1:               14.767000               25.073937
+#>   1:               10.514250               25.078625
 #>   2:                0.000000                0.000000
-#>   3:               32.186437               47.738500
+#>   3:               28.428875               51.317875
 #>   4:                0.000000                0.000000
-#>   5:                1.712563                3.126313
+#>   5:                2.311375                5.598875
 #>  ---                                                
-#> 112:                0.000000                0.000000
-#> 113:               13.687250               20.169937
-#> 114:                0.000000                0.000000
-#> 115:               22.955813               34.937188
-#> 116:                0.000000                0.000000
+#> 224:                0.000000                0.000000
+#> 225:               17.580250               35.370500
+#> 226:                0.000000                0.000000
+#> 227:              106.870563              219.916375
+#> 228:                0.000000                0.000000
 ```
 
 you can change `agg_type` to be a different spatial resolution – either
@@ -271,35 +272,35 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
                  verbose = 2)
 #> -- validation passed
 #> -- estimate in each geo_unit
-#> 5    10  15  20  25  30  35  40  45  50  55  
+#> 5    10  15  20  25  30  35  40  45  50  55  60  65  70  75  80  85  90  95  100     105     110     
 #> -- summarize by simulation
 #> 5    10  15  20  25  30  35  40  45  50  55  60  65  70  75  80  85  90  95  100     
 ma_AN$`_`$rate_table
 #>     COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>       <char>      <num>    <lgcl>                     <num>
-#> 1: MIDDLESEX    1623109      TRUE                  79.71161
+#> 1: MIDDLESEX    1623109      TRUE                  79.69559
 #> 2: MIDDLESEX    1623109     FALSE                   0.00000
-#> 3:   SUFFOLK     785443      TRUE                  91.91405
-#> 4:   SUFFOLK     785443     FALSE                   0.00000
+#> 3: WORCESTER     858898      TRUE                  68.81449
+#> 4: WORCESTER     858898     FALSE                   0.00000
 #>    mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                       <num>                    <num>
-#> 1:                 76.87088                 81.88135
-#> 2:                  0.00000                  0.00000
-#> 3:                 76.72278                102.17823
-#> 4:                  0.00000                  0.00000
+#> 1:            75.5849499325             8.345638e+01
+#> 2:             0.0000000000             0.000000e+00
+#> 3:            62.3838191497             7.642366e+01
+#> 4:            -0.0004438827             7.349534e-04
 ma_AN$`_`$number_table
 #>     COUNTY20 population above_MMT mean_annual_attr_num_est
 #>       <char>      <num>    <lgcl>                    <num>
-#> 1: MIDDLESEX    1623109      TRUE                1293.8063
+#> 1: MIDDLESEX    1623109      TRUE                1293.5462
 #> 2: MIDDLESEX    1623109     FALSE                   0.0000
-#> 3:   SUFFOLK     785443      TRUE                 721.9325
-#> 4:   SUFFOLK     785443     FALSE                   0.0000
+#> 3: WORCESTER     858898      TRUE                 591.0463
+#> 4: WORCESTER     858898     FALSE                   0.0000
 #>    mean_annual_attr_num_lb mean_annual_attr_num_ub
 #>                      <num>                   <num>
-#> 1:               1247.6982               1329.0236
-#> 2:                  0.0000                  0.0000
-#> 3:                602.6137                802.5517
-#> 4:                  0.0000                  0.0000
+#> 1:            1226.8261250            1354.5880000
+#> 2:               0.0000000               0.0000000
+#> 3:             535.8133750             656.4012500
+#> 4:              -0.0038125               0.0063125
 ```
 
 See that the numbers are roughly the same for Suffolk county ? They
@@ -340,22 +341,22 @@ ma_AN_s1 <- calc_AN(m2, ma_outcomes_tbl, ma_pop_data_long,
                  verbose = 2)
 #> -- validation passed
 #> -- estimate in each geo_unit
-#> 5    10  15  20  25  30  35  40  45  50  55  
+#> 5    10  15  20  25  30  35  40  45  50  55  60  65  70  75  80  85  90  95  100     105     110     
 #> -- summarize by simulation
 #> 5    10  15  20  25  30  35  40  45  50  55  60  65  70  75  80  85  90  95  100     
 
 ma_AN_s1$`_`$rate_table
 #>     COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>       <char>      <num>    <lgcl>                     <num>
-#> 1: MIDDLESEX    1623109      TRUE                  81.71987
+#> 1: MIDDLESEX    1623109      TRUE                  81.59125
 #> 2: MIDDLESEX    1623109     FALSE                   0.00000
-#> 3:   SUFFOLK     785443      TRUE                  97.70585
-#> 4:   SUFFOLK     785443     FALSE                   0.00000
+#> 3: WORCESTER     858898      TRUE                  80.06248
+#> 4: WORCESTER     858898     FALSE                   0.00000
 #>    mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                       <num>                    <num>
-#> 1:                 81.10122                 82.63056
+#> 1:                 80.66494                 82.53408
 #> 2:                  0.00000                  0.00000
-#> 3:                 93.21673                102.38692
+#> 3:                 78.31885                 81.20461
 #> 4:                  0.00000                  0.00000
 plot(ma_AN_s1, "num", above_MMT = T)
 ```
@@ -368,10 +369,10 @@ In the case where you have factors, you can easily extend this
 
 ``` r
 
-ma_outcomes_tbl_fct <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_outcomes_tbl_fct <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), 
-                                      outcome_columns,
-                                      collapse_to = 'age_grp')
+  outcome_columns, collapse_to = 'age_grp')
 
 ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
 #> < age_grp : 0-17 >

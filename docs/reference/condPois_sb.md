@@ -10,7 +10,7 @@ condPois_sb(
   outcomes_tbl,
   shp_sf,
   stan_type = "laplace",
-  use_spatial_model = "none",
+  use_spatial_model = "bym2",
   stan_opts = NULL,
   global_cen = NULL,
   argvar = NULL,

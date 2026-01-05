@@ -501,6 +501,53 @@ print.condPois_2stage_list <- function(x) {
 }
 
 #'@export
+#' getRR.condPois_2stage
+#'
+#' @param x
+#' @importFrom data.table setDT
+#' @returns
+#' @export
+#'
+#' @examples
+getRR.condPois_2stage <- function(x) {
+  oo <- do.call(rbind, lapply(x$`_`$out, \(obj) obj$RRdf))
+  oo$model_class = class(x)
+  setDT(oo)
+  return(oo)
+}
+
+#'@export
+#' getRR.condPois_2stage_list
+#'
+#' @param x
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+getRR.condPois_2stage_list <- function(x) {
+
+  obj_l <- vector("list", length(names(x)))
+  fct_lab <- x[[names(x)[1]]]$factor_col
+  exp_lab <- x[[names(x)[1]]]$"_"$out[[1]]$exposure_col
+
+  for(i in seq_along(obj_l)) {
+    yy <- do.call(rbind, lapply(x[[names(x)[i]]]$"_"$out, \(obj) obj$RRdf))
+    fct <- x[[names(x)[i]]]$factor_val
+    yy[[fct_lab]] <- fct
+    obj_l[[i]] <- yy
+  }
+
+  oo <- do.call(rbind, obj_l)
+  oo$model_class = class(x)
+  setDT(oo)
+  return(oo)
+
+}
+
+
+
+#'@export
 #' plot.condPois_2stage
 #'
 #' @param x an object of class condPois_2stage
@@ -821,6 +868,7 @@ forest_plot.condPois_2stage_list <- function(x, exposure_val) {
       geom_vline(xintercept = 1.0, linetype = '11') +
       ylab(geo_unit_grp_col) +
       theme_classic() +
+      scale_color_viridis_d() +
       scale_x_continuous(transform = 'log') +
       geom_pointrange(position = position_jitterdodge()) +
       ggtitle(paste0(exposure_col, " = ", exposure_val))
@@ -831,6 +879,7 @@ forest_plot.condPois_2stage_list <- function(x, exposure_val) {
       theme_classic() +
       scale_x_continuous(transform = 'log') +
       geom_pointrange() +
+      scale_color_viridis_d() +
       ggtitle(paste0(exposure_col, " = ", exposure_val))
   }
 }

@@ -30,7 +30,7 @@ condPois_sb <- function(exposure_matrix,
                         outcomes_tbl,
                         shp_sf,
                         stan_type = 'laplace',
-                        use_spatial_model = 'none',
+                        use_spatial_model = 'bym2',
                         stan_opts = NULL,
                         global_cen = NULL,
                         argvar = NULL,
@@ -68,9 +68,11 @@ condPois_sb <- function(exposure_matrix,
 
   #
   stopifnot(stan_type %in% c('laplace', 'mcmc'))
+  cat(" STAN TYPE =", stan_type, '\n')
 
   #
   stopifnot(use_spatial_model %in% c('none', 'bym2', 'leroux'))
+  cat(" SPATIAL MODEL =", use_spatial_model, '\n')
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -341,7 +343,7 @@ condPois_sb <- function(exposure_matrix,
   N_edges = nbs$N_edges;
   scaling_factor = scale_nb_components(nb_subset)[1];
 
-  SW <- getSW(shp = local_shp, ni = 1, include_self = F)
+  SW <- getSW(shp = shp_sf_safe, ni = 1, include_self = F)
 
   if(verbose > 0) {
     cat("\n")
@@ -421,55 +423,118 @@ condPois_sb <- function(exposure_matrix,
   # ****************
   # **** RUN STAN ***
   # ****************
-  if(stan_type == 'mcmc') {
+  out_df <- tryCatch({
 
-    default_stan_opts <- list(
-      chains = 2,
-      parallel_chains = 2,
-      refresh = 100,
-      init = init_fun
-    )
+    if(stan_type == 'mcmc') {
 
-    stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
+      default_stan_opts <- list(
+        chains = 2,
+        parallel_chains = 2,
+        refresh = 100,
+        init = init_fun
+      )
 
-    fit_mcmc <- do.call(
-      mod$sample,
-      c(list(data = stan_data), stan_opts)
-    )
+      stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
 
-    mcmc_array <- fit_mcmc$draws()
+      cat(" ...mcmc... \n")
+      fit_mcmc <- do.call(
+        mod$sample,
+        c(list(data = stan_data), stan_opts)
+      )
 
-    stan_summary <- fit_mcmc$summary()
+      cat(" ...mcmc draws... \n")
+      mcmc_array <- fit_mcmc$draws()
 
-    out_df <- posterior::as_draws_df(mcmc_array)
+      stan_summary <- fit_mcmc$summary()
+
+      # outdf
+      oo <- posterior::as_draws_df(mcmc_array)
+    }
+
+
+    if(stan_type == 'laplace') {
+
+      default_stan_opts <- list(
+        init = init_fun,
+        jacobian = TRUE,
+        iter = 1e4
+      )
+
+      stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
+
+      cat(" ...laplace optimize... \n")
+      fit_mode <- do.call(
+        mod$optimize,
+        c(list(data = stan_data), stan_opts)
+      )
+
+      cat(" ...laplace sample... \n")
+      fit_laplace <- mod$laplace(data = stan_data,
+                                 mode = fit_mode)
+
+      cat(" ...laplace draws... \n")
+      laplace_array <- fit_laplace$draws()
+
+      stan_summary <- fit_laplace$summary()
+
+      # outdf
+      oo <- posterior::as_draws_df(laplace_array)
+    }
+
+    if(stan_type == 'variational') {
+
+      default_stan_opts <- list(
+        init = init_fun,
+      )
+
+      stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
+
+      cat(" ...variational... \n")
+      fit_var <- do.call(
+        mod$variational,
+        c(list(data = stan_data), stan_opts)
+      )
+
+      cat(" ...variational draws... \n")
+      var_array <- fit_var$draws()
+
+      stan_summary <- fit_var$summary()
+
+      #out df
+      oo <- posterior::as_draws_df(var_array)
+    }
+
+    if(stan_type == 'pathfinder') {
+
+      default_stan_opts <- list(
+        init = init_fun,
+      )
+
+      stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
+
+      cat(" ...pathfinder... \n")
+      fit_path <- do.call(
+        mod$pathfinder,
+        c(list(data = stan_data), stan_opts)
+      )
+
+      cat(" ...pathfinder draws... \n")
+      path_array <- fit_path$draws()
+
+      stan_summary <- fit_path$summary()
+
+      #outdf
+      oo <- posterior::as_draws_df(path_array)
+    }
+
+    oo
+  },
+  error = function(e) {
+    # Exit the *entire* function immediately
+    warning("some STAN error, exiting early with STAN objects so manual testing can occur")
+    return(list(stan_data = stan_data, stan_opts = stan_opts))
   }
-
-
-  if(stan_type == 'laplace') {
-
-    default_stan_opts <- list(
-      init = init_fun,
-      jacobian = TRUE,
-      iter = 1e4
-    )
-
-    stan_opts <- modifyList(default_stan_opts, stan_opts %||% list())
-
-    fit_mode <- do.call(
-      mod$optimize,
-      c(list(data = stan_data), stan_opts)
-    )
-
-
-    fit_laplace <- mod$laplace(data = stan_data,
-                               mode = fit_mode)
-
-    laplace_array <- fit_laplace$draws()
-
-    stan_summary <- fit_laplace$summary()
-
-    out_df <- posterior::as_draws_df(laplace_array)
-  }
+  )
 
   # ****************
   # **** COEF ******
@@ -591,6 +656,7 @@ condPois_sb <- function(exposure_matrix,
 
     #
     this_geo <- unique_geos[i, get(outcome_columns$geo_unit)]
+    this_geo_grp <- unique_geos[i, get(outcome_columns$geo_unit_grp)]
 
     # get x
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
@@ -609,12 +675,15 @@ condPois_sb <- function(exposure_matrix,
     ## make the out
     RRdf <- data.frame(
       geo_unit = this_geo,
+      geo_unit_grp = this_geo_grp,
       x = blup_cp$cp$predvar,
       RR = blup_cp$cp$allRRfit,
       RRlb = blup_cp$cp$allRRlow,
       RRub = blup_cp$cp$allRRhigh
     )
-    names(RRdf)[2] <- exposure_col
+    names(RRdf)[1] <- outcome_columns$geo_unit
+    names(RRdf)[2] <- outcome_columns$geo_unit_grp
+    names(RRdf)[3] <- exposure_col
     setDT(RRdf)
 
     ## attach outcomes vector
@@ -720,6 +789,7 @@ plot.condPois_sb <- function(x, geo_unit,
   ggplot(obj$RRdf, aes(x = !!sym(obj$exposure_col), y = RR,
                        ymin = RRlb, ymax = RRub)) +
     geom_hline(yintercept = 1, linetype = '11') +
+    scale_y_continuous(transform = 'log') +
     theme_classic() +
     ggtitle(title) +
     geom_ribbon(fill = 'lightblue', alpha = 0.2) +
@@ -770,10 +840,12 @@ plot.condPois_sb_list <- function(x, geo_unit,
                     fill = !!sym(fct_lab)), alpha = 0.2) +
     geom_line(aes(x = !!sym(exp_lab), y = RR,
                   color = !!sym(fct_lab))) + xlab(xlab) + ylab(ylab) +
+    scale_y_continuous(transform = 'log') +
     scale_color_viridis_d() +
     scale_fill_viridis_d()
 
 }
+
 
 #'@export
 #' forest_plot.condPois_sb
@@ -1013,6 +1085,7 @@ forest_plot.condPois_sb_list <- function(x, exposure_val) {
       ylab(geo_unit_grp_col) +
       theme_classic() +
       scale_x_continuous(transform = 'log') +
+      scale_color_viridis_d() +
       geom_pointrange(position = position_jitterdodge()) +
       ggtitle(paste0(exposure_col, " = ", exposure_val))
   } else {
@@ -1022,6 +1095,52 @@ forest_plot.condPois_sb_list <- function(x, exposure_val) {
       theme_classic() +
       scale_x_continuous(transform = 'log') +
       geom_pointrange() +
+      scale_color_viridis_d() +
       ggtitle(paste0(exposure_col, " = ", exposure_val))
   }
+}
+
+#'@export
+#' getRR.condPois_sb
+#'
+#' @param x
+#' @importFrom data.table setDT
+#' @returns
+#' @export
+#'
+#' @examples
+getRR.condPois_sb <- function(x) {
+  oo <- do.call(rbind, lapply(x$`_`$out, \(obj) obj$RRdf))
+  oo$model_class = class(x)
+  setDT(oo)
+  return(oo)
+}
+
+#'@export
+#' getRR.condPois_sb_list
+#'
+#' @param x
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+getRR.condPois_sb_list <- function(x) {
+
+  obj_l <- vector("list", length(names(x)))
+  fct_lab <- x[[names(x)[1]]]$factor_col
+  exp_lab <- x[[names(x)[1]]]$"_"$out[[1]]$exposure_col
+
+  for(i in seq_along(obj_l)) {
+    yy <- do.call(rbind, lapply(x[[names(x)[i]]]$"_"$out, \(obj) obj$RRdf))
+    fct <- x[[names(x)[i]]]$factor_val
+    yy[[fct_lab]] <- fct
+    obj_l[[i]] <- yy
+  }
+
+  oo <- do.call(rbind, obj_l)
+  oo$model_class = class(x)
+  setDT(oo)
+  return(oo)
+
 }

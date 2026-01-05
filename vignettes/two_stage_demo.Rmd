@@ -35,7 +35,8 @@ exposure_columns <- list(
   "geo_unit_grp" = "COUNTY20"
 )
 
-ma_exposure_matrix <- make_exposure_matrix(subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_exposure_matrix <- make_exposure_matrix(
+  subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), exposure_columns)
 
 outcome_columns <- list(
@@ -46,7 +47,8 @@ outcome_columns <- list(
   "geo_unit" = "TOWN20",
   "geo_unit_grp" = "COUNTY20"
 )
-ma_outcomes_tbl <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_outcomes_tbl <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), outcome_columns)
 ```
 
@@ -57,21 +59,21 @@ Importantly, the estimates in each `geo_unit` are bolstered by those in their `g
 ```{r multi_town_run}
 ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
 ```
+
 You can still view the RR output from a single zone:
 ```{r multi_plot_sigle, fig.height=3, fig.width=5}
-plot(ma_model, "BOSTON")
+plot(ma_model, "CAMBRIDGE")
 ```
 It does seem like this is a wider confidence interval than the solo model -- Perhaps this is expected given the variables around it? Worth investigating in your dataset, as these are simulated data.
 
 You can also plot by `geo_unit_grp` (TODO -- a way to make this cleaner to get to)
 
-```{r grp, fig.height=8, fig.width=8}
+```{r grp, fig.height=3, fig.width=5}
 ma_model$`_`$grp_plt
 ```
 
-
 You can also make a forest plot at a specific exposure value
-```{r multi_plot_multiple1, fig.height=5, fig.width=8}
+```{r multi_plot_multiple1, fig.height=3, fig.width=5}
 forest_plot(ma_model, 25.1)
 ```
 
@@ -84,16 +86,23 @@ head(ma_towns)
 spatial_plot(ma_model, shp = ma_towns, exposure_val = 25.1)
 ```
 
+and You can get an RR table
+
+```{r getRR1}
+getRR(ma_model)
+```
+
 
 ### Model by factor
 
 Only a small change is required to run the model by factor, e.g., age_grp:
 
 ```{r multi_town_setup_factor}
-ma_outcomes_tbl_fct <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
-           year(date) %in% 2012:2015), 
-                                      outcome_columns,
-                                      collapse_to = 'age_grp')
+ma_outcomes_tbl_fct <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+           year(date) %in% 2012:2015),
+  outcome_columns,collapse_to = 'age_grp')
+
 head(ma_outcomes_tbl_fct)
 ```
 
@@ -104,11 +113,11 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 
 And plot
 ```{r multi_plot2a, fig.height=3, fig.width=5}
-plot(ma_model_fct, "BOSTON")
+plot(ma_model_fct, "CAMBRIDGE")
 ```
 
 ```{r multi_plot2b, fig.height=3, fig.width=5}
-plot(ma_model_fct$`18-64`, "BOSTON", title = 'BOSTON: 18-64')
+plot(ma_model_fct$`18-64`, "CAMBRIDGE", title = 'CAMBRIDGE: 18-64')
 ```
 
 ```{r multi_plot2c, fig.height=5, fig.width=5}
@@ -118,3 +127,9 @@ forest_plot(ma_model_fct, 25.1)
 ```{r multi_plot2d, fig.height=10, fig.width=6}
 spatial_plot(ma_model_fct, shp = ma_towns, exposure_val = 25.1)
 ```
+and You can get an RR table
+
+```{r getRR2}
+getRR(ma_model_fct)
+```
+

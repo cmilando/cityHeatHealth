@@ -259,6 +259,14 @@ And plot the relative risk
 ```{r single_plot, fig.height=3, fig.width=5}
 plot(m1)
 ```
+
+You can also get the RR table for your own usage
+
+```{r getRR1}
+getRR(m1)
+```
+
+
 ### Multi-zone DLNM 
 
 You can also easily extend to a 1 stage multi-zone case. You don't need to include population offset because within the geo_unit:year:month:dow strata the populations don't change (one of the benefits of the conditional poisson setup -- you would need to include a population offset if you were doing a time-series design).
@@ -297,6 +305,13 @@ And plot - notice the tighter confidence interval
 plot(m2)
 ```
 
+
+And get RR
+```{r getRR2}
+getRR(m2)
+```
+
+
 ### Multi-factor single beta coeff
 
 you can also get it for factors
@@ -315,3 +330,18 @@ plot(m3)
 
 ```
 
+And get RR
+```{r getRR3}
+getRR(m3)
+```
+
+### Changing the global_cen
+
+You can change the global_cen and view the impact
+
+```{r globalCenMod}
+# run the model
+m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, global_cen = 20,
+                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
+plot(m2)
+```

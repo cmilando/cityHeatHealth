@@ -1,0 +1,80 @@
+/* =========================
+   Navbar overrides
+   ========================= */
+
+/* Override navbar background */
+.navbar.fixed-top.bg-light {
+  background-color: lightgrey !important;
+  border-bottom: 1px solid #333333;      /* thin bottom border */
+}
+
+/* Optional: navbar text */
+.navbar.fixed-top.bg-light .navbar-brand,
+.navbar.fixed-top.bg-light .nav-link {
+  color: black !important;  /* ensure readability */
+}
+/* Brand + top-level links */
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: #ffffff;
+  navbar-bg: #b23029;
+}
+
+/* Hover / active states */
+.navbar .nav-link:hover,
+.navbar .nav-link:focus,
+.navbar .nav-link.active {
+  color: #ffffff;
+  opacity: 0.85;
+}
+
+/* Dropdown menu background */
+.navbar .dropdown-menu {
+  background-color: #ffffff;
+}
+
+/* Dropdown items */
+.navbar .dropdown-item {
+  color: black;
+}
+
+/* Dropdown hover */
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #CC0000 !important;
+  font-weight: bold;
+}
+
+/* =========================
+   Header colors
+   ========================= */
+
+h1, h2, h3, h4, h5, h6 {
+  color: #b23029; /* dark red */
+}
+
+/* =========================
+   Link colors
+   ========================= */
+
+a:link {
+  color: #b23029;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:visited {
+  color: #b23029;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover {
+  color: #CC0000;
+  background-color: transparent;
+  text-decoration: underline;
+}
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+}

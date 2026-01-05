@@ -84,7 +84,7 @@ exposure_columns <- list(
 )
 
 ma_exposure_matrix <- make_exposure_matrix(
-  subset(ma_exposure, COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+  subset(ma_exposure, COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), 
   exposure_columns)
 ```
@@ -100,7 +100,8 @@ outcome_columns <- list(
   "geo_unit_grp" = "COUNTY20"
 )
 
-ma_outcomes_tbl <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_outcomes_tbl <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), outcome_columns)
 
 ```
@@ -191,10 +192,10 @@ plot(ma_AN_s1, "num", above_MMT = T)
 In the case where you have factors, you can easily extend this
 
 ```{r fctrun, fig.height=3, fig.width=8}
-ma_outcomes_tbl_fct <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_outcomes_tbl_fct <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), 
-                                      outcome_columns,
-                                      collapse_to = 'age_grp')
+  outcome_columns, collapse_to = 'age_grp')
 
 ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
 

@@ -330,7 +330,6 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 }
 
 
-
 #'@export
 #' print.condPois_1stage
 #'
@@ -362,6 +361,40 @@ print.condPois_1stage_list <- function(x) {
 
 
 #'@export
+#' getRR.condPois_1stage
+#'
+#' @param x an object of class condPois_1stage
+#' @importFrom data.table setDT
+#' @returns
+#' @export
+#'
+#' @examples
+getRR.condPois_1stage <- function(x, ...) {
+
+  n_geo_names <- paste0(names(x$`_`$out), collapse = ":")
+
+  if(nchar(n_geo_names) > 20)
+    n_geo_names = paste0(substr(n_geo_names, 1, 15), "...(truncated)")
+
+  plot_cp = data.frame(
+    x = x$`_`$out[[1]]$cr$predvar,
+    RR = x$`_`$out[[1]]$cr$RRfit,
+    RRlow = x$`_`$out[[1]]$cr$RRlow,
+    RRhigh = x$`_`$out[[1]]$cr$RRhigh,
+    n_geo_names = n_geo_names,
+    model_class = class(x)
+  )
+
+  names(plot_cp)[1] <- x$`_`$out[[1]]$exposure_col
+
+  setDT(plot_cp)
+
+  return(plot_cp)
+}
+
+
+
+#'@export
 #' plot.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -378,18 +411,14 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
   n_geo_names <- paste0(names(x$`_`$out), collapse = ":")
 
   # these will all be the same, so just pick 1
-  plot_cp = data.frame(
-    x = x$`_`$out[[1]]$cr$predvar,
-    RR = x$`_`$out[[1]]$cr$RRfit,
-    RRlow = x$`_`$out[[1]]$cr$RRlow,
-    RRhigh = x$`_`$out[[1]]$cr$RRhigh
-  )
+  plot_cp = getRR(x)
 
   if(is.null(xlab)) xlab = x$`_`$out[[1]]$exposure_col
   if(is.null(ylab)) ylab = "RR"
   if(is.null(title)) title = n_geo_names
 
-  ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+  ggplot(plot_cp, aes(x = !!sym(names(plot_cp)[1]),
+                      y = RR, ymin = RRlow, ymax = RRhigh)) +
     geom_hline(yintercept = 1, linetype = '11') +
     theme_classic() +
     ggtitle(title) +
@@ -398,6 +427,47 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
     geom_line() + xlab(xlab) + ylab(ylab)
 }
 
+#'@export
+#' getRR.condPois_1stage_list
+#'
+#' @param x an object of class condPois_1stage
+#' @importFrom data.table setDT
+#' @returns
+#' @export
+#'
+#' @examples
+getRR.condPois_1stage_list <- function(x, ...) {
+
+  fct_names <- names(x)
+
+  plot_cl_l <- vector("list", length(names(x)))
+
+  for(i in 1:length(names(x))) {
+
+    # these will all be the same so just pick the first one
+    plot_cl_l[[i]] = data.frame(
+      x = x[[names(x)[i]]]$`_`$out[[1]]$cr$predvar,
+      fct = names(x)[i],
+      RR = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRfit,
+      RRlow = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRlow,
+      RRhigh = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRhigh
+    )
+
+    factor_col <- x[[names(x)[i]]]$factor_col
+    names(plot_cl_l[[i]])[2] <- factor_col
+
+    exp_col <- x[[names(x)[i]]]$`_`$out[[1]]$exposure_col
+    names(plot_cl_l[[i]])[1] <- exp_col
+
+  }
+
+  plot_cp <- do.call(rbind, plot_cl_l)
+  plot_cp$model_class = class(x)
+
+  setDT(plot_cp)
+
+  return(plot_cp)
+}
 
 #'@export
 #' plot.condPois_1stage
@@ -441,7 +511,8 @@ plot.condPois_1stage_list <- function(x, xlab = NULL, ylab = NULL, title = NULL)
   if(is.null(title)) title = n_geo_names
 
   ggplot(plot_cp,
-         aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+         aes(x = !!sym(names(plot_cp)[1]), y = RR,
+             ymin = RRlow, ymax = RRhigh)) +
     geom_hline(yintercept = 1, linetype = '11') +
     scale_fill_viridis_d() +
     scale_color_viridis_d() +
@@ -452,6 +523,44 @@ plot.condPois_1stage_list <- function(x, xlab = NULL, ylab = NULL, title = NULL)
     geom_line(aes(color = !!sym(factor_col))) +
     xlab(xlab) + ylab(ylab)
 
+}
+
+
+
+#'@export
+#' forest_plot.condPois_1stage
+#'
+#' @param x an object of class condPois_1stage
+#' @param ... other elements passed to spatial_plot
+#' @returns
+#' @export
+#'
+#' @examples
+forest_plot.condPois_1stage <- function(x, ...) {
+  warning("`forest_plot` method not implemented for objects of class `condPois_1stage`,
+      since there is only one 1_stage relative risk curve so all plot
+      values would be the same. 1stage attributable number results will change
+      over space, so those can be viewed instead by running `spatial_plot` on the
+      output of `calcAN` for a 1stage model!")
+}
+
+
+
+#'@export
+#' forest_plot.condPois_1stage_list
+#'
+#' @param x an object of class condPois_1stage
+#' @param ... other elements passed to spatial_plot
+#' @returns
+#' @export
+#'
+#' @examples
+forest_plot.condPois_1stage_list <- function(x, ...) {
+  warning("`forest_plot` method not implemented for objects of class `condPois_1stage_list`,
+      since there is only one 1_stage relative risk curve so all plot
+      values would be the same. 1stage attributable number results will change
+      over space, so those can be viewed instead by running `spatial_plot` on the
+      output of `calcAN` for a 1stage model!")
 }
 
 
@@ -472,6 +581,7 @@ spatial_plot.condPois_1stage <- function(x, ...) {
       over space, so those can be viewed instead by running `spatial_plot` on the
       output of `calcAN` for a 1stage model!")
 }
+
 
 #'@export
 #' spatial_plot.condPois_1stage_list

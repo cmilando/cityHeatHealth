@@ -1,7 +1,22 @@
 url: http://chadmilando.com/cityHeatHealth/
 
+home:
+  title: Weather-attributable health impacts
+
 template:
   bootstrap: 5
+
+authors:
+  Chad Milando:
+    href: https://chadmilando.com
+  Emma Gause:
+    href: https://www.bu.edu/sph/profile/emma-gause/
+  Quinn Adams:
+    href: https://www.colorado.edu/oclab/quinn-adams
+  Zachary Popp:
+    href: https://www.bu.edu/sph/profile/zachary-popp/
+  Gregory Wellenius:
+    href: https://www.bu.edu/sph/profile/gregory-wellenius/
 
 articles:
 - title: Main vignettes

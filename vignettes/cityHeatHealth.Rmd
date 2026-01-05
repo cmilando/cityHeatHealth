@@ -1,0 +1,329 @@
+---
+title: "Getting started with `cityHeatHealth`"
+output:
+  rmarkdown::html_vignette:
+    fig.retina: 2
+    dev: svg
+vignette: >
+  %\VignetteIndexEntry{Getting started with `cityHeatHealth`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Getting started with `cityHeatHealth`
+
+Here is code (not run with outputs) that shows the basic skeleton 
+of how this package works. We can run the model and then calculate attributable numbers easily, and provide a number of outputs.
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+# Run the model
+
+## Exposure
+
+First, create the exposure object - you will need to define the `exposure_columns`.
+
+```{r exposure}
+library(data.table)
+
+# load a built-in dataset and get a subset
+data("ma_exposure") 
+exposure_sub <- subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+           year(date) %in% 2012:2015)
+
+# define columns of ma_exposure
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+# create the object
+ma_exposure_matrix <- make_exposure_matrix(exposure_sub, exposure_columns)
+```
+
+And lets preview this
+```{r exp_preview}
+head(ma_exposure_matrix)
+```
+
+## Outcome
+
+Next, create the outcome object. As seen in other tutorials, you can `collapse_to` a factor level and get outputs that way later on.
+
+```{r outcome}
+# load a built-in dataset, and get a subset, for speed
+data("ma_deaths") 
+deaths_sub <- subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+           year(date) %in% 2012:2015)
+
+# define columns of ma_deaths
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+# create the object
+ma_outcomes_tbl <- make_outcome_table(deaths_sub, outcome_columns)
+```
+
+And lets preview this
+```{r out_preview}
+head(ma_outcomes_tbl)
+```
+
+## Run the conditional poisson model
+
+we then run a conditional poisson model.
+
+### Cross-basis arguments
+
+There are built-in arguments for `argvar` and `arglag` that you can override if you'd like, but the defaults are:
+
+*   `maxlag`: default is 5 (days)
+*   `argvar`: default is `ns()` and knots at the 50th and 90th percentile of unit-specific exposure. 
+*   `arglag`: default is `list(fun = 'ns', knots = logknots(maxlag, nk = 2))`
+
+You can also affect the global centering point:
+
+* the default behavior is `global_cen = NULL`, meaning that the mininum RR will be used
+* you can override this by setting `global_cen`
+
+### Model types
+
+Now you have several options for running the conditional poisson model: 
+
+* `condPois_1stage` would be if you wanted just 1 estimate of beta coefficients across all the spatial units you included (if there are multiple `geo_units` in the objects you pass in, you would need to set `multi_zone = TRUE`). There is no `mixmeta` or `blup` in this option
+* `condPois_2stage` creates a set of beta coefficients for each spatial unit, and uses `mixmeta` and `blup` to create more stable estimates
+* `condPois_sb` also creates beta coefficients for each spatial unit, but uses a selection of bayesian methods to create more stable estimates by borrowing information from each spatial unit's neighbor, rather than mixmeta which uses all the data in the dataset. This can be especially useful in settings with small numbers.
+
+We show code for each but just run `condPois_2stage` in this vignette.
+
+```{r runModel, eval=TRUE} 
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl)
+```
+
+For `condPois_1stage` the call would look like this, where you'd need to add the argument `multi_zone = T` because there are multiple `geo_units` in `ma_exposure_matrix`:
+
+```{r runModel2, eval=FALSE} 
+ma_model <- condPois_1stage(ma_exposure_matrix, ma_outcomes_tbl, multi_zone = T)
+```
+
+See `vignette("one_stage_demo")` for more details. Note that `forest_plot` and `spatial_plot` are not implemented for `condPois_1stage` since you can get all of that information from the RR plot.
+
+And for `condPois_sb`, the only additional information you'd need is a shapefile showing how the `geo_unit`s are arranged, in this case `ma_towns` (in a test run this code took 20 minutes to complete for the full MA dataset [with maybe some additional bugs to work out], so subsetting for 1 year for vignette purposes):
+
+```{r runModel3, eval=FALSE}
+data("ma_towns")
+ma_model <- condPois_sb(
+  subset(ma_exposure_matrix, year(date) == 2012),
+  subset(ma_outcomes_tbl, year(date) == 2012), 
+  ma_towns)
+```
+
+See `vignette("bayesian_demo")` for more details.
+
+## Plot outputs
+
+And are several plots you can make.
+
+First, a basic RR plot by `geo_unit`:
+
+```{r plot1, fig.height=3, fig.width=5}
+plot(ma_model, "CAMBRIDGE")
+```
+
+You can also make a forest plot at a specific exposure value
+```{r forest_plot, fig.height=5, fig.width=8}
+forest_plot(ma_model, exposure_val = 25.1)
+```
+
+You can also make a spatial plot at a specific exposure value:
+```{r spatial_plot, fig.height=5, fig.width=8}
+spatial_plot(ma_model, shp = ma_towns, exposure_val = 25.1)
+```
+
+
+## getRR
+
+For your own purposes, each of these objects has a `getRR` function
+
+```{r getRR}
+getRR(ma_model)
+```
+
+# Calculate attributable numbers
+
+See more details in `vignette("attributable_number")`, but here is a brief demo
+
+## Population data
+
+The first step of calculating attributable numbers is having a population data estimate. 
+
+This varies a lot by place and dataset, so we don't include functionality for it (but an example of how this could be done can be seen in `vignette("get_pop_estimates")`).
+
+Assume you are starting with a dataset for the entire timeframe that looks like this:
+```{r}
+library(data.table)
+data("ma_pop_data")
+setDT(ma_pop_data)
+ma_pop_data
+```
+
+Need to do some transformations:
+
+* pivot longer
+* variable clean
+
+Note again, this processing will vary by application so this approach is not prescriptive !
+
+Pivot longer:
+```{r transform}
+ma_pop_data_long <- melt(
+  ma_pop_data,
+  id.vars = "TOWN20",
+  variable.name = "sex_age",
+  value.name = "population"
+)
+```
+
+Variable clean:
+```{r clean}
+ma_pop_data_long$sex_age <- as.character(ma_pop_data_long$sex_age)
+varnames <- strsplit(ma_pop_data_long$sex_age, "_", fixed = T)
+varnames <- data.frame(do.call(rbind, varnames))
+names(varnames) <- c('sex', 'age_grp')
+rr <- which(varnames$sex == 'Female')
+varnames$sex[rr] <- 'F'
+rr <- which(varnames$sex == 'Male')
+varnames$sex[rr] <- 'M'
+ma_pop_data_long$sex = varnames$sex
+ma_pop_data_long$age_grp = varnames$age_grp
+ma_pop_data_long$sex_age <- NULL
+```
+
+Lets look at it:
+
+```{r popCleanView}
+ma_pop_data_long
+```
+
+We assume that these properties hold for the entire timeframe of our analysis, but you could also make a version of this dataset with a 'year' column. 
+
+## Calculate AN
+
+Now, you can easily calculate attributrable numbers (and rates) using `calcAN()`.
+
+There are two new inputs that this function needs, in addition to population data:
+
+* `agg_type` - what spatial resolution are you summarizing to: 'geo_unit', 'geo_unit_grp', or 'all'
+* `join_col` - which columns in `ma_outcomes_tbl` are you joining `ma_pop_data_long` by
+
+```{r calcAN}
+ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
+                 agg_type = 'TOWN20', join_cols = 'TOWN20')
+```
+
+From this you get a `rate_table` :
+
+```{r calcAN_output1}
+ma_AN$`_`$rate_table
+```
+
+ and a `number_table`:
+```{r calcAN_output2}
+ma_AN$`_`$number_table
+```
+
+And you can plot either one
+```{r calcAN_plot, fig.height=5, fig.width=8}
+plot(ma_AN, "num", above_MMT = T)
+```
+
+You can also plot spatially
+```{r multi_plot3d, fig.height=5, fig.width=6}
+spatial_plot(ma_AN, shp = ma_towns, table_type = "num", above_MMT = T)
+```
+
+# Running with factors
+
+Very often, we also get asked to run these results, with differences by both modifiable and non-modifiable factors:
+
+* age group
+* sex
+* the prevalence of air conditioning in a certain town
+
+We can easily do this, by using the `collapse_to` argument:
+
+```{r multi_town_setup_factor}
+ma_outcomes_tbl_fct <- make_outcome_table(
+  deaths_sub, outcome_columns, collapse_to = 'age_grp')
+```
+
+Lets look at the result:
+
+```{r fctCheck}
+head(ma_outcomes_tbl_fct)
+```
+
+Now, all of our other functions can stay the same:
+
+Running the model (adding the `verbose` argument so you can follow along)
+```{r runRestfct}
+ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
+                                verbose = 1)
+```
+
+And plotting the output
+
+```{r plot1b, fig.height=3, fig.width=5}
+plot(ma_model_fct, "CAMBRIDGE")
+```
+
+```{r forest_plot2b, fig.height=3, fig.width=5}
+forest_plot(ma_model_fct, exposure_val = 25.1)
+```
+
+You can also make a spatial plot at a specific exposure value:
+```{r spatial_plot2, fig.height=10, fig.width=5}
+spatial_plot(ma_model_fct, shp = ma_towns, exposure_val = 25.1)
+```
+
+You can also getRR:
+```{r getRR2}
+getRR(ma_model_fct)
+```
+
+And finally, you can `calcAN`, note that both `ma_outcomes_tbl_fct` and `ma_model_fct` need to have factors, again adding the verbose so you can see the progress
+```{r calcAN2}
+ma_AN_fct <- calc_AN(ma_model_fct, 
+                     ma_outcomes_tbl_fct, 
+                     ma_pop_data_long,
+                 agg_type = 'TOWN20', join_cols = 'TOWN20',
+                 verbose = 1)
+```
+
+And you can plot either one -- some empty bars not because there are no adults there but because this takes the top 20 in each bin, which don't have to overlap. Probably a better way to do this in the future but fine for diagnostics.
+
+```{r calcAN_plot2, fig.height=5, fig.width=8}
+plot(ma_AN_fct, "num", above_MMT = T)
+```
+
+You can also plot spatially
+```{r multi_plot3db, fig.height=8, fig.width=6}
+spatial_plot(ma_AN_fct, shp = ma_towns, table_type = "num", above_MMT = T)
+```

@@ -24,6 +24,8 @@
   : Title
 - [`forest_plot()`](http://chadmilando.com/cityHeatHealth/reference/forest_plot.md)
   : forest_plot base class
+- [`getRR()`](http://chadmilando.com/cityHeatHealth/reference/getRR.md)
+  : getRR base class
 - [`getSW()`](http://chadmilando.com/cityHeatHealth/reference/getSW.md)
   : Title
 - [`getSmat()`](http://chadmilando.com/cityHeatHealth/reference/getSmat.md)

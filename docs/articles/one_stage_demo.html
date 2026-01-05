@@ -16,11 +16,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">cityHeatHealth</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/cityHeatHealth.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -428,14 +429,33 @@ this is using <code>gnm</code> under the hood.</p>
 <p>And plot the relative risk</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="one_stage_demo_files/figure-html/single_plot-1.png" class="r-plt" width="480">
-### Multi-zone DLNM</p>
+<p><img src="one_stage_demo_files/figure-html/single_plot-1.png" class="r-plt" width="480"></p>
+<p>You can also get the RR table for your own usage</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getRR.html">getRR</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      tmax_C       RR    RRlow   RRhigh n_geo_names     model_class</span></span>
+<span><span class="co">#&gt;       &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;      &lt;char&gt;          &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1:    5.4 1.000000 1.000000 1.000000      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt;   2:    5.5 1.000395 1.000155 1.000636      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt;   3:    5.6 1.000791 1.000309 1.001272      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt;   4:    5.7 1.001186 1.000464 1.001909      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt;   5:    5.8 1.001582 1.000619 1.002546      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt;  ---                                                              </span></span>
+<span><span class="co">#&gt; 329:   38.2 1.440253 1.367101 1.517320      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt; 330:   38.3 1.443200 1.368934 1.521494      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt; 331:   38.4 1.446152 1.370766 1.525684      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt; 332:   38.5 1.449111 1.372597 1.529891      BOSTON condPois_1stage</span></span>
+<span><span class="co">#&gt; 333:   38.6 1.452077 1.374427 1.534113      BOSTON condPois_1stage</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="multi-zone-dlnm">Multi-zone DLNM<a class="anchor" aria-label="anchor" href="#multi-zone-dlnm"></a>
+</h3>
 <p>You can also easily extend to a 1 stage multi-zone case. You don’t
 need to include population offset because within the
 geo_unit:year:month:dow strata the populations don’t change (one of the
 benefits of the conditional poisson setup – you would need to include a
 population offset if you were doing a time-series design).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create exposure matrix</span></span>
 <span><span class="va">exposure_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="st">"date"</span> <span class="op">=</span> <span class="st">"date"</span>,</span>
@@ -464,15 +484,44 @@ population offset if you were doing a time-series design).</p>
 <span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span>exposure_matrix <span class="op">=</span> <span class="va">middlesex_exposure_mat</span>, </span>
 <span>                  outcomes_tbl <span class="op">=</span> <span class="va">middlesex_deaths_tbl</span>, multi_zone <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>And plot - notice the tighter confidence interval</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="one_stage_demo_files/figure-html/single_plot2b-1.png" class="r-plt" width="480"></p>
+<p>And get RR</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getRR.html">getRR</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      tmax_C       RR    RRlow   RRhigh                   n_geo_names</span></span>
+<span><span class="co">#&gt;       &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;                        &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1:    3.4 1.000000 1.000000 1.000000 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt;   2:    3.5 1.000553 1.000479 1.000628 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt;   3:    3.6 1.001107 1.000959 1.001256 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt;   4:    3.7 1.001662 1.001439 1.001884 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt;   5:    3.8 1.002216 1.001919 1.002514 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt;  ---                                                                </span></span>
+<span><span class="co">#&gt; 350:   38.3 1.495273 1.471733 1.519190 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt; 351:   38.4 1.498303 1.474447 1.522545 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt; 352:   38.5 1.501340 1.477166 1.525909 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt; 353:   38.6 1.504383 1.479889 1.529282 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt; 354:   38.7 1.507432 1.482616 1.532664 ACTON:ARLINGTON...(truncated)</span></span>
+<span><span class="co">#&gt;          model_class</span></span>
+<span><span class="co">#&gt;               &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: condPois_1stage</span></span>
+<span><span class="co">#&gt;   2: condPois_1stage</span></span>
+<span><span class="co">#&gt;   3: condPois_1stage</span></span>
+<span><span class="co">#&gt;   4: condPois_1stage</span></span>
+<span><span class="co">#&gt;   5: condPois_1stage</span></span>
+<span><span class="co">#&gt;  ---                </span></span>
+<span><span class="co">#&gt; 350: condPois_1stage</span></span>
+<span><span class="co">#&gt; 351: condPois_1stage</span></span>
+<span><span class="co">#&gt; 352: condPois_1stage</span></span>
+<span><span class="co">#&gt; 353: condPois_1stage</span></span>
+<span><span class="co">#&gt; 354: condPois_1stage</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multi-factor-single-beta-coeff">Multi-factor single beta coeff<a class="anchor" aria-label="anchor" href="#multi-factor-single-beta-coeff"></a>
 </h3>
 <p>you can also get it for factors</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">middlesex_deaths_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span></span>
 <span>  <span class="va">middlesex_deaths</span>,  <span class="va">outcome_columns</span>, collapse_to <span class="op">=</span> <span class="st">'age_grp'</span><span class="op">)</span></span>
 <span></span>
@@ -484,6 +533,33 @@ population offset if you were doing a time-series design).</p>
 <span><span class="co"># plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div>
 <p><img src="one_stage_demo_files/figure-html/ff2-1.png" class="r-plt" width="700"></p>
+<p>And get RR</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getRR.html">getRR</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       tmax_C age_grp       RR    RRlow   RRhigh          model_class</span></span>
+<span><span class="co">#&gt;        &lt;num&gt;  &lt;char&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;               &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1:    3.4    0-17 1.000000 1.000000 1.000000 condPois_1stage_list</span></span>
+<span><span class="co">#&gt;    2:    3.5    0-17 1.000805 1.000724 1.000886 condPois_1stage_list</span></span>
+<span><span class="co">#&gt;    3:    3.6    0-17 1.001611 1.001448 1.001773 condPois_1stage_list</span></span>
+<span><span class="co">#&gt;    4:    3.7    0-17 1.002417 1.002174 1.002661 condPois_1stage_list</span></span>
+<span><span class="co">#&gt;    5:    3.8    0-17 1.003224 1.002899 1.003549 condPois_1stage_list</span></span>
+<span><span class="co">#&gt;   ---                                                               </span></span>
+<span><span class="co">#&gt; 1058:   38.3     65+ 1.482591 1.456637 1.509008 condPois_1stage_list</span></span>
+<span><span class="co">#&gt; 1059:   38.4     65+ 1.485307 1.459010 1.512078 condPois_1stage_list</span></span>
+<span><span class="co">#&gt; 1060:   38.5     65+ 1.488028 1.461386 1.515156 condPois_1stage_list</span></span>
+<span><span class="co">#&gt; 1061:   38.6     65+ 1.490755 1.463765 1.518242 condPois_1stage_list</span></span>
+<span><span class="co">#&gt; 1062:   38.7     65+ 1.493486 1.466147 1.521335 condPois_1stage_list</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="changing-the-global_cen">Changing the global_cen<a class="anchor" aria-label="anchor" href="#changing-the-global_cen"></a>
+</h3>
+<p>You can change the global_cen and view the impact</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run the model</span></span>
+<span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span>exposure_matrix <span class="op">=</span> <span class="va">middlesex_exposure_mat</span>, global_cen <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>                  outcomes_tbl <span class="op">=</span> <span class="va">middlesex_deaths_tbl</span>, multi_zone <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="one_stage_demo_files/figure-html/globalCenMod-1.png" class="r-plt" width="700"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -492,7 +568,7 @@ population offset if you were doing a time-series design).</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Chad Milando.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

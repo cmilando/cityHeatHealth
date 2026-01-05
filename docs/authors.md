@@ -2,7 +2,7 @@
 
 ## Authors
 
-- **Chad Milando**. Author, maintainer.
+- **[Chad Milando](https://chadmilando.com)**. Author, maintainer.
 
 ## Citation
 

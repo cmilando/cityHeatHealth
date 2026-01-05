@@ -24,7 +24,8 @@ exposure_columns <- list(
   "geo_unit_grp" = "COUNTY20"
 )
 
-ma_exposure_matrix <- make_exposure_matrix(subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_exposure_matrix <- make_exposure_matrix(
+  subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), exposure_columns)
 #> Warning in make_exposure_matrix(subset(ma_exposure, COUNTY20 %in% c("MIDDLESEX", : check about any NA, some corrections for this later,
 #>             but only in certain columns
@@ -37,7 +38,8 @@ outcome_columns <- list(
   "geo_unit" = "TOWN20",
   "geo_unit_grp" = "COUNTY20"
 )
-ma_outcomes_tbl <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
+ma_outcomes_tbl <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), outcome_columns)
 ```
 
@@ -62,7 +64,7 @@ You can still view the RR output from a single zone:
 
 ``` r
 
-plot(ma_model, "BOSTON")
+plot(ma_model, "CAMBRIDGE")
 ```
 
 ![](two_stage_demo_files/figure-html/multi_plot_sigle-1.png) It does
@@ -151,6 +153,26 @@ spatial_plot(ma_model, shp = ma_towns, exposure_val = 25.1)
 
 ![](two_stage_demo_files/figure-html/multi_plot_multiple2-1.png)
 
+and You can get an RR table
+
+``` r
+
+getRR(ma_model)
+#>           TOWN20  COUNTY20 tmax_C       RR      RRlb     RRub     model_class
+#>           <char>    <char>  <num>    <num>     <num>    <num>          <char>
+#>     1:     ACTON MIDDLESEX    7.0 1.000000 1.0000000 1.000000 condPois_2stage
+#>     2:     ACTON MIDDLESEX    7.1 1.000516 0.9999447 1.001088 condPois_2stage
+#>     3:     ACTON MIDDLESEX    7.2 1.001033 0.9998894 1.002177 condPois_2stage
+#>     4:     ACTON MIDDLESEX    7.3 1.001549 0.9998343 1.003267 condPois_2stage
+#>     5:     ACTON MIDDLESEX    7.4 1.002067 0.9997795 1.004359 condPois_2stage
+#>    ---                                                                       
+#> 32510: WORCESTER WORCESTER   33.6 1.288946 1.2000454 1.384432 condPois_2stage
+#> 32511: WORCESTER WORCESTER   33.7 1.290732 1.2010888 1.387065 condPois_2stage
+#> 32512: WORCESTER WORCESTER   33.8 1.292520 1.2021282 1.389709 condPois_2stage
+#> 32513: WORCESTER WORCESTER   33.9 1.294311 1.2031641 1.392363 condPois_2stage
+#> 32514: WORCESTER WORCESTER   34.0 1.296105 1.2041968 1.395027 condPois_2stage
+```
+
 ### Model by factor
 
 Only a small change is required to run the model by factor, e.g.,
@@ -158,10 +180,11 @@ age_grp:
 
 ``` r
 
-ma_outcomes_tbl_fct <- make_outcome_table(subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'SUFFOLK') &
-           year(date) %in% 2012:2015), 
-                                      outcome_columns,
-                                      collapse_to = 'age_grp')
+ma_outcomes_tbl_fct <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+           year(date) %in% 2012:2015),
+  outcome_columns,collapse_to = 'age_grp')
+
 head(ma_outcomes_tbl_fct)
 #>          date    TOWN20  COUNTY20 age_grp daily_deaths
 #>        <Date>    <char>    <char>  <char>        <int>
@@ -207,14 +230,14 @@ And plot
 
 ``` r
 
-plot(ma_model_fct, "BOSTON")
+plot(ma_model_fct, "CAMBRIDGE")
 ```
 
 ![](two_stage_demo_files/figure-html/multi_plot2a-1.png)
 
 ``` r
 
-plot(ma_model_fct$`18-64`, "BOSTON", title = 'BOSTON: 18-64')
+plot(ma_model_fct$`18-64`, "CAMBRIDGE", title = 'CAMBRIDGE: 18-64')
 ```
 
 ![](two_stage_demo_files/figure-html/multi_plot2b-1.png)
@@ -233,4 +256,36 @@ forest_plot(ma_model_fct, 25.1)
 spatial_plot(ma_model_fct, shp = ma_towns, exposure_val = 25.1)
 ```
 
-![](two_stage_demo_files/figure-html/multi_plot2d-1.png)
+![](two_stage_demo_files/figure-html/multi_plot2d-1.png) and You can get
+an RR table
+
+``` r
+
+getRR(ma_model_fct)
+#>           TOWN20  COUNTY20 tmax_C       RR      RRlb     RRub age_grp
+#>           <char>    <char>  <num>    <num>     <num>    <num>  <char>
+#>     1:     ACTON MIDDLESEX    7.0 1.000000 1.0000000 1.000000    0-17
+#>     2:     ACTON MIDDLESEX    7.1 1.000694 0.9999329 1.001456    0-17
+#>     3:     ACTON MIDDLESEX    7.2 1.001389 0.9998659 1.002915    0-17
+#>     4:     ACTON MIDDLESEX    7.3 1.002085 0.9997992 1.004375    0-17
+#>     5:     ACTON MIDDLESEX    7.4 1.002781 0.9997327 1.005838    0-17
+#>    ---                                                               
+#> 97538: WORCESTER WORCESTER   33.6 1.300465 1.2147953 1.392175     65+
+#> 97539: WORCESTER WORCESTER   33.7 1.302040 1.2155758 1.394654     65+
+#> 97540: WORCESTER WORCESTER   33.8 1.303616 1.2163410 1.397154     65+
+#> 97541: WORCESTER WORCESTER   33.9 1.305195 1.2170919 1.399676     65+
+#> 97542: WORCESTER WORCESTER   34.0 1.306775 1.2178291 1.402218     65+
+#>                 model_class
+#>                      <char>
+#>     1: condPois_2stage_list
+#>     2: condPois_2stage_list
+#>     3: condPois_2stage_list
+#>     4: condPois_2stage_list
+#>     5: condPois_2stage_list
+#>    ---                     
+#> 97538: condPois_2stage_list
+#> 97539: condPois_2stage_list
+#> 97540: condPois_2stage_list
+#> 97541: condPois_2stage_list
+#> 97542: condPois_2stage_list
+```

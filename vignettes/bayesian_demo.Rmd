@@ -29,7 +29,12 @@ We implemented the spatial bayesian method of BYM2 but instead of regular poisso
 
 This requires bringing in a shapefile, so you can define the network 
 
-The standard application is using MCMC
+The standard application is using MCMC, we also include all STAN model types:
+
+* MCMC
+* laplace
+* variational
+* pathfinder
 
 You can also experiment with speeding things up (at the risk of less precise estimates) using the laplace or variational method. see Jack's notes as so what is going on here
 
@@ -190,4 +195,6 @@ And you can also see that the leroux `q` value is quite high
 ```{r getQ}
 subset(m_sb3$`_`$stan_summary, variable == 'q')
 ```
+
+All of the other objects associated with `condPois_1stage` or `condPois_2stage` will also work here, along with the `_list` and factor coding
 

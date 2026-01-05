@@ -16,11 +16,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">cityHeatHealth</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/cityHeatHealth.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -71,46 +72,99 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://chadmilando.com/cityHeatHealth/">cityHeatHealth</a></span><span class="op">)</span></span></code></pre></div>
 <p>Some things that will eventually go in the paper:</p>
+<div class="section level4">
+<h4 id="conditional-poisson-versus-time-series-framework">Conditional Poisson versus time-series framework<a class="anchor" aria-label="anchor" href="#conditional-poisson-versus-time-series-framework"></a>
+</h4>
 <ol style="list-style-type: decimal">
-<li><p>The reason we are doing a conditional poisson (over time-series
+<li>The reason we are doing a conditional poisson (over time-series
 analysis) is because it has some built-in properties that can help with
 small numbers (i.e., dropping low or empty strata). and we potentially
 trust the structure here more than the splines for time approach. As
 such there as several places where numeric cut-offs are necessary: MinN,
-strata_total. tHese are sensitivitity points</p></li>
-<li><p>The reason we are using data.table instead of tidyverse is so
-that joins can be done more efficiently on smaller computers (which may
-be the case for our hypothesized user)</p></li>
-<li><p>We are specifically designing this for daily data. I think it
-could likely be used with other types of data though, might be worth
-testing to see where it breaks. As we’ve seen, other time frames
-introduce other problems that are out of scope.</p></li>
+strata_total. tHese are sensitivitity points</li>
 </ol>
+</div>
+<div class="section level4">
+<h4 id="use-of-data-table-and-not-tidyverse">Use of data.table and not tidyverse<a class="anchor" aria-label="anchor" href="#use-of-data-table-and-not-tidyverse"></a>
+</h4>
+<ol start="2" style="list-style-type: decimal">
+<li>The reason we are using data.table instead of tidyverse is so that
+joins can be done more efficiently on smaller computers (which may be
+the case for our hypothesized user)</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="daily-versus-weekly-data-or-other-resolutions">Daily versus weekly data or other resolutions<a class="anchor" aria-label="anchor" href="#daily-versus-weekly-data-or-other-resolutions"></a>
+</h4>
+<ol start="3" style="list-style-type: decimal">
+<li>We are specifically designing this for daily data. I think it could
+likely be used with other types of data though, might be worth testing
+to see where it breaks. As we’ve seen, other time frames introduce other
+problems that are out of scope.</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="fatal-vs-non-fatal-health-outcomes">Fatal vs non-fatal health outcomes<a class="anchor" aria-label="anchor" href="#fatal-vs-non-fatal-health-outcomes"></a>
+</h4>
 <p>(3.5) we are also testing this for non-fatal</p>
+</div>
+<div class="section level4">
+<h4 id="motivation-for-this-work-is-small-area-studies">Motivation for this work is small-area studies<a class="anchor" aria-label="anchor" href="#motivation-for-this-work-is-small-area-studies"></a>
+</h4>
 <ol start="4" style="list-style-type: decimal">
-<li><p>the motivation here is for small-area studies, hence the specific
+<li>the motivation here is for small-area studies, hence the specific
 setup for grp and grp-level. as per the paper these are both (i) hard to
-do, and (ii) essential for public health officials</p></li>
-<li><p>How to deal with differing underlying population sizes? scale by
-the log-offset? But should it matter since you are doing within
+do, and (ii) essential for public health officials</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="why-dont-we-have-to-include-the-population-offset-in-the-model-calculation">Why don’t we have to include the population offset in the model
+calculation<a class="anchor" aria-label="anchor" href="#why-dont-we-have-to-include-the-population-offset-in-the-model-calculation"></a>
+</h4>
+<ol start="6" style="list-style-type: decimal">
+<li>How to deal with differing underlying population sizes? scale by the
+log-offset? But should it matter since you are doing within
 year-month-dow strata? No, the strata always have to be within
 populations that are the same, else the math gets messed up. I dont want
 to include an adjustment for log-population so i can use strata that
 combine multiple populations, although we could somewhat easily. Im just
 not sure how this would work in stan if its expecting the Y to be a
 number. I suppose in a future iteration you could build in scaling and
-un-scaling by some nominal amount.</p></li>
-<li><p>for both exposures and outcomes, <code>make_xgrid</code> is a key
-function that creates the skeleton of what you expect.</p></li>
-<li><p>throughout we also want to keep the size of various datasets
-small.</p></li>
-<li><p>and you need to remember its crossreduce not crosspred at the end
-of the day</p></li>
-<li><p>you could make this slightly more size resilient by not expanding
+un-scaling by some nominal amount.</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="the-role-of-make_xgrid">The role of <code>make_xgrid</code><a class="anchor" aria-label="anchor" href="#the-role-of-make_xgrid"></a>
+</h4>
+<ol start="7" style="list-style-type: decimal">
+<li>for both exposures and outcomes, <code>make_xgrid</code> is a key
+function that creates the skeleton of what you expect.</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="emphasis-on-keeping-datasets-small">Emphasis on keeping datasets small<a class="anchor" aria-label="anchor" href="#emphasis-on-keeping-datasets-small"></a>
+</h4>
+<ol start="8" style="list-style-type: decimal">
+<li>throughout we also want to keep the size of various datasets small.
+you could make this slightly more size resilient by not expanding
 outcomes until the inner step, but for now this is hopefully ok with
-data.table and pointers.</p></li>
-<li><p>why aren’t you doing more with future? im not sure these tasks
-are best suited, its a lot of quickly running tasks with lots of i/o and
+data.table and pointers.</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="reminder-about-what-is-needed-to-calculate-attributable-numbers">Reminder about what is needed to calculate attributable numbers<a class="anchor" aria-label="anchor" href="#reminder-about-what-is-needed-to-calculate-attributable-numbers"></a>
+</h4>
+<ol start="9" style="list-style-type: decimal">
+<li>and you need to remember its crossreduce not crosspred at the end of
+the day</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="why-arent-we-using-the-future-package-more">Why aren’t we using the <code>future</code> package more?<a class="anchor" aria-label="anchor" href="#why-arent-we-using-the-future-package-more"></a>
+</h4>
+<ol start="11" style="list-style-type: decimal">
+<li>why aren’t you doing more with future? im not sure these tasks are
+best suited, its a lot of quickly running tasks with lots of i/o and
 things to be passed around. none of these calculations actually take
 that long. I suppose you could look into it for some of the smaller
 tasks. but you’d have to make copies of some of the large objects, which
@@ -120,14 +174,17 @@ your total time savings will be small. The other thing about not doing
 it in future_ is that it becomes (a) harder to deploy (b) harder to
 ensure it works on mac and pc and (c) much harder to debug. would be
 worth it if the time-savings were really a lot but we are talking about
-a few minutes here</p></li>
-</ol></main>
+a few minutes here</li>
+</ol>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Chad Milando.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

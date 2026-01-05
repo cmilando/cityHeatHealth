@@ -18,7 +18,13 @@ performance gains that they articulate in Amrstrong.
 
 This requires bringing in a shapefile, so you can define the network
 
-The standard application is using MCMC
+The standard application is using MCMC, we also include all STAN model
+types:
+
+- MCMC
+- laplace
+- variational
+- pathfinder
 
 You can also experiment with speeding things up (at the risk of less
 precise estimates) using the laplace or variational method. see Jack’s
@@ -154,13 +160,16 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
                      verbose = 2,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'none')
+#>  STAN TYPE = mcmc 
+#>  SPATIAL MODEL = none 
 #> -- validation passed
 #> -- prepare inputs
 #> CHELSEA  EVERETT     MALDEN  REVERE  
-#> Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one
+#> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
 #> -- run STAN
+#>  ...mcmc... 
 #> Running MCMC with 2 parallel chains...
 #> 
 #> Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
@@ -186,14 +195,15 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 28.4 seconds.
+#> Chain 2 finished in 31.0 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 28.7 seconds.
+#> Chain 1 finished in 31.2 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 28.6 seconds.
-#> Total execution time: 28.8 seconds.
+#> Mean chain execution time: 31.1 seconds.
+#> Total execution time: 31.3 seconds.
 #> 
+#>  ...mcmc draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
 ```
@@ -245,19 +255,23 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
                      verbose = 2,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'bym2')
+#>  STAN TYPE = laplace 
+#>  SPATIAL MODEL = bym2 
 #> -- validation passed
 #> -- prepare inputs
 #> CHELSEA  EVERETT     MALDEN  REVERE  
-#> Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one
+#> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
 #> -- run STAN
+#>  ...laplace optimize... 
 #> Initial log joint probability = -6739.06 
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
 #>      139      -6737.26   0.000348121      0.731762           1           1      169    
 #> Optimization terminated normally:  
 #>   Convergence detected: relative gradient magnitude is below tolerance 
 #> Finished in  0.1 seconds.
+#>  ...laplace sample... 
 #> Calculating Hessian 
 #> Calculating inverse of Cholesky factor 
 #> Generating draws 
@@ -271,7 +285,8 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> iteration: 700 
 #> iteration: 800 
 #> iteration: 900 
-#> Finished in  0.7 seconds.
+#> Finished in  0.8 seconds.
+#>  ...laplace draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
 ```
@@ -323,47 +338,43 @@ m_sb3 <- condPois_sb(exposure_mat,
                      verbose = 2,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'leroux')
+#>  STAN TYPE = laplace 
+#>  SPATIAL MODEL = leroux 
 #> -- validation passed
 #> -- prepare inputs
 #> CHELSEA  EVERETT     MALDEN  REVERE  
-#> Warning in getSW(shp = local_shp, ni = 1, include_self = F): has to be one
+#> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
 #> -- run STAN
+#>  ...laplace optimize... 
 #> Initial log joint probability = -7000.25 
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>      199      -6508.32      0.101312       735.672           1           1      210    
+#>      199      -6518.16     0.0317223        386.68           1           1      215    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>      399      -6441.08   0.000602857       2011.02           1           1      415    
+#>      399      -6438.84     0.0763665       11799.7      0.5406           1      425    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>      599      -6421.17    0.00168537       2169.19           1           1      622    
+#>      599      -6393.62      0.027489       12270.4           1           1      635    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>      799      -6419.21   0.000241764       2033.04           1           1      828    
+#>      799       -6371.4    0.00210131       22054.6           1           1      849    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>      999      -6418.36   3.55337e-05       1137.51           1           1     1040    
+#>      999      -6362.85   2.48342e-06       1876.72           1           1     1060    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     1199      -6418.11   2.18947e-05       273.309           1           1     1249    
+#>     1199      -6360.11   1.70314e-06       1926.29           1           1     1272    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     1399      -6417.96   4.21693e-06       290.011      0.2871      0.2871     1456    
+#>     1399       -6359.2   1.63738e-06       1871.19           1           1     1480    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     1599      -6417.82   8.38522e-06       266.515           1           1     1668    
+#>     1599      -6358.77   1.14602e-05       1174.76           1           1     1690    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     1799      -6417.66   8.43777e-06       127.557           1           1     1875    
+#>     1799      -6357.61   0.000191241       7846.74           1           1     1897    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     1999      -6417.53   1.57883e-05       374.016       0.666       0.666     2084    
+#>     1999      -6356.56   1.89901e-05       1981.71           1           1     2106    
 #>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     2199      -6417.41   2.03482e-05       234.158           1           1     2294    
-#>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     2399      -6417.37   0.000196685       263.952           1           1     2505    
-#>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     2599      -6417.27    0.00020019        874.02           1           1     2712    
-#>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     2799       -6417.2   2.31778e-05       282.484      0.8335      0.8335     2922    
-#>     Iter      log prob        ||dx||      ||grad||       alpha      alpha0  # evals  Notes  
-#>     2917      -6417.09   5.16008e-07       58.1118           1           1     3045    
+#>     2152      -6355.97   2.89835e-07       242.602           1           1     2271    
 #> Optimization terminated normally:  
 #>   Convergence detected: relative gradient magnitude is below tolerance 
-#> Finished in  1.4 seconds.
+#> Finished in  1.1 seconds.
+#>  ...laplace sample... 
 #> Calculating Hessian 
 #> Calculating inverse of Cholesky factor 
 #> Generating draws 
@@ -377,7 +388,8 @@ m_sb3 <- condPois_sb(exposure_mat,
 #> iteration: 700 
 #> iteration: 800 
 #> iteration: 900 
-#> Finished in  0.9 seconds.
+#> Finished in  0.8 seconds.
+#>  ...laplace draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
 ```
@@ -402,19 +414,19 @@ mx
 #> cbv3.l4 -0.0490847643 -0.01913613 -0.0655887549 -0.044893272
 
 m_sb3$`_`$beta_mat
-#>            CHELSEA      EVERETT      MALDEN       REVERE
-#>  [1,]  0.026319525  0.026319693  0.02631967  0.026319835
-#>  [2,] -0.005534506 -0.005534296 -0.00553427 -0.005534043
-#>  [3,]  0.094720528  0.094720723  0.09472093  0.094721223
-#>  [4,] -0.036462337 -0.036462215 -0.03646218 -0.036462030
-#>  [5,]  0.017719019  0.017712262  0.01771736  0.017710263
-#>  [6,]  0.011331487  0.011330544  0.01133091  0.011329994
-#>  [7,]  0.160040095  0.160039608  0.16003934  0.160039051
-#>  [8,] -0.054106971 -0.054107011 -0.05410700 -0.054106990
-#>  [9,]  0.036384050  0.036384133  0.03638422  0.036384400
-#> [10,] -0.011483545 -0.011483506 -0.01148341 -0.011483331
-#> [11,]  0.134981224  0.134980961  0.13498120  0.134981046
-#> [12,] -0.045758154 -0.045758204 -0.04575826 -0.045758549
+#>            CHELSEA      EVERETT       MALDEN       REVERE
+#>  [1,]  0.007393641  0.007393784  0.007394247  0.007393496
+#>  [2,]  0.005909126  0.005908665  0.005909324  0.005909028
+#>  [3,]  0.101804062  0.101805289  0.101804801  0.101804395
+#>  [4,] -0.044028808 -0.044029393 -0.044029676 -0.044029059
+#>  [5,] -0.045403324 -0.045399940 -0.045397528 -0.045397372
+#>  [6,]  0.046002454  0.046006165  0.046005329  0.046004261
+#>  [7,]  0.187302489  0.187302192  0.187301543  0.187302563
+#>  [8,] -0.079967398 -0.079968486 -0.079967632 -0.079968145
+#>  [9,]  0.009569402  0.009569678  0.009569970  0.009570108
+#> [10,]  0.011026743  0.011027348  0.011027609  0.011027644
+#> [11,]  0.141515048  0.141515237  0.141514517  0.141515253
+#> [12,] -0.056311461 -0.056311481 -0.056310680 -0.056311312
 ```
 
 And you can also see that the leroux `q` value is quite high
@@ -423,7 +435,11 @@ And you can also see that the leroux `q` value is quite high
 
 subset(m_sb3$`_`$stan_summary, variable == 'q')
 #> # A tibble: 1 × 7
-#>   variable  mean median    sd     mad    q5   q95
-#>   <chr>    <dbl>  <dbl> <dbl>   <dbl> <dbl> <dbl>
-#> 1 q        0.936  0.998 0.181 0.00129 0.474 0.999
+#>   variable  mean median    sd   mad    q5   q95
+#>   <chr>    <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 q        0.631  0.640 0.113 0.112 0.437 0.808
 ```
+
+All of the other objects associated with `condPois_1stage` or
+`condPois_2stage` will also work here, along with the `_list` and factor
+coding

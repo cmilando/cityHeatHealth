@@ -21,7 +21,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   stopifnot(class(model) %in%
               c('condPois_1stage', 'condPois_1stage_list',
                 'condPois_2stage', 'condPois_2stage_list',
-                'condPois_bayes',  'condPois_bayes_list'))
+                'condPois_sb',  'condPois_sb_list'))
 
   stopifnot("outcome" %in% class(outcomes_tbl))
 
@@ -127,6 +127,9 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   # get the blup object
   n_geo_units <- length(x$out)
+  if(!(n_geo_units >= 1)) {
+    stop("the model object is empty, check that model and outcomes are the same type (e.g., that one is not a `_list` type while the other is a standard.")
+  }
   stopifnot(n_geo_units >= 1)
   AN <- vector("list", n_geo_units)
 
@@ -456,7 +459,11 @@ plot.calcAN <- function(x, table_type, above_MMT) {
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
-    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
+    if(nrow(byX_df) > 20) {
+      warning("plot elements > 20, subsetting to top 20")
+      setorder(byX_df, -mean_annual_attr_num_est)
+      byX_df <- byX_df[1:20]
+    }
 
     ggplot(byX_df) +
       coord_cartesian() +
@@ -488,7 +495,11 @@ plot.calcAN <- function(x, table_type, above_MMT) {
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
-    if(nrow(byX_df) > 20) stop("plot elements > 20, not plotting")
+    if(nrow(byX_df) > 20) {
+      warning("plot elements > 20, subsetting to top 20")
+      setorder(byX_df, -mean_annual_attr_rate_est)
+      byX_df <- byX_df[1:20]
+    }
 
     ggplot(byX_df) +
       coord_cartesian() +
@@ -547,13 +558,17 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
     for(i in 1:length(byX_df)) {
       byX_df[[i]] <- x[[fct_names[i]]]$`_`$number_table
       byX_df[[i]][, (fct_lab) := fct_names[i]]
+      if(nrow(byX_df[[i]]) > 20) {
+        warning("plot elements > 20, subsetting to top 20")
+        setorder(byX_df[[i]], -mean_annual_attr_num_est)
+        byX_df[[i]] <- byX_df[[i]][1:20]
+      }
     }
 
     byX_df <- do.call(rbind, byX_df)
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
-    if(nrow(byX_df) > 20 * length(byX_df)) stop("too many plot elements")
 
     ##
     pd <- position_dodge2(width = 0.9, preserve = "single")
@@ -592,13 +607,17 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
     for(i in 1:length(byX_df)) {
       byX_df[[i]] <- x[[fct_names[i]]]$`_`$rate_table
       byX_df[[i]][, (fct_lab) := fct_names[i]]
+      if(nrow(byX_df[[i]]) > 20) {
+        warning("plot elements > 20, subsetting to top 20")
+        setorder(byX_df[[i]], -mean_annual_attr_rate_est)
+        byX_df[[i]] <- byX_df[[i]][1:20]
+      }
     }
 
     byX_df <- do.call(rbind, byX_df)
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
-    if(nrow(byX_df) > 20 * length(byX_df)) stop("too many plot elements")
 
     ##
     pd <- position_dodge2(width = 0.9, preserve = "single")

@@ -441,8 +441,29 @@ And plot the relative risk
 plot(m1)
 ```
 
-![](one_stage_demo_files/figure-html/single_plot-1.png) \### Multi-zone
-DLNM
+![](one_stage_demo_files/figure-html/single_plot-1.png)
+
+You can also get the RR table for your own usage
+
+``` r
+
+getRR(m1)
+#>      tmax_C       RR    RRlow   RRhigh n_geo_names     model_class
+#>       <num>    <num>    <num>    <num>      <char>          <char>
+#>   1:    5.4 1.000000 1.000000 1.000000      BOSTON condPois_1stage
+#>   2:    5.5 1.000395 1.000155 1.000636      BOSTON condPois_1stage
+#>   3:    5.6 1.000791 1.000309 1.001272      BOSTON condPois_1stage
+#>   4:    5.7 1.001186 1.000464 1.001909      BOSTON condPois_1stage
+#>   5:    5.8 1.001582 1.000619 1.002546      BOSTON condPois_1stage
+#>  ---                                                              
+#> 329:   38.2 1.440253 1.367101 1.517320      BOSTON condPois_1stage
+#> 330:   38.3 1.443200 1.368934 1.521494      BOSTON condPois_1stage
+#> 331:   38.4 1.446152 1.370766 1.525684      BOSTON condPois_1stage
+#> 332:   38.5 1.449111 1.372597 1.529891      BOSTON condPois_1stage
+#> 333:   38.6 1.452077 1.374427 1.534113      BOSTON condPois_1stage
+```
+
+### Multi-zone DLNM
 
 You can also easily extend to a 1 stage multi-zone case. You don’t need
 to include population offset because within the geo_unit:year:month:dow
@@ -490,6 +511,39 @@ plot(m2)
 
 ![](one_stage_demo_files/figure-html/single_plot2b-1.png)
 
+And get RR
+
+``` r
+
+getRR(m2)
+#>      tmax_C       RR    RRlow   RRhigh                   n_geo_names
+#>       <num>    <num>    <num>    <num>                        <char>
+#>   1:    3.4 1.000000 1.000000 1.000000 ACTON:ARLINGTON...(truncated)
+#>   2:    3.5 1.000553 1.000479 1.000628 ACTON:ARLINGTON...(truncated)
+#>   3:    3.6 1.001107 1.000959 1.001256 ACTON:ARLINGTON...(truncated)
+#>   4:    3.7 1.001662 1.001439 1.001884 ACTON:ARLINGTON...(truncated)
+#>   5:    3.8 1.002216 1.001919 1.002514 ACTON:ARLINGTON...(truncated)
+#>  ---                                                                
+#> 350:   38.3 1.495273 1.471733 1.519190 ACTON:ARLINGTON...(truncated)
+#> 351:   38.4 1.498303 1.474447 1.522545 ACTON:ARLINGTON...(truncated)
+#> 352:   38.5 1.501340 1.477166 1.525909 ACTON:ARLINGTON...(truncated)
+#> 353:   38.6 1.504383 1.479889 1.529282 ACTON:ARLINGTON...(truncated)
+#> 354:   38.7 1.507432 1.482616 1.532664 ACTON:ARLINGTON...(truncated)
+#>          model_class
+#>               <char>
+#>   1: condPois_1stage
+#>   2: condPois_1stage
+#>   3: condPois_1stage
+#>   4: condPois_1stage
+#>   5: condPois_1stage
+#>  ---                
+#> 350: condPois_1stage
+#> 351: condPois_1stage
+#> 352: condPois_1stage
+#> 353: condPois_1stage
+#> 354: condPois_1stage
+```
+
 ### Multi-factor single beta coeff
 
 you can also get it for factors
@@ -509,3 +563,37 @@ plot(m3)
 ```
 
 ![](one_stage_demo_files/figure-html/ff2-1.png)
+
+And get RR
+
+``` r
+
+getRR(m3)
+#>       tmax_C age_grp       RR    RRlow   RRhigh          model_class
+#>        <num>  <char>    <num>    <num>    <num>               <char>
+#>    1:    3.4    0-17 1.000000 1.000000 1.000000 condPois_1stage_list
+#>    2:    3.5    0-17 1.000805 1.000724 1.000886 condPois_1stage_list
+#>    3:    3.6    0-17 1.001611 1.001448 1.001773 condPois_1stage_list
+#>    4:    3.7    0-17 1.002417 1.002174 1.002661 condPois_1stage_list
+#>    5:    3.8    0-17 1.003224 1.002899 1.003549 condPois_1stage_list
+#>   ---                                                               
+#> 1058:   38.3     65+ 1.482591 1.456637 1.509008 condPois_1stage_list
+#> 1059:   38.4     65+ 1.485307 1.459010 1.512078 condPois_1stage_list
+#> 1060:   38.5     65+ 1.488028 1.461386 1.515156 condPois_1stage_list
+#> 1061:   38.6     65+ 1.490755 1.463765 1.518242 condPois_1stage_list
+#> 1062:   38.7     65+ 1.493486 1.466147 1.521335 condPois_1stage_list
+```
+
+### Changing the global_cen
+
+You can change the global_cen and view the impact
+
+``` r
+
+# run the model
+m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, global_cen = 20,
+                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
+plot(m2)
+```
+
+![](one_stage_demo_files/figure-html/globalCenMod-1.png)

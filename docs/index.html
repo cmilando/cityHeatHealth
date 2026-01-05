@@ -5,12 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Estimating Heat-Health Impacts at Small Spatial Scales • cityHeatHealth</title>
+<title>Weather-attributable health impacts • cityHeatHealth</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Estimating Heat-Health Impacts at Small Spatial Scales">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
+<meta property="og:title" content="Weather-attributable health impacts">
 <meta name="description" content="Tools for estimating heat-related health impacts using daily exposure and outcome data at small spatial scales. The package supports one-stage conditional Poisson models, two-stage meta-analytic designs, and spatial Bayesian approaches that borrow strength across neighboring geographic units when case counts are small. Methods include distributed lag non-linear models and attributable number calculations, with workflows designed for messy real-world epidemiologic data.">
 <meta property="og:description" content="Tools for estimating heat-related health impacts using daily exposure and outcome data at small spatial scales. The package supports one-stage conditional Poisson models, two-stage meta-analytic designs, and spatial Bayesian approaches that borrow strength across neighboring geographic units when case counts are small. Methods include distributed lag non-linear models and attributable number calculations, with workflows designed for messy real-world epidemiologic data.">
 </head>
@@ -31,6 +32,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/cityHeatHealth.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -75,24 +77,21 @@
 <th>Spatial Bayes</th>
 </tr></thead>
 <tbody><tr>
-<td>A 1-stage conditional poisson model when estimating a <em>single set of beta coefficients</em> for heat-health impacts across single or multiple zones</td>
-<td>A 2-stage design is used when estimating heat-health impacts across many zones, but where <em>individual zone models</em> are desired</td>
-<td>If numbers are very small in the 2-stage design, spatial bayesian methods can be used to tighten confidence intervals</td>
+<td>A 1-stage conditional poisson model when estimating a <em>single set of beta coefficients</em> for heat-health impacts across single or multiple zones: <code><a href="articles/one_stage_demo.html">vignette("one_stage_demo")</a></code>
+</td>
+<td>A 2-stage design is used when estimating heat-health impacts across many zones, but where <em>individual zone models</em> are desired: <code><a href="articles/two_stage_demo.html">vignette("two_stage_demo")</a></code>
+</td>
+<td>If numbers are very small in the 2-stage design, spatial bayesian methods can be used to tighten confidence intervals: <code><a href="articles/bayesian_demo.html">vignette("bayesian_demo")</a></code>
+</td>
 </tr></tbody>
 </table>
-<p>Essentially, the spatial bayes (SB) method is a bridge between and 1 stage and a 2 stage if you want more granularity than a 1 stage, but the data aren’t strong enough to do a 2 stage even with blups, you can do an SB model, which is sort of like many overlapping 1 stage models of groups of spatial units fused together.</p>
-<p>The vignettes for these are:</p>
-<ul>
-<li><code><a href="articles/one_stage_demo.html">vignette("one_stage_demo")</a></code></li>
-<li><code><a href="articles/two_stage_demo.html">vignette("two_stage_demo")</a></code></li>
-<li><code><a href="articles/bayesian_demo.html">vignette("bayesian_demo")</a></code></li>
-</ul>
-<p>In implementations, an attributable number calculation is applied to model outcomes to get heat-attributable outcomes. To avoid repetition, we provide a separate vignette that details the attributable number module: <code><a href="articles/attributable_number.html">vignette("attributable_number")</a></code>.</p>
+<p>In implementations, an attributable number calculation is applied to model outputs, see <code><a href="articles/attributable_number.html">vignette("attributable_number")</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="starting-a-new-analysis">Starting a new analysis<a class="anchor" aria-label="anchor" href="#starting-a-new-analysis"></a>
 </h2>
 <p>To start a new analysis, you will need the following <strong>4</strong> datasets:</p>
+<div class="smalltable">
 <table class="table">
 <colgroup>
 <col width="25%">
@@ -115,7 +114,8 @@
 <td>A map showing how the various <code>geo_unit</code>s are neighbors</td>
 </tr></tbody>
 </table>
-<p>This package comes pre-loaded with sample datasets of each type (e.g., <code>ma_exposure</code>, <code>ma_deaths</code>, <code>ma_pop_data</code>, and <code>ma_towns</code> respectively) so each of these methods can be explored. See the above vignettes for starter code for each type of analysis.</p>
+</div>
+<p>This package comes pre-loaded with sample datasets of each type (e.g., <code>ma_exposure</code>, <code>ma_deaths</code>, <code>ma_pop_data</code>, and <code>ma_towns</code> respectively) so each of these methods can be explored.</p>
 </div>
 <div class="section level2">
 <h2 id="additional-vignettes">Additional vignettes<a class="anchor" aria-label="anchor" href="#additional-vignettes"></a>
@@ -143,7 +143,8 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Chad Milando <br><small class="roles"> Author, maintainer </small>   </li>
+<li>
+<a href="https://chadmilando.com" class="external-link">Chad Milando</a> <br><small class="roles"> Author, maintainer </small>   </li>
 </ul>
 </div>
 
@@ -154,7 +155,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Chad Milando.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

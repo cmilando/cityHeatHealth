@@ -4,6 +4,7 @@ pkgdown_sha: ~
 articles:
   attributable_number: attributable_number.html
   bayesian_demo: bayesian_demo.html
+  cityHeatHealth: cityHeatHealth.html
   comparison: comparison.html
   dlnm_sensitivity: dlnm_sensitivity.html
   faq: faq.html
@@ -13,7 +14,7 @@ articles:
   TODO: TODO.html
   two_stage_demo: two_stage_demo.html
   validation: validation.html
-last_built: 2026-01-04T22:07Z
+last_built: 2026-01-05T18:52Z
 urls:
   reference: http://chadmilando.com/cityHeatHealth/reference
   article: http://chadmilando.com/cityHeatHealth/articles

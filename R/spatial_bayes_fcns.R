@@ -198,7 +198,7 @@ getSW <- function(shp, ni, include_self = T) {
   }
 
   #
-  nb <- poly2nb(local_shp)
+  nb <- poly2nb(shp)
   lb <- nb2listw(nb, style = 'B', zero.policy = TRUE)
   xx <- lb$neighbours
 

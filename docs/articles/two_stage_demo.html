@@ -16,11 +16,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">cityHeatHealth</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/cityHeatHealth.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -87,7 +88,8 @@ and <code>outcome_columns</code> as before.</p>
 <span>  <span class="st">"geo_unit_grp"</span> <span class="op">=</span> <span class="st">"COUNTY20"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ma_exposure_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_exposure_matrix.html">make_exposure_matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_exposure</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'SUFFOLK'</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span><span class="va">ma_exposure_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_exposure_matrix.html">make_exposure_matrix</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_exposure</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>           <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>, <span class="va">exposure_columns</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in make_exposure_matrix(subset(ma_exposure, COUNTY20 %in% c("MIDDLESEX", : check about any NA, some corrections for this later,</span></span>
 <span><span class="co">#&gt;             but only in certain columns</span></span>
@@ -100,7 +102,8 @@ and <code>outcome_columns</code> as before.</p>
 <span>  <span class="st">"geo_unit"</span> <span class="op">=</span> <span class="st">"TOWN20"</span>,</span>
 <span>  <span class="st">"geo_unit_grp"</span> <span class="op">=</span> <span class="st">"COUNTY20"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">ma_outcomes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'SUFFOLK'</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span><span class="va">ma_outcomes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>           <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>, <span class="va">outcome_columns</span><span class="op">)</span></span></code></pre></div>
 <p>Now run by using <code>condPois_2stage</code>. This does the Gasp
 Extended2stage design in 1 function from these inputs and defaults for
@@ -117,7 +120,7 @@ model.</p>
 <span><span class="co">#&gt; -- stage 2</span></span></code></pre></div>
 <p>You can still view the RR output from a single zone:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="st">"BOSTON"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="st">"CAMBRIDGE"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="two_stage_demo_files/figure-html/multi_plot_sigle-1.png" class="r-plt" width="480">
 It does seem like this is a wider confidence interval than the solo
 model – Perhaps this is expected given the variables around it? Worth
@@ -126,13 +129,13 @@ investigating in your dataset, as these are simulated data.</p>
 this cleaner to get to)</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_model</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">grp_plt</span></span></code></pre></div>
-<p><img src="two_stage_demo_files/figure-html/grp-1.png" class="r-plt" width="768"></p>
+<p><img src="two_stage_demo_files/figure-html/grp-1.png" class="r-plt" width="480"></p>
 <p>You can also make a forest plot at a specific exposure value</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/forest_plot.html">forest_plot</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="fl">25.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in forest_plot.condPois_2stage(ma_model, 25.1): plotting by group since</span></span>
 <span><span class="co">#&gt; n_geos &gt; 20</span></span></code></pre></div>
-<p><img src="two_stage_demo_files/figure-html/multi_plot_multiple1-1.png" class="r-plt" width="768"></p>
+<p><img src="two_stage_demo_files/figure-html/multi_plot_multiple1-1.png" class="r-plt" width="480"></p>
 <p>Finally you can also plot how the RR changes at specific expsoure
 units across space – for this you need to bring in an <code>sf</code>
 shapefile:</p>
@@ -189,17 +192,34 @@ shapefile:</p>
 <span></span>
 <span><span class="fu"><a href="../reference/spatial_plot.html">spatial_plot</a></span><span class="op">(</span><span class="va">ma_model</span>, shp <span class="op">=</span> <span class="va">ma_towns</span>, exposure_val <span class="op">=</span> <span class="fl">25.1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="two_stage_demo_files/figure-html/multi_plot_multiple2-1.png" class="r-plt" width="768"></p>
+<p>and You can get an RR table</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getRR.html">getRR</a></span><span class="op">(</span><span class="va">ma_model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           TOWN20  COUNTY20 tmax_C       RR      RRlb     RRub     model_class</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;char&gt;  &lt;num&gt;    &lt;num&gt;     &lt;num&gt;    &lt;num&gt;          &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1:     ACTON MIDDLESEX    7.0 1.000000 1.0000000 1.000000 condPois_2stage</span></span>
+<span><span class="co">#&gt;     2:     ACTON MIDDLESEX    7.1 1.000516 0.9999447 1.001088 condPois_2stage</span></span>
+<span><span class="co">#&gt;     3:     ACTON MIDDLESEX    7.2 1.001033 0.9998894 1.002177 condPois_2stage</span></span>
+<span><span class="co">#&gt;     4:     ACTON MIDDLESEX    7.3 1.001549 0.9998343 1.003267 condPois_2stage</span></span>
+<span><span class="co">#&gt;     5:     ACTON MIDDLESEX    7.4 1.002067 0.9997795 1.004359 condPois_2stage</span></span>
+<span><span class="co">#&gt;    ---                                                                       </span></span>
+<span><span class="co">#&gt; 32510: WORCESTER WORCESTER   33.6 1.288946 1.2000454 1.384432 condPois_2stage</span></span>
+<span><span class="co">#&gt; 32511: WORCESTER WORCESTER   33.7 1.290732 1.2010888 1.387065 condPois_2stage</span></span>
+<span><span class="co">#&gt; 32512: WORCESTER WORCESTER   33.8 1.292520 1.2021282 1.389709 condPois_2stage</span></span>
+<span><span class="co">#&gt; 32513: WORCESTER WORCESTER   33.9 1.294311 1.2031641 1.392363 condPois_2stage</span></span>
+<span><span class="co">#&gt; 32514: WORCESTER WORCESTER   34.0 1.296105 1.2041968 1.395027 condPois_2stage</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-by-factor">Model by factor<a class="anchor" aria-label="anchor" href="#model-by-factor"></a>
 </h3>
 <p>Only a small change is required to run the model by factor, e.g.,
 age_grp:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ma_outcomes_tbl_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'SUFFOLK'</span><span class="op">)</span> <span class="op">&amp;</span></span>
-<span>           <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>, </span>
-<span>                                      <span class="va">outcome_columns</span>,</span>
-<span>                                      collapse_to <span class="op">=</span> <span class="st">'age_grp'</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ma_outcomes_tbl_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>           <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>,</span>
+<span>  <span class="va">outcome_columns</span>,collapse_to <span class="op">=</span> <span class="st">'age_grp'</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ma_outcomes_tbl_fct</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          date    TOWN20  COUNTY20 age_grp daily_deaths</span></span>
 <span><span class="co">#&gt;        &lt;Date&gt;    &lt;char&gt;    &lt;char&gt;  &lt;char&gt;        &lt;int&gt;</span></span>
@@ -218,7 +238,7 @@ age_grp:</p>
 <span><span class="co">#&gt; 5: ARLINGTON:yr2012:mn5:dow3:age_grp18-64          249</span></span>
 <span><span class="co">#&gt; 6:   ARLINGTON:yr2012:mn5:dow3:age_grp65+          262</span></span></code></pre></div>
 <p>Run the model</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_model_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_2stage.html">condPois_2stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl_fct</span>, verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
@@ -236,20 +256,49 @@ age_grp:</p>
 <span><span class="co">#&gt; -- mixmeta</span></span>
 <span><span class="co">#&gt; -- stage 2</span></span></code></pre></div>
 <p>And plot</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, <span class="st">"BOSTON"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="two_stage_demo_files/figure-html/multi_plot2a-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_model_fct</span><span class="op">$</span><span class="va">`18-64`</span>, <span class="st">"BOSTON"</span>, title <span class="op">=</span> <span class="st">'BOSTON: 18-64'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="two_stage_demo_files/figure-html/multi_plot2b-1.png" class="r-plt" width="480"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, <span class="st">"CAMBRIDGE"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="two_stage_demo_files/figure-html/multi_plot2a-1.png" class="r-plt" width="480"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_model_fct</span><span class="op">$</span><span class="va">`18-64`</span>, <span class="st">"CAMBRIDGE"</span>, title <span class="op">=</span> <span class="st">'CAMBRIDGE: 18-64'</span><span class="op">)</span></span></code></pre></div>
+<p><img src="two_stage_demo_files/figure-html/multi_plot2b-1.png" class="r-plt" width="480"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/forest_plot.html">forest_plot</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, <span class="fl">25.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in forest_plot.condPois_2stage_list(ma_model_fct, 25.1): plotting by</span></span>
 <span><span class="co">#&gt; group since n_geos &gt; 20</span></span></code></pre></div>
 <p><img src="two_stage_demo_files/figure-html/multi_plot2c-1.png" class="r-plt" width="480"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/spatial_plot.html">spatial_plot</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, shp <span class="op">=</span> <span class="va">ma_towns</span>, exposure_val <span class="op">=</span> <span class="fl">25.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="two_stage_demo_files/figure-html/multi_plot2d-1.png" class="r-plt" width="576"></p>
+<p><img src="two_stage_demo_files/figure-html/multi_plot2d-1.png" class="r-plt" width="576">
+and You can get an RR table</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getRR.html">getRR</a></span><span class="op">(</span><span class="va">ma_model_fct</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           TOWN20  COUNTY20 tmax_C       RR      RRlb     RRub age_grp</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;char&gt;  &lt;num&gt;    &lt;num&gt;     &lt;num&gt;    &lt;num&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1:     ACTON MIDDLESEX    7.0 1.000000 1.0000000 1.000000    0-17</span></span>
+<span><span class="co">#&gt;     2:     ACTON MIDDLESEX    7.1 1.000694 0.9999329 1.001456    0-17</span></span>
+<span><span class="co">#&gt;     3:     ACTON MIDDLESEX    7.2 1.001389 0.9998659 1.002915    0-17</span></span>
+<span><span class="co">#&gt;     4:     ACTON MIDDLESEX    7.3 1.002085 0.9997992 1.004375    0-17</span></span>
+<span><span class="co">#&gt;     5:     ACTON MIDDLESEX    7.4 1.002781 0.9997327 1.005838    0-17</span></span>
+<span><span class="co">#&gt;    ---                                                               </span></span>
+<span><span class="co">#&gt; 97538: WORCESTER WORCESTER   33.6 1.300465 1.2147953 1.392175     65+</span></span>
+<span><span class="co">#&gt; 97539: WORCESTER WORCESTER   33.7 1.302040 1.2155758 1.394654     65+</span></span>
+<span><span class="co">#&gt; 97540: WORCESTER WORCESTER   33.8 1.303616 1.2163410 1.397154     65+</span></span>
+<span><span class="co">#&gt; 97541: WORCESTER WORCESTER   33.9 1.305195 1.2170919 1.399676     65+</span></span>
+<span><span class="co">#&gt; 97542: WORCESTER WORCESTER   34.0 1.306775 1.2178291 1.402218     65+</span></span>
+<span><span class="co">#&gt;                 model_class</span></span>
+<span><span class="co">#&gt;                      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: condPois_2stage_list</span></span>
+<span><span class="co">#&gt;     2: condPois_2stage_list</span></span>
+<span><span class="co">#&gt;     3: condPois_2stage_list</span></span>
+<span><span class="co">#&gt;     4: condPois_2stage_list</span></span>
+<span><span class="co">#&gt;     5: condPois_2stage_list</span></span>
+<span><span class="co">#&gt;    ---                     </span></span>
+<span><span class="co">#&gt; 97538: condPois_2stage_list</span></span>
+<span><span class="co">#&gt; 97539: condPois_2stage_list</span></span>
+<span><span class="co">#&gt; 97540: condPois_2stage_list</span></span>
+<span><span class="co">#&gt; 97541: condPois_2stage_list</span></span>
+<span><span class="co">#&gt; 97542: condPois_2stage_list</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -258,7 +307,7 @@ age_grp:</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Chad Milando.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
