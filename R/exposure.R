@@ -242,7 +242,8 @@ make_exposure_matrix <- function(data, column_mapping,
   exposure2 <- do.call(rbind, exposure2_l)
 
   # get just the warm season months
-  rr <- month(exposure2$date) %in% warm_season_months
+  rr <- month(exposure2[, get(column_mapping$date)]) %in% warm_season_months
+  stopifnot(length(rr) > 1)
   warm_season_exposure <- exposure2[rr, ]
 
   # reset the order
