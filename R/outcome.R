@@ -30,6 +30,9 @@ make_outcome_table <- function(data,
   ##
   setDT(data)
 
+  #
+  stopifnot(typeof(column_mapping) == 'list')
+
   # column types
   col_types <- c('date', 'factor', 'outcome', 'geo_unit', 'geo_unit_grp')
 
