@@ -70,6 +70,17 @@ make_exposure_matrix <- function(data, column_mapping,
     is.character(data[[column_mapping$geo_unit_grp]])
   )
 
+  # check that all are unique 1:1
+  geo_cols <- c(
+    column_mapping$geo_unit,
+    column_mapping$geo_unit_grp
+  )
+  unique_geos <- unique(data[, get(column_mapping$geo_unit)])
+  unique_geos_and_grps <- unique(data[, ..geo_cols])
+  if(length(unique_geos) != nrow(unique_geos_and_grps)) {
+    stop("`geo_unit` repeated across multiple `grps`")
+  }
+
   # overwrite date
   data[, (column_mapping$date) :=
          as.Date(
@@ -178,9 +189,6 @@ make_exposure_matrix <- function(data, column_mapping,
 
     # 3. Aggregate by group
     # Here I'm assuming you want the mean of exposure columns; adjust as needed
-    # TODO: this may double-count if there are multiple of the same `geo_units`
-    #       within a single geo-unit, so first summarize by geo_unit within grp
-    stop("fix todo here")
     exposure2 <- exposure2[, lapply(.SD, mean, na.rm = TRUE),
                            by = .(get(geo_grp_col), get(date_col)),
                            .SDcols = exposure_col]

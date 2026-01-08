@@ -65,6 +65,18 @@ make_outcome_table <- function(data,
     warning("check about any NA")
   }
 
+  # check that all are unique 1:1
+  geo_cols <- c(
+    column_mapping$geo_unit,
+    column_mapping$geo_unit_grp
+  )
+  unique_geos <- unique(data[, get(column_mapping$geo_unit)])
+  unique_geos_and_grps <- unique(data[, ..geo_cols])
+  if(length(unique_geos) != nrow(unique_geos_and_grps)) {
+    stop("`geo_unit` repeated across multiple `grps`")
+  }
+
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' COLLAPSE AND SUMMARIZE

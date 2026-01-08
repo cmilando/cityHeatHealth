@@ -195,13 +195,13 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 28.7 seconds.
+#> Chain 2 finished in 28.8 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 29.0 seconds.
+#> Chain 1 finished in 29.1 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 28.9 seconds.
-#> Total execution time: 29.1 seconds.
+#> Mean chain execution time: 29.0 seconds.
+#> Total execution time: 29.2 seconds.
 #> 
 #>  ...mcmc draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
