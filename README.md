@@ -3,6 +3,12 @@
 
 The package `cityHeatHealth` makes it simple to estimate heat-health impacts at small spatial scales. Starting from a messy exposure and outcome dataset, we can quickly estimate heat-health impacts.
 
+## Installing the package
+
+```
+remotes::install_github("cmilando/cityHeatHealth")
+```
+
 ## Usage 
 
 This package can be used in three main ways:
