@@ -425,6 +425,8 @@ condPois_sb <- function(exposure_matrix,
   # ****************
   out_df <- tryCatch({
 
+
+    ## SAMPLING FROM MCMC
     if(stan_type == 'mcmc') {
 
       default_stan_opts <- list(
@@ -452,6 +454,7 @@ condPois_sb <- function(exposure_matrix,
     }
 
 
+    ## LAPLACE
     if(stan_type == 'laplace') {
 
       default_stan_opts <- list(
@@ -481,6 +484,7 @@ condPois_sb <- function(exposure_matrix,
       oo <- posterior::as_draws_df(laplace_array)
     }
 
+    ## VARIATIONAL METHOD
     if(stan_type == 'variational') {
 
       default_stan_opts <- list(
@@ -504,6 +508,7 @@ condPois_sb <- function(exposure_matrix,
       oo <- posterior::as_draws_df(var_array)
     }
 
+    ## PATHFINDER
     if(stan_type == 'pathfinder') {
 
       default_stan_opts <- list(

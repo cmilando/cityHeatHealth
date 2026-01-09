@@ -3,7 +3,7 @@
 #' @param data
 #' @param column_mapping a named list that indicates relevant columns in `data`. for the exposure
 #' data table, these need to be one of: c('date', "outcome",'factor, 'geo_unit', 'geo_unit_grp')
-#' @param warm_season_months the warm season months for this region, default is Northern Hemisphere's
+#' @param months_subset the warm season months for this region, default is Northern Hemisphere's
 #' May through September (5 through 9)
 #' @param collapse_to which factors to collapse across
 #' @param grp_level whether to summarize to the group level or not (default)
@@ -17,7 +17,7 @@
 #' @examples
 make_outcome_table <- function(data,
                                column_mapping,
-                               warm_season_months = 5:9,
+                               months_subset = 5:9,
                                collapse_to = NULL,
                                grp_level = FALSE) {
 
@@ -209,7 +209,7 @@ make_outcome_table <- function(data,
 
   ## fill in the blanks with 0s
   ## so make xgrid again
-  xgrid <- make_xgrid(data, column_mapping, warm_season_months)
+  xgrid <- make_xgrid(data, column_mapping, months_subset)
 
   # **************
   ## ADD ZEROS back in given the now full calendar

@@ -186,15 +186,15 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  ## if using GNM, you get COEF and VCOV as part of the model objects
-  ## instead of doing keep == 1, i updated to be a strata total variable
+  ## (1) if using GNM, you get COEF and VCOV as part of the model objects
+  ##
+  ## (2) instead of doing keep == 1, i updated to be a strata total variable
   ## so you can raise the floor if you want to.
   ##
-  ## Note -- you also don't need to do offset = log(poplation)
+  ## (3) you also don't need to do offset = log(poplation)
   ## because the population is not changing within the strata,
-  ## and since you are doing conditional poisson
-  ## it all cancels out in the numerator and denominator of the
-  ## multi-nomial distribution
+  ## since you are doing conditional poisson. if you are doing time-series
+  ## you would need to do this
   ff = as.formula(paste(outcome_col, "~ cb"))
 
   m_sub <- gnm(formula = ff,
@@ -232,6 +232,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                   cen = exp_mean,
                   by = 0.1)
 
+  # if it's centered at global cen use that, otherwise get the cp min
   if(!is.null(global_cen)) {
     cen = global_cen
   } else {
@@ -281,16 +282,16 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
     this_cb <- cb[rr, ]
     cb_att <- attributes(cb)
-    # reset-dim
+    # reset-dim --> another little trick here!
     cb_att$dim = dim(this_cb)
     attributes(this_cb) = cb_att
 
-    # this cities outcome
+    # this city's outcome
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
     outcomes <- single_outcomes_tbl[, get(outcome_col)]
 
-    # and get centered
+    # and get centered crosspred
     basis1z <- get_centered_cp(argvar = argvar,
                                xcoef = coef(cr),
                                xvcov = vcov(cr),
@@ -300,24 +301,24 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                                x_b = x_b)
 
     # each of these things you need for BLUP and MIXMETA later
-    oo_list[[i]] <- list(geo_unit = this_geo,     ## individual
-               geo_unit_grp = this_geo_grp,       ## individual
-               basis_cen = basis1z$basis_cen,
-               strata_vec = single_outcomes_tbl$strata,
-               orig_basis = this_cb,
-               orig_coef = m_coef,
-               orig_vcov = m_vcov,
+    oo_list[[i]] <- list(geo_unit = this_geo,     ## --> individual
+               geo_unit_grp = this_geo_grp,       ## --> individual
+               basis_cen = basis1z$basis_cen,     ## --> individual
+               strata_vec = single_outcomes_tbl$strata, ## --> individual
+               orig_basis = this_cb,              ## --> individual
+               orig_coef = m_coef,                ## whole group
+               orig_vcov = m_vcov,                ## whole group
                cr = cr,                           ## whole group
-               coef = coef(cr),                ## whole group
-               vcov = vcov(cr),                ## whole group
+               coef = coef(cr),                   ## whole group
+               vcov = vcov(cr),                   ## whole group
                exposure_col = exposure_col,       ## whole group
-               this_exp = this_exp,               ## for the individual
-               outcomes = outcomes,               ## for the individual
+               this_exp = this_exp,               ## --> individual
+               outcomes = outcomes,               ## --> individual
                cen = cen,                         ## whole group
                global_cen = global_cen,           ## whole group
                argvar = argvar,                   ## whole group
-               exp_mean = exp_mean,               ## for the whole group
-               exp_IQR = exp_IQR)                 ## for the whole group
+               exp_mean = exp_mean,               ## whole group
+               exp_IQR = exp_IQR)                 ## whole group
 
   }
 
@@ -369,7 +370,7 @@ print.condPois_1stage_list <- function(x) {
 #' @export
 #'
 #' @examples
-getRR.condPois_1stage <- function(x, ...) {
+getRR.condPois_1stage <- function(x) {
 
   n_geo_names <- paste0(names(x$`_`$out), collapse = ":")
 
@@ -436,7 +437,7 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
 #' @export
 #'
 #' @examples
-getRR.condPois_1stage_list <- function(x, ...) {
+getRR.condPois_1stage_list <- function(x) {
 
   fct_names <- names(x)
 
