@@ -1,0 +1,20 @@
+---
+title: "Methods for working with non-daily data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Methods for working with non-daily data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
