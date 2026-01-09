@@ -1,5 +1,5 @@
 #' Function to create the outcome table
-#'
+#' TO DO : EDIT XGRID
 #' @param data
 #' @param column_mapping a named list that indicates relevant columns in `data`. for the exposure
 #' data table, these need to be one of: c('date', "outcome",'factor, 'geo_unit', 'geo_unit_grp')
