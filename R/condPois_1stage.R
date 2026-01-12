@@ -85,8 +85,9 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
   out_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
 
-  exp_geo_unit <- unlist(unique(exposure_matrix[, get(exp_geo_unit_col)]))
-  out_geo_unit <- unlist(unique(outcomes_tbl[, get(out_geo_unit_col)]))
+  # added sorting
+  exp_geo_unit <- sort(unlist(unique(exposure_matrix[, get(exp_geo_unit_col)])))
+  out_geo_unit <- sort(unlist(unique(outcomes_tbl[, get(out_geo_unit_col)])))
 
   stopifnot(identical(exp_geo_unit, out_geo_unit))
 
@@ -101,6 +102,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   outcome_date_col <- attributes(outcomes_tbl)$column_mapping$date
 
   # subset so its a complete match
+  # TODO: hmm update this so it also has geo_unit in it
   rr <- which(exposure_matrix[, get(exp_date_col)] %in%
                 outcomes_tbl[, get(outcome_date_col)])
   exposure_matrix <- exposure_matrix[rr, ,drop = FALSE]

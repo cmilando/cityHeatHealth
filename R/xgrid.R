@@ -3,16 +3,20 @@
 #' @param data
 #' @param column_mapping
 #' @param months
+#' @param dt_by either by day or by week
 #' @import data.table
 #' @importFrom lubridate make_date
 #' @importFrom tidyr expand_grid
 #' @returns
 #'
 #' @examples
-make_xgrid <- function(data, column_mapping, months = 1:12) {
+make_xgrid <- function(data, column_mapping, months = 1:12,
+                       dt_by = 'day') {
 
   #
   setDT(data)
+
+  stopifnot(dt_by %in% c('day', 'week'))
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -28,7 +32,7 @@ make_xgrid <- function(data, column_mapping, months = 1:12) {
   get_dt <- function(yy) {
     st = make_date(yy, 1, 1)
     ed = make_date(yy, 12, 31)
-    dt = seq.Date(st, ed, by = 'day')
+    dt = seq.Date(st, ed, by = dt_by)
     mn = month(dt)
     return(as.IDate(dt[mn %in% months]))
   }

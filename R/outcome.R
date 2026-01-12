@@ -7,6 +7,7 @@
 #' May through September (5 through 9)
 #' @param collapse_to which factors to collapse across
 #' @param grp_level whether to summarize to the group level or not (default)
+#' @param dt_by is it daily data, or weekly or ...
 #'
 #' @import data.table
 #' @importFrom lubridate days_in_month
@@ -18,6 +19,7 @@
 make_outcome_table <- function(data,
                                column_mapping,
                                months_subset = 5:9,
+                               dt_by = 'day',
                                collapse_to = NULL,
                                grp_level = FALSE) {
 
@@ -207,7 +209,7 @@ make_outcome_table <- function(data,
 
   ## fill in the blanks with 0s
   ## so make xgrid again
-  xgrid <- make_xgrid(data, column_mapping, months_subset)
+  xgrid <- make_xgrid(data, column_mapping, months_subset, dt_by)
 
   # **************
   ## ADD ZEROS back in given the now full calendar

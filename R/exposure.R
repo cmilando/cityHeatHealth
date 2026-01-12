@@ -8,6 +8,7 @@
 #' @param maxgaps the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)
 #' @param maxlag the number of lags for the exposure variable (default is 5)
 #' @param grp_level whether to summarize to the group level or not (default)
+#' @param dt_by is it daily data, or weekly or ...
 #'
 #' @import data.table
 #' @importFrom zoo na.approx
@@ -18,6 +19,7 @@
 #' @examples
 make_exposure_matrix <- function(data, column_mapping,
                                  months_subset = 5:9,
+                                 dt_by = 'day',
                                  maxgap = 5,
                                  maxlag = 5,
                                  grp_level = FALSE) {
@@ -91,7 +93,7 @@ make_exposure_matrix <- function(data, column_mapping,
   #' //////////////////////////////////////////////////////////////////////////
 
   # build xgrid
-  xgrid <- make_xgrid(data, column_mapping)
+  xgrid <- make_xgrid(data, column_mapping, dt_by)
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
