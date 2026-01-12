@@ -30,7 +30,7 @@ make_xgrid <- function(data, column_mapping, months = 1:12) {
     ed = make_date(yy, 12, 31)
     dt = seq.Date(st, ed, by = 'day')
     mn = month(dt)
-    return(dt[mn %in% months])
+    return(as.IDate(dt[mn %in% months]))
   }
 
   all_dt <- lapply(years, get_dt)

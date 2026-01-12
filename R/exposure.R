@@ -3,7 +3,7 @@
 #' @param data a dataset of exposures
 #' @param column_mapping a named list that indicates relevant columns in `data`. for the exposure
 #' data table, these need to be one of: c('date', "exposure", 'geo_unit', 'geo_unit_grp')
-#' @param warm_season_months the warm season months for this region, default is Northern Hemisphere's
+#' @param months_subset the warm season months for this region, default is Northern Hemisphere's
 #' May through September (5 through 9)
 #' @param maxgaps the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)
 #' @param maxlag the number of lags for the exposure variable (default is 5)
@@ -17,7 +17,7 @@
 #'
 #' @examples
 make_exposure_matrix <- function(data, column_mapping,
-                                 warm_season_months = 5:9,
+                                 months_subset = 5:9,
                                  maxgap = 5,
                                  maxlag = 5,
                                  grp_level = FALSE) {
@@ -34,8 +34,8 @@ make_exposure_matrix <- function(data, column_mapping,
   # validation block
   # set some arbitrary limits on these but users could always make a local
   # copy and override if they really want to
-  stopifnot(all(warm_season_months %in% 1:12) &
-              length(warm_season_months) == length(unique(warm_season_months)))
+  stopifnot(all(months_subset %in% 1:12) &
+              length(months_subset) == length(unique(months_subset)))
   stopifnot(length(maxgap) == 1 & maxgap %in% 1:10)
   stopifnot(length(maxlag) == 1 & maxlag %in% 1:10)
   stopifnot(length(grp_level) == 1 & grp_level %in% c(T, F))
@@ -82,12 +82,7 @@ make_exposure_matrix <- function(data, column_mapping,
   }
 
   # overwrite date
-  data[, (column_mapping$date) :=
-         as.Date(
-           as.integer(get(column_mapping$date)),
-           origin = "1970-01-01"
-         )
-  ]
+  data[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -199,12 +194,7 @@ make_exposure_matrix <- function(data, column_mapping,
     # warning("make type checks  (e.g., so Date == Date),
     #      for some reason this doesn't work in some cases? but ok in others?")
 
-    exposure2[, (column_mapping$date) :=
-           as.Date(
-             as.integer(get(column_mapping$date)),
-             origin = "1970-01-01"
-           )
-    ]
+    exposure2[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
 
     # then in order to set up lags you need to split again
     exposure2_l <- split(exposure2, f = exposure2[, get(geo_grp_col)])
@@ -250,7 +240,7 @@ make_exposure_matrix <- function(data, column_mapping,
   exposure2 <- do.call(rbind, exposure2_l)
 
   # get just the warm season months
-  rr <- month(exposure2[, get(column_mapping$date)]) %in% warm_season_months
+  rr <- month(exposure2[, get(column_mapping$date)]) %in% months_subset
   stopifnot(length(rr) > 1)
   warm_season_exposure <- exposure2[rr, ]
 

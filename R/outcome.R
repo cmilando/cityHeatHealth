@@ -55,6 +55,9 @@ make_outcome_table <- function(data,
     is.character(data[[column_mapping$factor]])
   )
 
+  # overwrite date
+  data[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
+
   # at the beginning there shouldn't be any outcomes < 0
   outcome_col <- column_mapping$outcome
   if(any(data[, get(outcome_col)] < 0)) {
@@ -191,12 +194,7 @@ make_outcome_table <- function(data,
   }
 
   # overwrite date
-  data[, (column_mapping$date) :=
-         as.Date(
-           as.integer(get(column_mapping$date)),
-           origin = "1970-01-01"
-         )
-  ]
+  data[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
 
   geo_unit_col = column_mapping$geo_unit
   geo_unit_grp_col = column_mapping$geo_unit_grp
