@@ -2,7 +2,7 @@
 #'
 #' @param data
 #' @param column_mapping
-#' @param months
+#' @param months_subset
 #' @param dt_by either by day or by week
 #' @import data.table
 #' @importFrom lubridate make_date
@@ -10,7 +10,7 @@
 #' @returns
 #'
 #' @examples
-make_xgrid <- function(data, column_mapping, months = 1:12,
+make_xgrid <- function(data, column_mapping, months_subset = 1:12,
                        dt_by = 'day') {
 
   #
@@ -29,16 +29,27 @@ make_xgrid <- function(data, column_mapping, months = 1:12,
 
   # make the skeleton you need later
   # this is one of the first key stumbling blocks
-  get_dt <- function(yy) {
-    st = make_date(yy, 1, 1)
-    ed = make_date(yy, 12, 31)
-    dt = seq.Date(st, ed, by = dt_by)
-    mn = month(dt)
-    return(as.IDate(dt[mn %in% months]))
+  # correct! it is.
+  # for "week" you need to also define what the start of the week is
+  if(dt_by == 'day') {
+    get_dt <- function(yy) {
+      st = make_date(yy, 1, 1)
+      ed = make_date(yy, 12, 31)
+      dt = seq.Date(st, ed, by = 'day')
+      mn = month(dt)
+      return(as.IDate(dt[mn %in% months_subset]))
+    }
+
+    all_dt <- lapply(years, get_dt)
+    all_dt <- do.call(c, all_dt)
   }
 
-  all_dt <- lapply(years, get_dt)
-  all_dt <- do.call(c, all_dt)
+  if(dt_by == 'week') {
+    st = as.IDate(min(data[, get(date_col)]))
+    ed = as.IDate(max(data[, get(date_col)]))
+    dt = seq.Date(st, ed, by = 'week')
+    all_dt = as.IDate(dt)
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -108,6 +119,8 @@ make_xgrid <- function(data, column_mapping, months = 1:12,
     on = setNames(join_col, join_col)
   ]
 
+  stopifnot(nrow(xgrid) > 0)
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' FINALLY - JOIN WITH DATA
@@ -135,6 +148,8 @@ make_xgrid <- function(data, column_mapping, months = 1:12,
     xgrid,
     on = setNames(join_cols, join_cols)
   ]
+
+  stopifnot(nrow(xgrid) > 0)
 
   return(xgrid)
 

@@ -19,7 +19,7 @@
 #' @examples
 make_exposure_matrix <- function(data, column_mapping,
                                  months_subset = 5:9,
-                                 dt_by = 'day',
+                                 dt_by = 'week',
                                  maxgap = 5,
                                  maxlag = 5,
                                  grp_level = FALSE) {
@@ -94,7 +94,7 @@ make_exposure_matrix <- function(data, column_mapping,
 
   # build xgrid
   xgrid <- make_xgrid(data, column_mapping, dt_by)
-
+  #head(xgrid)
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' FILL NA VALUES
