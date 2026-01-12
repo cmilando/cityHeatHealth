@@ -4,7 +4,10 @@
 \alias{make_xgrid}
 \title{An internal function to make the xgrid}
 \usage{
-make_xgrid(data, column_mapping, months = 1:12)
+make_xgrid(data, column_mapping, months_subset = 1:12, dt_by = "day")
+}
+\arguments{
+\item{dt_by}{either by day or by week}
 }
 \description{
 An internal function to make the xgrid

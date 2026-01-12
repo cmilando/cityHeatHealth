@@ -2,12 +2,14 @@
 % Please edit documentation in R/outcome.R
 \name{make_outcome_table}
 \alias{make_outcome_table}
-\title{Function to create the outcome table}
+\title{Function to create the outcome table
+TO DO : EDIT XGRID}
 \usage{
 make_outcome_table(
   data,
   column_mapping,
-  warm_season_months = 5:9,
+  months_subset = 5:9,
+  dt_by = "day",
   collapse_to = NULL,
   grp_level = FALSE
 )
@@ -16,8 +18,10 @@ make_outcome_table(
 \item{column_mapping}{a named list that indicates relevant columns in \code{data}. for the exposure
 data table, these need to be one of: c('date', "outcome",'factor, 'geo_unit', 'geo_unit_grp')}
 
-\item{warm_season_months}{the warm season months for this region, default is Northern Hemisphere's
+\item{months_subset}{the warm season months for this region, default is Northern Hemisphere's
 May through September (5 through 9)}
+
+\item{dt_by}{is it daily data, or weekly or ...}
 
 \item{collapse_to}{which factors to collapse across}
 
@@ -25,6 +29,7 @@ May through September (5 through 9)}
 }
 \description{
 Function to create the outcome table
+TO DO : EDIT XGRID
 }
 \examples{
 //////////////////////////////////////////////////////////////////////////
