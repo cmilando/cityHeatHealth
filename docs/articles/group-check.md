@@ -38,30 +38,30 @@ exposure_mat <- make_exposure_matrix(exposure, exposure_columns,
 
 exposure_mat
 #>        COUNTY20       date   tmax_C  explag1  explag2  explag3  explag4
-#>          <char>     <Date>    <num>    <num>    <num>    <num>    <num>
+#>          <char>     <IDat>    <num>    <num>    <num>    <num>    <num>
 #>    1: MIDDLESEX 2010-05-01 22.73500 15.94895  8.32810 10.25350 15.61525
-#>    2:   SUFFOLK 2010-05-01 22.97060 14.95275  7.70270 10.44610 15.55035
-#>    3: MIDDLESEX 2010-05-02 29.20320 22.73500 15.94895  8.32810 10.25350
-#>    4:   SUFFOLK 2010-05-02 27.38805 22.97060 14.95275  7.70270 10.44610
-#>    5: MIDDLESEX 2010-05-03 30.83745 29.20320 22.73500 15.94895  8.32810
+#>    2: MIDDLESEX 2010-05-02 29.20320 22.73500 15.94895  8.32810 10.25350
+#>    3: MIDDLESEX 2010-05-03 30.83745 29.20320 22.73500 15.94895  8.32810
+#>    4: MIDDLESEX 2010-05-04 25.41450 30.83745 29.20320 22.73500 15.94895
+#>    5: MIDDLESEX 2010-05-05 24.12005 25.41450 30.83745 29.20320 22.73500
 #>   ---                                                                  
-#> 3362:   SUFFOLK 2020-09-28 25.19490 24.72725 25.15465 24.78400 24.66000
-#> 3363: MIDDLESEX 2020-09-29 24.69490 24.29570 23.52120 26.10840 23.63025
-#> 3364:   SUFFOLK 2020-09-29 26.22930 25.19490 24.72725 25.15465 24.78400
-#> 3365: MIDDLESEX 2020-09-30 22.34675 24.69490 24.29570 23.52120 26.10840
+#> 3362:   SUFFOLK 2020-09-26 25.15465 24.78400 24.66000 18.28090 17.02280
+#> 3363:   SUFFOLK 2020-09-27 24.72725 25.15465 24.78400 24.66000 18.28090
+#> 3364:   SUFFOLK 2020-09-28 25.19490 24.72725 25.15465 24.78400 24.66000
+#> 3365:   SUFFOLK 2020-09-29 26.22930 25.19490 24.72725 25.15465 24.78400
 #> 3366:   SUFFOLK 2020-09-30 25.48680 26.22930 25.19490 24.72725 25.15465
 #>        explag5
 #>          <num>
 #>    1: 13.13640
-#>    2: 16.71785
-#>    3: 15.61525
-#>    4: 15.55035
-#>    5: 10.25350
+#>    2: 15.61525
+#>    3: 10.25350
+#>    4:  8.32810
+#>    5: 15.94895
 #>   ---         
-#> 3362: 18.28090
-#> 3363: 23.57620
-#> 3364: 24.66000
-#> 3365: 23.63025
+#> 3362: 15.72065
+#> 3363: 17.02280
+#> 3364: 18.28090
+#> 3365: 24.66000
 #> 3366: 24.78400
 
 # create outcome table
@@ -80,30 +80,30 @@ deaths_tbl <- make_outcome_table(deaths,  outcome_columns,
 #>          for some reason this doesn't work in some cases? but ok in others?
 deaths_tbl
 #>             date  COUNTY20 daily_deaths spatial_grp                    strata
-#>           <Date>    <char>        <int>      <char>                    <char>
+#>           <IDat>    <char>        <int>      <char>                    <char>
 #>    1: 2010-05-01 MIDDLESEX          395         ALL MIDDLESEX:yr2010:mn5:dow7
-#>    2: 2010-05-01   SUFFOLK          329         ALL   SUFFOLK:yr2010:mn5:dow7
-#>    3: 2010-05-02 MIDDLESEX          406         ALL MIDDLESEX:yr2010:mn5:dow1
-#>    4: 2010-05-02   SUFFOLK          336         ALL   SUFFOLK:yr2010:mn5:dow1
-#>    5: 2010-05-03 MIDDLESEX          411         ALL MIDDLESEX:yr2010:mn5:dow2
+#>    2: 2010-05-02 MIDDLESEX          406         ALL MIDDLESEX:yr2010:mn5:dow1
+#>    3: 2010-05-03 MIDDLESEX          411         ALL MIDDLESEX:yr2010:mn5:dow2
+#>    4: 2010-05-04 MIDDLESEX          411         ALL MIDDLESEX:yr2010:mn5:dow3
+#>    5: 2010-05-05 MIDDLESEX          427         ALL MIDDLESEX:yr2010:mn5:dow4
 #>   ---                                                                        
-#> 3362: 2020-09-28   SUFFOLK          467         ALL   SUFFOLK:yr2020:mn9:dow2
-#> 3363: 2020-09-29 MIDDLESEX          336         ALL MIDDLESEX:yr2020:mn9:dow3
-#> 3364: 2020-09-29   SUFFOLK          459         ALL   SUFFOLK:yr2020:mn9:dow3
-#> 3365: 2020-09-30 MIDDLESEX          320         ALL MIDDLESEX:yr2020:mn9:dow4
+#> 3362: 2020-09-26   SUFFOLK          421         ALL   SUFFOLK:yr2020:mn9:dow7
+#> 3363: 2020-09-27   SUFFOLK          433         ALL   SUFFOLK:yr2020:mn9:dow1
+#> 3364: 2020-09-28   SUFFOLK          467         ALL   SUFFOLK:yr2020:mn9:dow2
+#> 3365: 2020-09-29   SUFFOLK          459         ALL   SUFFOLK:yr2020:mn9:dow3
 #> 3366: 2020-09-30   SUFFOLK          437         ALL   SUFFOLK:yr2020:mn9:dow4
 #>       strata_total
 #>              <num>
 #>    1:         1987
-#>    2:         1684
-#>    3:         2018
-#>    4:         1675
-#>    5:         1951
+#>    2:         2018
+#>    3:         1951
+#>    4:         1576
+#>    5:         1615
 #>   ---             
-#> 3362:         1704
-#> 3363:         1538
-#> 3364:         2144
-#> 3365:         1561
+#> 3362:         1728
+#> 3363:         1674
+#> 3364:         1704
+#> 3365:         2144
 #> 3366:         2094
 
 #

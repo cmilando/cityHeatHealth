@@ -100,6 +100,18 @@ for(bb in 1:4) {
   plot_l[[bb]] <- plot(m1)
   
 }
+#> Warning in condPois_1stage(subset(exposure_mat, TOWN20 == TOWNLIST[bb]), :
+#> Centering point is outside the range of exposures in geo-unit CHELSEA. This
+#> means your zones are across too large of an area, or there are differences in
+#> exposures so much that the bases are quite different. Try limiting the
+#> geo-units passed in to those that are more similar, or changing your exposure
+#> variable.
+#> Warning in condPois_1stage(subset(exposure_mat, TOWN20 == TOWNLIST[bb]), :
+#> Centering point is outside the range of exposures in geo-unit REVERE. This
+#> means your zones are across too large of an area, or there are differences in
+#> exposures so much that the bases are quite different. Try limiting the
+#> geo-units passed in to those that are more similar, or changing your exposure
+#> variable.
 mx <- do.call(cbind, beta_l) # COEFS NOT THE SAME
 colnames(mx)  = TOWNLIST
 mx
@@ -164,7 +176,20 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #>  SPATIAL MODEL = none 
 #> -- validation passed
 #> -- prepare inputs
-#> CHELSEA  EVERETT     MALDEN  REVERE  
+#> CHELSEA  
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit CHELSEA. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> or changing your exposure variable.
+#> EVERETT  MALDEN  REVERE  
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit REVERE. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> or changing your exposure variable.
 #> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
@@ -195,13 +220,13 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 28.8 seconds.
+#> Chain 2 finished in 30.5 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 29.1 seconds.
+#> Chain 1 finished in 30.7 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 29.0 seconds.
-#> Total execution time: 29.2 seconds.
+#> Mean chain execution time: 30.6 seconds.
+#> Total execution time: 30.8 seconds.
 #> 
 #>  ...mcmc draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
@@ -259,7 +284,20 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #>  SPATIAL MODEL = bym2 
 #> -- validation passed
 #> -- prepare inputs
-#> CHELSEA  EVERETT     MALDEN  REVERE  
+#> CHELSEA  
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit CHELSEA. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> or changing your exposure variable.
+#> EVERETT  MALDEN  REVERE  
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit REVERE. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> or changing your exposure variable.
 #> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
@@ -270,7 +308,7 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #>      139      -6737.26   0.000348121      0.731762           1           1      169    
 #> Optimization terminated normally:  
 #>   Convergence detected: relative gradient magnitude is below tolerance 
-#> Finished in  0.2 seconds.
+#> Finished in  0.1 seconds.
 #>  ...laplace sample... 
 #> Calculating Hessian 
 #> Calculating inverse of Cholesky factor 
@@ -285,7 +323,7 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> iteration: 700 
 #> iteration: 800 
 #> iteration: 900 
-#> Finished in  0.7 seconds.
+#> Finished in  0.9 seconds.
 #>  ...laplace draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
@@ -342,7 +380,20 @@ m_sb3 <- condPois_sb(exposure_mat,
 #>  SPATIAL MODEL = leroux 
 #> -- validation passed
 #> -- prepare inputs
-#> CHELSEA  EVERETT     MALDEN  REVERE  
+#> CHELSEA  
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit CHELSEA. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> or changing your exposure variable.
+#> EVERETT  MALDEN  REVERE  
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit REVERE. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> or changing your exposure variable.
 #> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 

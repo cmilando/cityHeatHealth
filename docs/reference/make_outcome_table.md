@@ -1,6 +1,6 @@
-# Function to create the outcome table
+# Function to create the outcome table TO DO : EDIT XGRID
 
-Function to create the outcome table
+Function to create the outcome table TO DO : EDIT XGRID
 
 ## Usage
 
@@ -8,7 +8,8 @@ Function to create the outcome table
 make_outcome_table(
   data,
   column_mapping,
-  warm_season_months = 5:9,
+  months_subset = 5:9,
+  dt_by = "day",
   collapse_to = NULL,
   grp_level = FALSE
 )
@@ -22,10 +23,14 @@ make_outcome_table(
   exposure data table, these need to be one of: c('date',
   "outcome",'factor, 'geo_unit', 'geo_unit_grp')
 
-- warm_season_months:
+- months_subset:
 
   the warm season months for this region, default is Northern
   Hemisphere's May through September (5 through 9)
+
+- dt_by:
+
+  is it daily data, or weekly or ...
 
 - collapse_to:
 

@@ -78,7 +78,7 @@
   : Function to clean and prepare the exposure data matrix
 
 - [`make_outcome_table()`](http://chadmilando.com/cityHeatHealth/reference/make_outcome_table.md)
-  : Function to create the outcome table
+  : Function to create the outcome table TO DO : EDIT XGRID
 
 - [`make_xgrid()`](http://chadmilando.com/cityHeatHealth/reference/make_xgrid.md)
   : An internal function to make the xgrid

@@ -4,6 +4,10 @@ The package `cityHeatHealth` makes it simple to estimate heat-health
 impacts at small spatial scales. Starting from a messy exposure and
 outcome dataset, we can quickly estimate heat-health impacts.
 
+## Installing the package
+
+    remotes::install_github("cmilando/cityHeatHealth")
+
 ## Usage
 
 This package can be used in three main ways:
@@ -113,7 +117,7 @@ We also provide several additional vignettes for common questions – see
   : Function to clean and prepare the exposure data matrix
 
 - [`make_outcome_table()`](http://chadmilando.com/cityHeatHealth/reference/make_outcome_table.md)
-  : Function to create the outcome table
+  : Function to create the outcome table TO DO : EDIT XGRID
 
 - [`make_xgrid()`](http://chadmilando.com/cityHeatHealth/reference/make_xgrid.md)
   : An internal function to make the xgrid
@@ -162,3 +166,6 @@ Vignettes aimed at advanced users
   tutorials](http://chadmilando.com/cityHeatHealth/articles/comparison.md):
 - [group-check](http://chadmilando.com/cityHeatHealth/articles/group-check.md):
 - [Todo](http://chadmilando.com/cityHeatHealth/articles/TODO.md):
+- [QA_testing](http://chadmilando.com/cityHeatHealth/articles/QA_testing.md):
+- [Methods for working with non-daily
+  data](http://chadmilando.com/cityHeatHealth/articles/non_daily_data.md):

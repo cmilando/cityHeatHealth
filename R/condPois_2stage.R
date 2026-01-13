@@ -114,10 +114,6 @@ condPois_2stage <- function(exposure_matrix,
 
   stopifnot(all(out_geo_units %in% exp_geo_units))
 
-  # subset so its a complete match
-  rr <- which(exposure_matrix[, get(exp_geo_unit_col)] %in% out_geo_units)
-  exposure_matrix <- exposure_matrix[rr, ,drop = FALSE]
-
   ## Check 2
   ## probably should make sure that exposure_matrix and outcomes_tbl
   ## are the same size, at least
@@ -128,6 +124,19 @@ condPois_2stage <- function(exposure_matrix,
   exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
   outcome_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
 
+  # subset so its a complete match
+  orig_exp_mapping <- attributes(exposure_matrix)$column_mapping
+  exposure_matrix <- exposure_matrix[
+    outcomes_tbl,
+    on = setNames(
+      c(outcome_date_col, out_geo_unit_col),
+      c(exp_date_col,    exp_geo_unit_col)
+    ),
+    nomatch = 0L, drop = F
+  ]
+  attributes(exposure_matrix)$column_mapping <- orig_exp_mapping
+
+  # now confirm
   setorderv(
     exposure_matrix,
     c(exp_geo_unit_col, exp_date_col)

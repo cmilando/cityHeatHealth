@@ -53,9 +53,11 @@ make_outcome_table <- function(data,
     inherits(data[[column_mapping$date]], "Date"),
     is.integer(data[[column_mapping$outcome]]),
     is.character(data[[column_mapping$geo_unit]]),
-    is.character(data[[column_mapping$geo_unit_grp]]),
-    is.character(data[[column_mapping$factor]])
+    is.character(data[[column_mapping$geo_unit_grp]])
   )
+  if("factor" %in% names(column_mapping)) {
+    stopifnot(is.character(data[[column_mapping$factor]]))
+  }
 
   # overwrite date
   data[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
@@ -265,7 +267,7 @@ make_outcome_table <- function(data,
   date_col <- column_mapping$date
   setorderv(
     xgrid_comb,
-    c(date_col, join_col)
+    c(join_col, date_col)
   )
 
   # set the class as an exposure
@@ -276,7 +278,7 @@ make_outcome_table <- function(data,
 
   # at the end there shouldn't be any NAs, so give a warning to investigate
   if(any(is.na(xgrid_comb))) {
-    warning("some NAs persist, investigate and submit a Github issue :) ")
+    stop("some NAs persist, investigate and submit a Github issue :) ")
   }
 
   return(xgrid_comb)

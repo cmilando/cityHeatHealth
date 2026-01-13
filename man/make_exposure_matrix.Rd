@@ -8,7 +8,7 @@ make_exposure_matrix(
   data,
   column_mapping,
   months_subset = 5:9,
-  dt_by = "week",
+  dt_by = "day",
   maxgap = 5,
   maxlag = 5,
   grp_level = FALSE

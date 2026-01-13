@@ -48,7 +48,8 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
     st = as.IDate(min(data[, get(date_col)]))
     ed = as.IDate(max(data[, get(date_col)]))
     dt = seq.Date(st, ed, by = 'week')
-    all_dt = as.IDate(dt)
+    yr = year(dt)
+    all_dt = as.IDate(dt[yr %in% years])
   }
 
   #' //////////////////////////////////////////////////////////////////////////

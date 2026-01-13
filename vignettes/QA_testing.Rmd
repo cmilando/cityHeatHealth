@@ -21,28 +21,41 @@ library(cityHeatHealth)
 ```{r}
 
 
+# *****
 #slow way to update
-unloadNamespace("cityHeatHealth")
-remotes::install_github("cmilando/cityHeatHealth")
+# unloadNamespace("cityHeatHealth")
+# remotes::install_github("cmilando/cityHeatHealth")
 
+# once you update your R version you can just do
 #load locally with devtools::load_all()
 #if you want to actually make changes to the files.
-
-library(lubridate)
-library(dplyr)
-library(data.table)
-library(cityHeatHealth)
-
-data <- readRDS("data/weekly_mort_updated_nov17.RDS") %>%
-  select(X_week_end_date, X_deaths, mean_temp_C, occurrence_county_code, region)
-
-data <- data %>%
-  arrange(occurrence_county_code, X_week_end_date)
-
-sum(is.na(data$mean_temp_C))
-sum(is.na(data$X_deaths))
+# *****
 
 library(data.table)
+
+data <- readRDS("../data-raw/weekly_mort_updated_nov17.RDS")
+setDT(data)
+
+# just get a specific subset
+data <- subset(data, region %in% 'Southeast')
+
+# Select only the needed columns
+data <- data[, .(
+  X_week_end_date,
+  X_deaths,
+  mean_temp_C,
+  occurrence_county_code,
+  region
+)]
+
+# Order by county code and week end date
+setorder(data, occurrence_county_code, X_week_end_date)
+```
+
+
+Exposure data
+
+```{r exp}
 exposure_columns <- list(
   "date" = "X_week_end_date",
   "exposure" = "mean_temp_C",
@@ -50,10 +63,21 @@ exposure_columns <- list(
   "geo_unit_grp" = "region"
 )
 
-column_mapping <- exposure_columns
+exp_data <- data[, .(
+  X_week_end_date,
+  mean_temp_C,
+  occurrence_county_code,
+  region
+)]
 
-exposure_matrix <- make_exposure_matrix(data, exposure_columns, dt_by = 'week')
+exposure_matrix <- make_exposure_matrix(
+  exp_data, exposure_columns, dt_by = 'week')
 
+head(exposure_matrix)
+```
+
+Outcome
+```{r outcome}
 outcome_columns <- list(
   "date" = "X_week_end_date",
   "outcome" = "X_deaths",
@@ -63,53 +87,31 @@ outcome_columns <- list(
   "geo_unit_grp" = "region"
 )
 
-outcomes_tbl <- make_outcome_table(data, outcome_columns)
+out_data <- data[, .(
+  X_week_end_date,
+  X_deaths,
+  occurrence_county_code,
+  region
+)]
 
-
-model <- condPois_2stage(exposure_matrix, outcomes_tbl, verbose = 1)
-
-
-
-#checking date regularity:
-
-dx <- diff(as.Date(data[["X_week_end_date"]]))
-summary(dx)
-table(dx)
-any(duplicated(data[["X_week_end_date"]]))
-
-
-dupe_geos <- data %>%
-  group_by(occurrence_county_code) %>%
-  summarise(has_dupes = any(duplicated(X_week_end_date)), .groups = "drop") %>%
-  filter(has_dupes)
-
-dupe_geos
-nrow(dupe_geos)
-
-bad_order_geos <- data %>%
-  arrange(occurrence_county_code, X_week_end_date) %>%
-  group_by(occurrence_county_code) %>%
-  summarise(
-    non_increasing = any(diff(as.Date(X_week_end_date)) <= 0),
-    .groups = "drop"
-  ) %>%
-  filter(non_increasing)
-
-bad_order_geos
-nrow(bad_order_geos)
-
-weird_spacing_geos <- data %>%
-  arrange(occurrence_county_code, X_week_end_date) %>%
-  group_by(occurrence_county_code) %>%
-  summarise(
-    any_not_7 = any(diff(as.Date(X_week_end_date)) != 7),
-    .groups = "drop"
-  ) %>%
-  filter(any_not_7)
-
-weird_spacing_geos
-nrow(weird_spacing_geos)
-
-devtools::load_all()
-
+outcomes_tbl <- make_outcome_table(out_data, outcome_columns)
+outcomes_tbl
 ```
+
+
+```{r runModel}
+model <- condPois_1stage(exposure_matrix, outcomes_tbl, 
+                         multi_zone = T)
+```
+
+```{r plot v1}
+plot(model, title = 'Southeast')
+```
+
+```{r runModel2}
+model2 <- condPois_2stage(exposure_matrix, outcomes_tbl,
+                          verbose = 1)
+```
+```
+
+

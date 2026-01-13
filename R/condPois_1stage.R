@@ -101,11 +101,17 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   exp_date_col <- attributes(exposure_matrix)$column_mapping$date
   outcome_date_col <- attributes(outcomes_tbl)$column_mapping$date
 
-  # subset so its a complete match
-  # TODO: hmm update this so it also has geo_unit in it
-  rr <- which(exposure_matrix[, get(exp_date_col)] %in%
-                outcomes_tbl[, get(outcome_date_col)])
-  exposure_matrix <- exposure_matrix[rr, ,drop = FALSE]
+  # subset so its a complete match based on DATE and GEO_UNIT
+  orig_exp_mapping <- attributes(exposure_matrix)$column_mapping
+  exposure_matrix <- exposure_matrix[
+    outcomes_tbl,
+    on = setNames(
+      c(outcome_date_col, out_geo_unit_col),
+      c(exp_date_col,    exp_geo_unit_col)
+    ),
+    nomatch = 0L, drop = F
+  ]
+  attributes(exposure_matrix)$column_mapping <- orig_exp_mapping
 
   # get the order correct
   setorderv(
@@ -218,6 +224,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
+  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
   geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
   geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
@@ -251,6 +258,25 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
+  #' Make a single centered basis
+  #' ==========================================================================
+  #' //////////////////////////////////////////////////////////////////////////
+
+  this_exp <- exposure_matrix[, get(exposure_col)]
+  x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
+
+  centered_basis <- get_centered_cp(argvar = argvar,
+                                    xcoef = coef(cr),
+                                    xvcov = vcov(cr),
+                                    global_cen = global_cen,
+                                    cen = cen,
+                                    this_exp = this_exp,
+                                    x_b = x_b)
+
+  overall_centered_basis <- centered_basis$basis_cen
+
+  #' //////////////////////////////////////////////////////////////////////////
+  #' ==========================================================================
   #' OUTPUT OBJECTS
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
@@ -279,6 +305,25 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     x_b <- c(floor(min(this_exp)), ceiling(max(this_exp)))
     this_exp_mean = mean(single_exposure_matrix[, get(exposure_col)])
     this_exp_IQR = IQR(single_exposure_matrix[, get(exposure_col)])
+    if(cen < x_b[1] | cen > x_b[2]) {
+      warning(sprintf(
+        "Centering point is outside the range of exposures in geo-unit %s. This means your zones are across too large of an area, or there are differences in exposures so much that the bases are quite different. Try limiting the geo-units passed in to those that are more similar, or changing your exposure variable.",
+        this_geo
+      ))
+    }
+
+    # another check
+    centered_check <- tryCatch({
+      get_centered_cp(argvar = argvar,
+                                 xcoef = coef(cr),
+                                 xvcov = vcov(cr),
+                                 global_cen = global_cen,
+                                 cen = cen,
+                                 this_exp = this_exp,
+                                 x_b = x_b)
+    }, error = function(e) {
+      warning(sprintf('a check of making the centered basis for a geo-unit %s did not pass. this likely means that the knots for the overall basis are outside the range of exposures in this geographic unit. Consider adjusting either the geo-units you are passing in, or the exposure variable (e.g., switching from absolute to relative measures)', this_geo))
+    })
 
     # this cities cb, with attributes!
     rr <- exposure_matrix[, get(exp_geo_unit_col)] == this_geo
@@ -288,24 +333,27 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     cb_att$dim = dim(this_cb)
     attributes(this_cb) = cb_att
 
+    # do the same thing with centered_cb
+    this_centered_cb <- overall_centered_basis[rr, ]
+    cb_cen_att <- attributes(overall_centered_basis)
+    # reset-dim --> another little trick here!
+    cb_cen_att$dim = dim(this_centered_cb)
+    attributes(this_centered_cb) = cb_cen_att
+
     # this city's outcome
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
     outcomes <- single_outcomes_tbl[, get(outcome_col)]
 
     # and get centered crosspred
-    basis1z <- get_centered_cp(argvar = argvar,
-                               xcoef = coef(cr),
-                               xvcov = vcov(cr),
-                               global_cen = global_cen,
-                               cen = cen,
-                               this_exp = this_exp,
-                               x_b = x_b)
+    # Ah ha! this fails is cen is outside of x_b
+    #
+
 
     # each of these things you need for BLUP and MIXMETA later
     oo_list[[i]] <- list(geo_unit = this_geo,     ## --> individual
                geo_unit_grp = this_geo_grp,       ## --> individual
-               basis_cen = basis1z$basis_cen,     ## --> individual
+               basis_cen = this_centered_cb,      ## --> individual
                strata_vec = single_outcomes_tbl$strata, ## --> individual
                orig_basis = this_cb,              ## --> individual
                orig_coef = m_coef,                ## whole group

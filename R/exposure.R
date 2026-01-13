@@ -17,9 +17,10 @@
 #' @export
 #'
 #' @examples
-make_exposure_matrix <- function(data, column_mapping,
+make_exposure_matrix <- function(data,
+                                 column_mapping,
                                  months_subset = 5:9,
-                                 dt_by = 'week',
+                                 dt_by = 'day',
                                  maxgap = 5,
                                  maxlag = 5,
                                  grp_level = FALSE) {
@@ -93,8 +94,9 @@ make_exposure_matrix <- function(data, column_mapping,
   #' //////////////////////////////////////////////////////////////////////////
 
   # build xgrid
-  xgrid <- make_xgrid(data, column_mapping, dt_by)
-  #head(xgrid)
+  # no month subset here, do not change from 1:12!
+  xgrid <- make_xgrid(data, column_mapping, months_subset = 1:12, dt_by)
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' FILL NA VALUES
@@ -107,7 +109,7 @@ make_exposure_matrix <- function(data, column_mapping,
   date_col <- column_mapping$date
 
   exposure1_l <- split(xgrid, f = xgrid[, get(join_col)])
-  length(exposure1_l)
+  stopifnot(length(exposure1_l) > 0)
 
   exposure2_l <- vector("list", length(exposure1_l))
 
@@ -145,7 +147,7 @@ make_exposure_matrix <- function(data, column_mapping,
     }
     if(cont) {
       fillx <- x[j, get(exposure_col)]
-      x[(j + 1):nrow(x), (exposure_col):=fillx]
+      x[(j + 1):nrow(x), (exposure_col):= fillx]
     }
 
     # this should have caught the edge cases, cause a failure if not
@@ -161,10 +163,14 @@ make_exposure_matrix <- function(data, column_mapping,
     x <- x[order(x[, get(date_col)]), ]
 
     # fill in any NAs using zoo::na.approx
-    x[, (exposure_col) := zoo::na.approx(get(exposure_col),maxgap = maxgap)]
-    if(any(is.na(x[, get(exposure_col)])))
-      stop(paste0("zoo::na.approx() was not able to remove all NAs in ",
-                  x[1, get(join_col)]))
+    # hmm this fails if years are not continuous
+    # because the gap is too large
+    # should i let this fail and then it gets caught later?
+    x[, (exposure_col) := zoo::na.approx(get(exposure_col),
+                                         maxgap = maxgap)]
+    # if(any(is.na(x[, get(exposure_col)])))
+    #   stop(paste0("zoo::na.approx() was not able to remove all NAs in ",
+    #               x[1, get(join_col)]))
 
     exposure2_l[[i]] <- x
   }
@@ -244,27 +250,27 @@ make_exposure_matrix <- function(data, column_mapping,
   # get just the warm season months
   rr <- month(exposure2[, get(column_mapping$date)]) %in% months_subset
   stopifnot(length(rr) > 1)
-  warm_season_exposure <- exposure2[rr, ]
+  exposure_subset <- exposure2[rr, ]
 
   # reset the order
   join_col <- column_mapping$geo_unit
   date_col <- column_mapping$date
   setorderv(
-    warm_season_exposure,
-    c(date_col, join_col)
+    exposure_subset,
+    c(join_col, date_col)
   )
 
   # set the class as an exposure
-  class(warm_season_exposure) <- c(class(warm_season_exposure), "exposure")
+  class(exposure_subset) <- c(class(exposure_subset), "exposure")
 
   # set attributes
-  attr(warm_season_exposure, "column_mapping") <- column_mapping
+  attr(exposure_subset, "column_mapping") <- column_mapping
 
   # at the end there shouldn't be any NAs, so give a warning to investigate
-  if(any(is.na(warm_season_exposure))) {
-    warning("some NAs persist, investigate and submit a Github issue :)")
+  if(any(is.na(exposure_subset))) {
+    stop("some NAs persist, investigate (might be zoo::na_approx) and submit a Github issue :)")
   }
 
-  return(warm_season_exposure)
+  return(exposure_subset)
 
 }

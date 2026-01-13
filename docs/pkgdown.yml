@@ -10,11 +10,13 @@ articles:
   faq: faq.html
   get_pop_estimates: get_pop_estimates.html
   group-check: group-check.html
+  non_daily_data: non_daily_data.html
   one_stage_demo: one_stage_demo.html
+  QA_testing: QA_testing.html
   TODO: TODO.html
   two_stage_demo: two_stage_demo.html
   validation: validation.html
-last_built: 2026-01-08T16:55Z
+last_built: 2026-01-13T15:16Z
 urls:
   reference: http://chadmilando.com/cityHeatHealth/reference
   article: http://chadmilando.com/cityHeatHealth/articles

@@ -27,3 +27,6 @@ Vignettes aimed at advanced users
   tutorials](http://chadmilando.com/cityHeatHealth/articles/comparison.md):
 - [group-check](http://chadmilando.com/cityHeatHealth/articles/group-check.md):
 - [Todo](http://chadmilando.com/cityHeatHealth/articles/TODO.md):
+- [QA_testing](http://chadmilando.com/cityHeatHealth/articles/QA_testing.md):
+- [Methods for working with non-daily
+  data](http://chadmilando.com/cityHeatHealth/articles/non_daily_data.md):
