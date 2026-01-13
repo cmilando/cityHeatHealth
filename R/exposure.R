@@ -94,7 +94,8 @@ make_exposure_matrix <- function(data,
   #' //////////////////////////////////////////////////////////////////////////
 
   # build xgrid
-  # no month subset here, do not change from 1:12!
+  # no month subset here, do not change from 1:12 for exposure!
+  # this does change in outcomes but not here
   xgrid <- make_xgrid(data, column_mapping, months_subset = 1:12, dt_by)
 
   #' //////////////////////////////////////////////////////////////////////////

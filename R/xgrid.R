@@ -18,13 +18,22 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
 
   stopifnot(dt_by %in% c('day', 'week'))
 
+  # check they are all the same day of week
+  date_col <- column_mapping$date
+  date_vec <- data[, get(date_col)]
+  dow_vec <- data.table::wday(date_vec)
+  if(dt_by == 'week' & length(unique(dow_vec)) > 1) {
+    stop('`dt_by` == "week" but there are more than 1 day-of-week')
+  }
+
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' GET ALL DATES
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  date_col <- column_mapping$date
+
   years   <- sort(unique(data[, year(get(date_col))]))
 
   # make the skeleton you need later
