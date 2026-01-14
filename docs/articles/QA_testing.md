@@ -159,49 +159,57 @@ model2 <- condPois_2stage(exposure_matrix, outcomes_tbl,
 #> exposures in geo-unit 12009. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 12031. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 12057. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 12073. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 12099. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 12109. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 22051. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit 45019. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> -- mixmeta
 #> -- stage 2
 ```

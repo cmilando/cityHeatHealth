@@ -130,62 +130,34 @@ condPois_sb <- function(exposure_matrix,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  ## Check 1.5 -- every outcome geo_unit should have data
-  ## NOTE - this is sligtly different from the check for pois_single
-  exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
-  out_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  # Generic validation tests
+  validated <- input_validation(exposure_matrix, outcomes_tbl)
+  exposure_matrix <- validated$exposure_matrix
+  outcomes_tbl    <- validated$outcomes_tbl
 
-  exp_geo_units <- unlist(unique(exposure_matrix[, get(exp_geo_unit_col)]))
-  out_geo_units <- unlist(unique(outcomes_tbl[, get(out_geo_unit_col)]))
+  # make objects available
+  exp_geo_unit_col     <- attributes(exposure_matrix)$column_mapping$geo_unit
+  exp_geo_unit_grp_col <- attributes(exposure_matrix)$column_mapping$geo_unit_grp
+  exposure_col         <- attributes(exposure_matrix)$column_mapping$exposure
 
-  stopifnot(all(out_geo_units %in% exp_geo_units))
+  out_geo_unit_col     <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  out_geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
+  outcome_col          <- attributes(outcomes_tbl)$column_mapping$outcome
 
-  ## Check 2
-  ## probably should make sure that exposure_matrix and outcomes_tbl
-  ## are the same size, at least
-  ## and have the same dates
-  exp_date_col <- attributes(exposure_matrix)$column_mapping$date
-  outcome_date_col <- attributes(outcomes_tbl)$column_mapping$date
+  ## CHECK 6 - minN
+  if(is.null(min_n)) {
+    min_n = 50
+  }
+  stopifnot(sum(outcomes_tbl[, get(outcome_col)]) >= min_n)
 
-  exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
-  outcome_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
-
-  # subset so its a complete match
-  orig_exp_mapping <- attributes(exposure_matrix)$column_mapping
-  exposure_matrix <- exposure_matrix[
-    outcomes_tbl,
-    on = setNames(
-      c(outcome_date_col, out_geo_unit_col),
-      c(exp_date_col,    exp_geo_unit_col)
-    ),
-    nomatch = 0L, drop = F
-  ]
-  attributes(exposure_matrix)$column_mapping <- orig_exp_mapping
-
-  setorderv(
-    exposure_matrix,
-    c(exp_geo_unit_col, exp_date_col)
-  )
-
-  setorderv(
-    outcomes_tbl,
-    c(outcome_geo_unit_col, outcome_date_col)
-  )
-
-  stopifnot(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])
-  stopifnot(identical(exposure_matrix[, get(exp_date_col)],
-                      outcomes_tbl[, get(outcome_date_col)]))
-
-  # CHECK 4 geo_unit is the same for both"
-  stopifnot(all(outcomes_tbl[, get(outcome_geo_unit_col)] %in%
-                  exposure_matrix[, get(exp_geo_unit_col)]))
+  # CHECK 7
+  stopifnot(strata_min >= 0)
+  stopifnot(strata_min < min_n)
 
   # CHECK5
   if(!is.null(global_cen)) {
     stopifnot(is.numeric(global_cen))
   }
-
-
 
   if(verbose > 0) {
     cat("-- validation passed\n")

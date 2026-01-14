@@ -63,6 +63,7 @@ condPois_2stage <- function(exposure_matrix,
 
     fct_outlist <- vector("list", length(unique_fcts))
 
+    # run this function again for each factor
     for(fct_i in seq_along(fct_outlist)) {
 
       if(verbose > 0) {
@@ -89,6 +90,7 @@ condPois_2stage <- function(exposure_matrix,
 
     }
 
+    # and then make this a "_list" object
     names(fct_outlist) = unique_fcts
 
     class(fct_outlist) = 'condPois_2stage_list'
@@ -104,56 +106,28 @@ condPois_2stage <- function(exposure_matrix,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  ## Check 1.5 -- every outcome geo_unit should have data
-  ## NOTE - this is sligtly different from the check for pois_single
-  exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
-  out_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  # Generic validation tests
+  validated <- input_validation(exposure_matrix, outcomes_tbl)
+  exposure_matrix <- validated$exposure_matrix
+  outcomes_tbl    <- validated$outcomes_tbl
 
-  exp_geo_units <- unlist(unique(exposure_matrix[, get(exp_geo_unit_col)]))
-  out_geo_units <- unlist(unique(outcomes_tbl[, get(out_geo_unit_col)]))
+  # make objects available
+  exp_geo_unit_col     <- attributes(exposure_matrix)$column_mapping$geo_unit
+  exp_geo_unit_grp_col <- attributes(exposure_matrix)$column_mapping$geo_unit_grp
+  exposure_col         <- attributes(exposure_matrix)$column_mapping$exposure
 
-  stopifnot(all(out_geo_units %in% exp_geo_units))
+  out_geo_unit_col     <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  out_geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
+  outcome_col          <- attributes(outcomes_tbl)$column_mapping$outcome
+  ## CHECK 6 - minN
+  if(is.null(min_n)) {
+    min_n = 50
+  }
+  stopifnot(sum(outcomes_tbl[, get(outcome_col)]) >= min_n)
 
-  ## Check 2
-  ## probably should make sure that exposure_matrix and outcomes_tbl
-  ## are the same size, at least
-  ## and have the same dates
-  exp_date_col <- attributes(exposure_matrix)$column_mapping$date
-  outcome_date_col <- attributes(outcomes_tbl)$column_mapping$date
-
-  exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
-  outcome_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
-
-  # subset so its a complete match
-  orig_exp_mapping <- attributes(exposure_matrix)$column_mapping
-  exposure_matrix <- exposure_matrix[
-    outcomes_tbl,
-    on = setNames(
-      c(outcome_date_col, out_geo_unit_col),
-      c(exp_date_col,    exp_geo_unit_col)
-    ),
-    nomatch = 0L, drop = F
-  ]
-  attributes(exposure_matrix)$column_mapping <- orig_exp_mapping
-
-  # now confirm
-  setorderv(
-    exposure_matrix,
-    c(exp_geo_unit_col, exp_date_col)
-  )
-
-  setorderv(
-    outcomes_tbl,
-    c(outcome_geo_unit_col, outcome_date_col)
-  )
-
-  stopifnot(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])
-  stopifnot(identical(exposure_matrix[, get(exp_date_col)],
-                      outcomes_tbl[, get(outcome_date_col)]))
-
-  # CHECK 4 geo_unit is the same for both"
-  stopifnot(all(outcomes_tbl[, get(outcome_geo_unit_col)] %in%
-                  exposure_matrix[, get(exp_geo_unit_col)]))
+  # CHECK 7
+  stopifnot(strata_min >= 0)
+  stopifnot(strata_min < min_n)
 
   # CHECK5
   if(!is.null(global_cen)) {
@@ -174,11 +148,9 @@ condPois_2stage <- function(exposure_matrix,
     cat("-- stage 1\n")
   }
 
-  outcome_columns <- attributes(outcomes_tbl)$column_mapping
-
   geo_cols <- c(
-    outcome_columns$geo_unit,
-    outcome_columns$geo_unit_grp
+    out_geo_unit_col,
+    out_geo_unit_grp_col
   )
   unique_geos <- unique(outcomes_tbl[, ..geo_cols])
   n_geos      <- nrow(unique_geos)
@@ -194,14 +166,14 @@ condPois_2stage <- function(exposure_matrix,
   vcov_list   <- vector("list", n_geos);
   coef_list   <- vector("list", n_geos);
   outc_list   <- vector("list", n_geos);
-  names(vcov_model) <- unique_geos[, get(outcome_columns$geo_unit)]
-  names(coef_list) <- unique_geos[, get(outcome_columns$geo_unit)]
+  names(vcov_model) <- unique_geos[, get(out_geo_unit_col)]
+  names(coef_list) <- unique_geos[, get(out_geo_unit_col)]
 
   # loop through geos
   for(i in seq_along(cp_list)) {
 
     # get the name, which you know exists in both datasets
-    this_geo <- unique_geos[i, get(outcome_columns$geo_unit)]
+    this_geo <- unique_geos[i, get(out_geo_unit_col)]
 
     if(verbose > 1) {
       cat(this_geo, '\t')
@@ -217,10 +189,13 @@ condPois_2stage <- function(exposure_matrix,
     # run the model once
     # pass all the main arguments forward
     d1 <- condPois_1stage(exposure_matrix = single_exposure_matrix,
-                                    outcomes_tbl = single_outcomes_tbl,
-                                    argvar = argvar, arglag = arglag,
-                                    maxlag = maxlag, min_n = min_n,
-                                    strata_min = strata_min)
+                          outcomes_tbl = single_outcomes_tbl,
+                          argvar = argvar,
+                          arglag = arglag,
+                          maxlag = maxlag,
+                          global_cen = global_cen,
+                          min_n = min_n,
+                          strata_min = strata_min)
 
     # get the named list object
     cp_list[[i]] <- d1$`_`$out[[this_geo]]
@@ -229,7 +204,6 @@ condPois_2stage <- function(exposure_matrix,
     # thos are only needed for sb testing and AN calc
     cp_list[[i]]$orig_basis <- NULL
     cp_list[[i]]$basis_cen <- NULL
-
 
     # get coef and vcov
     coef_list[[i]] <- coef(cp_list[[i]]$cr)
@@ -267,8 +241,8 @@ condPois_2stage <- function(exposure_matrix,
   # ~ 1 | geo_unit_grp / geo_unit
   # TODO will this work if geo_unit_grp is 'ALL' ?
   #      easy to create a switch if not
-  rf = as.formula(paste0("~ 1 | ", outcome_columns$geo_unit_grp, " / ",
-                         outcome_columns$geo_unit))
+  rf = as.formula(paste0("~ 1 | ", out_geo_unit_grp_col, " / ",
+                         out_geo_unit_col))
 
   # see function description for references for this
   meta_fit <- mixmeta(coef_matrix ~ exp_mean + exp_IQR,
@@ -285,7 +259,7 @@ condPois_2stage <- function(exposure_matrix,
   # blup_geo_lvl2 <- blup(meta_fit, vcov = T, level = 2)
   # stopifnot(identical(blup_geo, blup_geo_lvl2))
   blup_geo <- blup(meta_fit, vcov = T)
-  names(blup_geo) = unique_geos[, get(outcome_columns$geo_unit)]
+  names(blup_geo) = unique_geos[, get(out_geo_unit_col)]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -300,7 +274,7 @@ condPois_2stage <- function(exposure_matrix,
   # stateblup <- unique(blup(meta_fit, level=1))
 
   # ONE FOR EACH GRP
-  group_col <- outcome_columns$geo_unit_grp
+  group_col <- out_geo_unit_grp_col
   datapred <- unique_geos[, .(
     exp_mean = mean(exp_mean),
     exp_IQR = mean(exp_IQR)
@@ -309,8 +283,7 @@ condPois_2stage <- function(exposure_matrix,
   ngrp <- nrow(datapred)
 
   grp_l <- vector("list", ngrp)
-  exp_grp_col <- attributes(exposure_matrix)$column_mapping$geo_unit_grp
-  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
+
 
   for(grp_i in 1:ngrp) {
 
@@ -321,7 +294,7 @@ condPois_2stage <- function(exposure_matrix,
     pred <- predict(meta_fit, datapred[grp_i, ], vcov = T)
 
     ## get group_level data
-    rr <- which(exposure_matrix[, get(exp_grp_col)] ==
+    rr <- which(exposure_matrix[, get(exp_geo_unit_grp_col)] ==
                   datapred[grp_i, get(group_col)])
 
     grp_dat <- exposure_matrix[rr, ]
@@ -391,17 +364,14 @@ condPois_2stage <- function(exposure_matrix,
     cat("-- stage 2\n")
   }
 
-  exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
-  outcomes_col <- attributes(outcomes_tbl)$column_mapping$outcome
-
   out   <- vector("list", n_geos);
 
   # loop through geos
   for(i in seq_along(cp_list)) {
 
     #
-    this_geo <- unique_geos[i, get(outcome_columns$geo_unit)]
-    this_geo_grp <- unique_geos[i, get(outcome_columns$geo_unit_grp)]
+    this_geo <- unique_geos[i, get(out_geo_unit_col)]
+    this_geo_grp <- unique_geos[i, get(out_geo_unit_grp_col)]
 
     if(verbose > 1) {
       cat(this_geo, '\t')
@@ -431,15 +401,15 @@ condPois_2stage <- function(exposure_matrix,
       RRlb = blup_cp$cp$allRRlow,
       RRub = blup_cp$cp$allRRhigh
     )
-    names(RRdf)[1] <- outcome_columns$geo_unit
-    names(RRdf)[2] <- outcome_columns$geo_unit_grp
+    names(RRdf)[1] <- out_geo_unit_col
+    names(RRdf)[2] <- out_geo_unit_grp_col
     names(RRdf)[3] <- exposure_col
     setDT(RRdf)
 
     ## attach outcomes vector
     rr <- outcomes_tbl[, get(out_geo_unit_col)] == this_geo
     single_outcomes_tbl = outcomes_tbl[rr, ,drop = FALSE]
-    outcomes_vec = single_outcomes_tbl[, get(outcomes_col)]
+    outcomes_vec = single_outcomes_tbl[, get(outcome_col)]
     stopifnot(identical(outcomes_vec, outc_list[[i]]))
 
     #
@@ -459,7 +429,7 @@ condPois_2stage <- function(exposure_matrix,
   }
 
   # set names
-  names(out) <- unique_geos[, get(outcome_columns$geo_unit)]
+  names(out) <- unique_geos[, get(out_geo_unit_col)]
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================

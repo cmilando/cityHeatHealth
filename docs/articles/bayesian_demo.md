@@ -104,13 +104,15 @@ for(bb in 1:4) {
 #> Centering point is outside the range of exposures in geo-unit CHELSEA. This
 #> means your zones are across too large of an area, or there are differences in
 #> exposures so much that the bases are quite different. Try limiting the
-#> geo-units passed in to those that are more similar, or changing your exposure
+#> geo-units passed in to those that are more similar, manually setting a
+#> centering point that you know each geo-unit has, or changing your exposure
 #> variable.
 #> Warning in condPois_1stage(subset(exposure_mat, TOWN20 == TOWNLIST[bb]), :
 #> Centering point is outside the range of exposures in geo-unit REVERE. This
 #> means your zones are across too large of an area, or there are differences in
 #> exposures so much that the bases are quite different. Try limiting the
-#> geo-units passed in to those that are more similar, or changing your exposure
+#> geo-units passed in to those that are more similar, manually setting a
+#> centering point that you know each geo-unit has, or changing your exposure
 #> variable.
 mx <- do.call(cbind, beta_l) # COEFS NOT THE SAME
 colnames(mx)  = TOWNLIST
@@ -182,14 +184,16 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> exposures in geo-unit CHELSEA. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> EVERETT  MALDEN  REVERE  
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit REVERE. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
@@ -220,13 +224,13 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 30.5 seconds.
+#> Chain 2 finished in 28.9 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 30.7 seconds.
+#> Chain 1 finished in 29.4 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 30.6 seconds.
-#> Total execution time: 30.8 seconds.
+#> Mean chain execution time: 29.1 seconds.
+#> Total execution time: 29.5 seconds.
 #> 
 #>  ...mcmc draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
@@ -290,14 +294,16 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> exposures in geo-unit CHELSEA. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> EVERETT  MALDEN  REVERE  
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit REVERE. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 
@@ -386,14 +392,16 @@ m_sb3 <- condPois_sb(exposure_mat,
 #> exposures in geo-unit CHELSEA. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> EVERETT  MALDEN  REVERE  
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit REVERE. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in getSW(shp = shp_sf_safe, ni = 1, include_self = F): has to be one
 #> polygon per row in `shp`
 #> 

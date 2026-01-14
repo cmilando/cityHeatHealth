@@ -108,7 +108,7 @@ ma_outcomes_tbl <- make_outcome_table(
 
 models
 ```{r jj}
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1, global_cen = 20)
 ```
 
 ### Estimating the AN

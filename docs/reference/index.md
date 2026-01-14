@@ -55,6 +55,9 @@
 - [`indexByComponent()`](http://chadmilando.com/cityHeatHealth/reference/indexByComponent.md)
   : Title
 
+- [`input_validation()`](http://chadmilando.com/cityHeatHealth/reference/input_validation.md)
+  : Input validation
+
 - [`ma_counties`](http://chadmilando.com/cityHeatHealth/reference/ma_counties.md)
   : Massachusetts Towns and Cities (2020 Census)
 

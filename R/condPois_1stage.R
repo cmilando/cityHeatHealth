@@ -81,74 +81,40 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   #' ==========================================================================
   #' //////////////////////////////////////////////////////////////////////////
 
-  ## Check 1.5 -- there should be just one geo_unit
-  exp_geo_unit_col <- attributes(exposure_matrix)$column_mapping$geo_unit
-  out_geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  # Generic validation tests
+  validated <- input_validation(exposure_matrix, outcomes_tbl)
+  exposure_matrix <- validated$exposure_matrix
+  outcomes_tbl    <- validated$outcomes_tbl
 
-  # added sorting
-  exp_geo_unit <- sort(unlist(unique(exposure_matrix[, get(exp_geo_unit_col)])))
-  out_geo_unit <- sort(unlist(unique(outcomes_tbl[, get(out_geo_unit_col)])))
+  # make objects available
+  exp_geo_unit_col     <- attributes(exposure_matrix)$column_mapping$geo_unit
+  exp_geo_unit_grp_col <- attributes(exposure_matrix)$column_mapping$geo_unit_grp
+  exposure_col         <- attributes(exposure_matrix)$column_mapping$exposure
 
-  stopifnot(identical(exp_geo_unit, out_geo_unit))
-
-  # check if multizone
-  if(!multi_zone) stopifnot(length(out_geo_unit) == 1)
-
-  ## Check 2
-  ## probably should make sure that exposure_matrix and outcomes_tbl
-  ## are the same size, at least
-  ## and have the same dates
-  exp_date_col <- attributes(exposure_matrix)$column_mapping$date
-  outcome_date_col <- attributes(outcomes_tbl)$column_mapping$date
-
-  # subset so its a complete match based on DATE and GEO_UNIT
-  orig_exp_mapping <- attributes(exposure_matrix)$column_mapping
-  exposure_matrix <- exposure_matrix[
-    outcomes_tbl,
-    on = setNames(
-      c(outcome_date_col, out_geo_unit_col),
-      c(exp_date_col,    exp_geo_unit_col)
-    ),
-    nomatch = 0L, drop = F
-  ]
-  attributes(exposure_matrix)$column_mapping <- orig_exp_mapping
-
-  # get the order correct
-  setorderv(
-    exposure_matrix,
-    c(exp_geo_unit_col, exp_date_col)
-  )
-
-  setorderv(
-    outcomes_tbl,
-    c(out_geo_unit_col, outcome_date_col)
-  )
-
-  # check that it worked
-  stopifnot(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])
-
-  stopifnot(identical(exposure_matrix[, get(exp_date_col)],
-                      outcomes_tbl[, get(outcome_date_col)]))
-
-  stopifnot(identical(exposure_matrix[, get(exp_geo_unit_col)],
-                      outcomes_tbl[, get(out_geo_unit_col)]))
-
-  # CHECK 4
-  if("factor" %in% names(attributes(outcomes_tbl)$column_mapping)) {
-    stop("if outcome has a factor, thats a problem")
-  }
+  out_geo_unit_col     <- attributes(outcomes_tbl)$column_mapping$geo_unit
+  out_geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
+  outcome_col          <- attributes(outcomes_tbl)$column_mapping$outcome
 
   ## CHECK 6 - minN
   if(is.null(min_n)) {
     min_n = 50
   }
-
   outcome_col <- attributes(outcomes_tbl)$column_mapping$outcome
   stopifnot(sum(outcomes_tbl[, get(outcome_col)]) >= min_n)
 
   # CHECK 7
   stopifnot(strata_min >= 0)
   stopifnot(strata_min < min_n)
+
+  # CHECK 8 check if multizone
+  out_geo_unit <- sort(unlist(unique(outcomes_tbl[, get(out_geo_unit_col)])))
+  if(!multi_zone) stopifnot(length(out_geo_unit) == 1)
+
+  # CHECK5
+  if(!is.null(global_cen)) {
+    stopifnot(is.numeric(global_cen))
+  }
+
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -307,7 +273,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     this_exp_IQR = IQR(single_exposure_matrix[, get(exposure_col)])
     if(cen < x_b[1] | cen > x_b[2]) {
       warning(sprintf(
-        "Centering point is outside the range of exposures in geo-unit %s. This means your zones are across too large of an area, or there are differences in exposures so much that the bases are quite different. Try limiting the geo-units passed in to those that are more similar, or changing your exposure variable.",
+        "Centering point is outside the range of exposures in geo-unit %s. This means your zones are across too large of an area, or there are differences in exposures so much that the bases are quite different. Try limiting the geo-units passed in to those that are more similar, manually setting a centering point that you know each geo-unit has, or changing your exposure variable.",
         this_geo
       ))
     }

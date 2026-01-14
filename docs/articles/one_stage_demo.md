@@ -436,8 +436,9 @@ m1 <- condPois_1stage(exposure_matrix = boston_exposure_mat,
 #> = boston_deaths_tbl): Centering point is outside the range of exposures in
 #> geo-unit BOSTON. This means your zones are across too large of an area, or
 #> there are differences in exposures so much that the bases are quite different.
-#> Try limiting the geo-units passed in to those that are more similar, or
-#> changing your exposure variable.
+#> Try limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 ```
 
 And plot the relative risk
@@ -511,319 +512,372 @@ m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> exposures in geo-unit ACTON. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit ARLINGTON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit ASHBY. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit ASHLAND. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit AYER. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BEDFORD. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BELMONT. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BILLERICA. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BOXBOROUGH. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BURLINGTON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit CAMBRIDGE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit CARLISLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit CHELMSFORD. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit CONCORD. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit DRACUT. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit DUNSTABLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit EVERETT. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit FRAMINGHAM. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit GROTON. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit HOLLISTON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit HOPKINTON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit HUDSON. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit LEXINGTON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit LINCOLN. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit LITTLETON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit LOWELL. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit MALDEN. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit MARLBOROUGH. This means your zones are across too large
 #> of an area, or there are differences in exposures so much that the bases are
 #> quite different. Try limiting the geo-units passed in to those that are more
-#> similar, or changing your exposure variable.
+#> similar, manually setting a centering point that you know each geo-unit has, or
+#> changing your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit MAYNARD. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit MEDFORD. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit MELROSE. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit NATICK. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit NEWTON. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit NORTH READING. This means your zones are across too large
 #> of an area, or there are differences in exposures so much that the bases are
 #> quite different. Try limiting the geo-units passed in to those that are more
-#> similar, or changing your exposure variable.
+#> similar, manually setting a centering point that you know each geo-unit has, or
+#> changing your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit PEPPERELL. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit READING. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit SHERBORN. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit SOMERVILLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit STONEHAM. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit STOW. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit SUDBURY. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit TEWKSBURY. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit TOWNSEND. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit TYNGSBOROUGH. This means your zones are across too large
 #> of an area, or there are differences in exposures so much that the bases are
 #> quite different. Try limiting the geo-units passed in to those that are more
-#> similar, or changing your exposure variable.
+#> similar, manually setting a centering point that you know each geo-unit has, or
+#> changing your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WAKEFIELD. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WALTHAM. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WATERTOWN. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WAYLAND. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WESTFORD. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WESTON. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WILMINGTON. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WINCHESTER. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> outcomes_tbl = middlesex_deaths_tbl, : Centering point is outside the range of
 #> exposures in geo-unit WOBURN. This means your zones are across too large of an
 #> area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
-#> or changing your exposure variable.
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 ```
 
 And plot - notice the tighter confidence interval
@@ -885,956 +939,1115 @@ m3 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat,
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ACTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ARLINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ASHBY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ASHLAND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> AYER. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BEDFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BELMONT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BILLERICA. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BOXBOROUGH. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BURLINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CAMBRIDGE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CARLISLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CHELMSFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CONCORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> DRACUT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> DUNSTABLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> EVERETT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> FRAMINGHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> GROTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HOLLISTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HOPKINTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HUDSON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LEXINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LINCOLN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LITTLETON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LOWELL. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MALDEN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MARLBOROUGH. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MAYNARD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MEDFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MELROSE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NATICK. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NEWTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NORTH READING. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> PEPPERELL. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> READING. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SHERBORN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SOMERVILLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> STONEHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> STOW. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SUDBURY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TEWKSBURY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TOWNSEND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TYNGSBOROUGH. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WAKEFIELD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WALTHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WATERTOWN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WAYLAND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WESTFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WESTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WILMINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WINCHESTER. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WOBURN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ACTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ARLINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ASHBY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ASHLAND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> AYER. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BEDFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BELMONT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BILLERICA. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BOXBOROUGH. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BURLINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CAMBRIDGE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CARLISLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CHELMSFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CONCORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> DRACUT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> DUNSTABLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> EVERETT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> FRAMINGHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> GROTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HOLLISTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HOPKINTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HUDSON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LEXINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LINCOLN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LITTLETON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LOWELL. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MALDEN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MARLBOROUGH. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MAYNARD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MEDFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MELROSE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NATICK. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NEWTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NORTH READING. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> PEPPERELL. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> READING. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SHERBORN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SOMERVILLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> STONEHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> STOW. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SUDBURY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TEWKSBURY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TOWNSEND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TYNGSBOROUGH. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WAKEFIELD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WALTHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WATERTOWN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WAYLAND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WESTFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WESTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WILMINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WINCHESTER. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WOBURN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ACTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ARLINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ASHBY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> ASHLAND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> AYER. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BEDFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BELMONT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BILLERICA. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BOXBOROUGH. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> BURLINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CAMBRIDGE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CARLISLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CHELMSFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> CONCORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> DRACUT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> DUNSTABLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> EVERETT. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> FRAMINGHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> GROTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HOLLISTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HOPKINTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> HUDSON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LEXINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LINCOLN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LITTLETON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> LOWELL. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MALDEN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MARLBOROUGH. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MAYNARD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MEDFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> MELROSE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NATICK. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NEWTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> NORTH READING. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> PEPPERELL. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> READING. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SHERBORN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SOMERVILLE. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> STONEHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> STOW. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> SUDBURY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TEWKSBURY. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TOWNSEND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> TYNGSBOROUGH. This means your zones are across too large of an area, or there
 #> are differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WAKEFIELD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WALTHAM. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WATERTOWN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WAYLAND. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WESTFORD. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WESTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WILMINGTON. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WINCHESTER. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 #> Warning in condPois_1stage(exposure_matrix, subset_outcomes_tbl, global_cen =
 #> global_cen, : Centering point is outside the range of exposures in geo-unit
 #> WOBURN. This means your zones are across too large of an area, or there are
 #> differences in exposures so much that the bases are quite different. Try
-#> limiting the geo-units passed in to those that are more similar, or changing
-#> your exposure variable.
+#> limiting the geo-units passed in to those that are more similar, manually
+#> setting a centering point that you know each geo-unit has, or changing your
+#> exposure variable.
 
 # plot
 plot(m3)
