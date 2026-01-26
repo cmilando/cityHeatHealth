@@ -7,6 +7,7 @@
 #' May through September (5 through 9)
 #' @param collapse_to which factors to collapse across
 #' @param grp_level whether to summarize to the group level or not (default)
+#' @param keep_unit_outcomes if grp_level is true, whether to keep original unit-level outcomes
 #' @param dt_by is it daily data, or weekly or ...
 #'
 #' @import data.table
@@ -21,7 +22,8 @@ make_outcome_table <- function(data,
                                months_subset = 5:9,
                                dt_by = 'day',
                                collapse_to = NULL,
-                               grp_level = FALSE) {
+                               grp_level = FALSE,
+                               keep_unit_outcomes = FALSE) {
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -105,6 +107,9 @@ make_outcome_table <- function(data,
 
     if(grp_level == FALSE) {
 
+      # collapse to = NULL --> so this collapses across factors
+      # grp_level = FALSE  --> and doesn't summarize to the group level
+
       data <- data[,.(
         xoutcome = sum(get(outcome_col))
       ), by = .(get(date_col),
@@ -122,24 +127,48 @@ make_outcome_table <- function(data,
 
     } else {
 
-      warning("make type checks  (e.g., so Date == Date),
-         for some reason this doesn't work in some cases? but ok in others?")
+      # collapse to = NULL --> so this collapses across factors
+      # grp_level = TRUE  --> and does summarize to the group level
+      #
+      # warning("make type checks  (e.g., so Date == Date),
+      #    for some reason this doesn't work in some cases? but ok in others?")
 
-      data <- data[,.(
-        xoutcome = sum(get(outcome_col))
-      ), by = .(get(date_col),
-                get(geo_unit_grp_col))]
 
-      names(data) <- c(date_col, geo_unit_grp_col, outcome_col)
+      if(keep_unit_outcomes == FALSE) {
 
-      data$spatial_grp <- 'ALL'
+        data <- data[,.(
+          xoutcome = sum(get(outcome_col))
+        ), by = .(get(date_col),
+                  get(geo_unit_grp_col))]
 
-      column_mapping <- list(
-        "date" = date_col,
-        "outcome" = outcome_col,
-        "geo_unit" = geo_unit_grp_col,
-        "geo_unit_grp" = 'spatial_grp'
-      )
+        names(data) <- c(date_col, geo_unit_grp_col, outcome_col)
+
+        data$spatial_grp <- 'ALL'
+
+        column_mapping <- list(
+          "date" = date_col,
+          "outcome" = outcome_col,
+          "geo_unit" = geo_unit_grp_col,
+          "geo_unit_grp" = 'spatial_grp'
+        )
+
+      } else {
+
+        data <- data[,.(
+          xoutcome = sum(get(outcome_col))
+        ), by = .(get(date_col),
+                  get(geo_unit_col),
+                  get(geo_unit_grp_col))]
+
+        names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col, outcome_col)
+
+        # and SKIP column re-mapping until later
+        # except remove factor
+        rr <- which(names(column_mapping) == 'factor')
+        column_mapping[rr] <- NULL
+
+      }
+
     }
 
   } else {
@@ -149,6 +178,9 @@ make_outcome_table <- function(data,
     stopifnot(collapse_to %in% factor_cols)
 
     if(grp_level == FALSE) {
+
+      # collapse to = NOT NULL
+      # grp_level = FALSE
 
       data <- data[,.(
         xoutcome = sum(get(outcome_col))
@@ -170,28 +202,52 @@ make_outcome_table <- function(data,
       )
     } else {
 
-      warning("make type checks  (e.g., so Date == Date),
-         for some reason this doesn't work in some cases? but ok in others?")
+      # collapse to = NOT NULL
+      # grp_level = TRUE
+      #
+      # warning("make type checks  (e.g., so Date == Date),
+      #    for some reason this doesn't work in some cases? but ok in others?")
 
-      data <- data[,.(
-        xoutcome = sum(get(outcome_col))
-      ), by = .(get(date_col),
-                get(geo_unit_grp_col),
-                get(collapse_to))]
+      if(keep_unit_outcomes == FALSE) {
+        data <- data[,.(
+          xoutcome = sum(get(outcome_col))
+        ), by = .(get(date_col),
+                  get(geo_unit_grp_col),
+                  get(collapse_to))]
 
-      names(data) <- c(date_col, geo_unit_grp_col,
-                       collapse_to, outcome_col)
+        names(data) <- c(date_col, geo_unit_grp_col,
+                         collapse_to, outcome_col)
 
-      data$spatial_grp <- 'ALL'
+        #
+        data$spatial_grp <- 'ALL'
 
-      # update the properties here
-      column_mapping <- list(
-        "date" = date_col,
-        "outcome" = outcome_col,
-        "geo_unit" = geo_unit_grp_col,
-        "geo_unit_grp" = 'spatial_grp',
-        "factor" = collapse_to
-      )
+        # update the properties here
+        column_mapping <- list(
+          "date" = date_col,
+          "outcome" = outcome_col,
+          "geo_unit" = geo_unit_grp_col,
+          "geo_unit_grp" = 'spatial_grp',
+          "factor" = collapse_to
+        )
+      } else {
+        data <- data[,.(
+          xoutcome = sum(get(outcome_col))
+        ), by = .(get(date_col),
+                  get(geo_unit_col),
+                  get(geo_unit_grp_col),
+                  get(collapse_to))]
+
+        names(data) <- c(date_col, geo_unit_col, geo_unit_grp_col,
+                         collapse_to, outcome_col)
+
+        # just over-write the collapse_to
+        rr <- which(names(column_mapping) == 'factor')
+        column_mapping[rr] <- NULL
+        column_mapping[['factor']] <- 'collapse_to'
+
+      }
+
+
 
 
     }
@@ -217,23 +273,15 @@ make_outcome_table <- function(data,
   ## ADD ZEROS back in given the now full calendar
   rr <- which(is.na(xgrid[[outcome_col]]))
   xgrid[rr, (outcome_col) := 0]
+  if(any(is.na(xgrid))) stop('some NA in xgrid, investigate')
 
   # **************
   ## create the strata
   dow <- wday(xgrid[, get(date_col)])
   mn  <- month(xgrid[, get(date_col)])
   yr  <- year(xgrid[, get(date_col)])
-  if(any(names(column_mapping) == 'factor')) {
-    fct <- xgrid[, get(column_mapping$factor)]
-    xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
-                           ":yr",yr, ":mn",mn, ":dow",dow,":",
-                           column_mapping$factor, fct)
-
-  } else {
-    xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
-                           ":yr",yr, ":mn",mn, ":dow",dow)
-  }
-
+  xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
+                         ":yr",yr, ":mn",mn, ":dow",dow)
 
   # **************
   # Label strata that have no cases, these will be removed later
@@ -256,6 +304,28 @@ make_outcome_table <- function(data,
   rr <- which(xgrid_comb$strata_total > 0)
   xgrid_comb <- xgrid_comb[rr, ,drop = FALSE]
 
+  # **************
+  # Lastly, re-set column mapping if group-level = TRUE but keep_orig = TRUE
+  if(grp_level & keep_unit_outcomes) {
+    xgrid_comb$spatial_grp <- 'ALL'
+    if(collapse_to == 'ALL') {
+      column_mapping <- list(
+        "date" = date_col,
+        "outcome" = outcome_col,
+        "geo_unit" = geo_unit_grp_col,
+        "geo_unit_grp" = 'spatial_grp'
+      )
+    } else {
+      column_mapping <- list(
+        "date" = date_col,
+        "outcome" = outcome_col,
+        "geo_unit" = geo_unit_grp_col,
+        "geo_unit_grp" = 'spatial_grp',
+        "factor" = collapse_to
+      )
+    }
+  }
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' OUTPUT
@@ -263,11 +333,10 @@ make_outcome_table <- function(data,
   #' //////////////////////////////////////////////////////////////////////////
 
   # reset the order
-  join_col <- column_mapping$geo_unit
   date_col <- column_mapping$date
   setorderv(
     xgrid_comb,
-    c(join_col, date_col)
+    c("strata", date_col)
   )
 
   # set the class as an exposure

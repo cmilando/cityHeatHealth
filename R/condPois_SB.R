@@ -145,10 +145,33 @@ condPois_sb <- function(exposure_matrix,
   outcome_col          <- attributes(outcomes_tbl)$column_mapping$outcome
 
   ## CHECK 6 - minN
+  ## need to update this to check within each town,
+  ## and then remove towns that don't pass from both outcomes_tbl
+  ## and exposure_matrix
   if(is.null(min_n)) {
     min_n = 50
   }
-  stopifnot(sum(outcomes_tbl[, get(outcome_col)]) >= min_n)
+
+  geos_to_remove <- c()
+  unique_geos <- unique(outcomes_tbl[, get(out_geo_unit_col)])
+
+  for(geo_i in 1:length(unique_geos)) {
+    this_geo <- unique_geos[geo_i]
+    rr <- which(outcomes_tbl[, get(out_geo_unit_col)] == this_geo)
+    if(sum(outcomes_tbl[rr, get(outcome_col)]) < min_n) {
+      geos_to_remove <- c(geos_to_remove, this_geo)
+    }
+  }
+
+  if(length(geos_to_remove) > 0) {
+    cat("Removed due to min_n:", geos_to_remove, "\n")
+    #
+    rr <- which(outcomes_tbl[, get(out_geo_unit_col)] %in% geos_to_remove)
+    outcomes_tbl <- outcomes_tbl[-rr, ]
+    #
+    rr <- which(exposure_matrix[, get(exp_geo_unit_col)] %in% geos_to_remove)
+    exposure_matrix <- exposure_matrix[-rr, ]
+  }
 
   # CHECK 7
   stopifnot(strata_min >= 0)

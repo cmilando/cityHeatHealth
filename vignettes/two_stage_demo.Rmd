@@ -57,7 +57,8 @@ Now run by using `condPois_2stage`. This does the Gasp Extended2stage design in 
 Importantly, the estimates in each `geo_unit` are bolstered by those in their `geo_unit_grp` by including a random effect for `geo_unit_grp` in the `mixmeta` model.
 
 ```{r multi_town_run}
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, verbose = 1)
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl, 
+                            verbose = 1, global_cen = 10)
 ```
 
 You can still view the RR output from a single zone:
@@ -108,7 +109,8 @@ head(ma_outcomes_tbl_fct)
 
 Run the model
 ```{r fctrun}
-ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
+ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, 
+                                verbose = 1, global_cen = 10)
 ```
 
 And plot
@@ -133,3 +135,45 @@ and You can get an RR table
 getRR(ma_model_fct)
 ```
 
+## Change the strata level
+
+There may also be situations where you want to overwrite the strata to be a 
+sub-strata level.
+
+```{r overwriteStrata}
+
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+ma_exposure_matrix <- make_exposure_matrix(
+  subset(ma_exposure, COUNTY20 %in% c('MIDDLESEX', 'WORCESTER', 'SUFFOLK') &
+           year(date) %in% 2012:2015), exposure_columns, 
+  grp_level = T, keep_unit_exposures = T)
+
+
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+
+ma_outcomes_tbl <- make_outcome_table(
+  subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER', 'SUFFOLK') &
+           year(date) %in% 2012:2015), outcome_columns,
+  grp_level = T, keep_unit_outcomes = T)
+
+ma_model <- condPois_2stage(ma_exposure_matrix, 
+                            ma_outcomes_tbl, 
+                            verbose = 2, global_cen = 10)
+
+plot(ma_model, geo_unit = "SUFFOLK")
+
+```

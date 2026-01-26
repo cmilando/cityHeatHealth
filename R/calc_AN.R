@@ -658,7 +658,7 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
 #'@export
 #' spatial_plot.calcAN
 #'
-#' @param x an object of class condPois_2stage
+#' @param x an object of class condPois_AN
 #' @param shp an sf shapefile with an appropriate column at which to join
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
@@ -726,7 +726,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT, pal = 'Purples') 
 #'@export
 #' spatial_plot.calcAN_list
 #'
-#' @param x an object of class condPois_2stage_list
+#' @param x an object of class condPois_AN
 #' @param shp an sf shapefile with an appropriate column at which to join
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT

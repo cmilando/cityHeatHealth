@@ -91,22 +91,22 @@ boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
 #> Warning in make_exposure_matrix(boston_exposure, exposure_columns): check about any NA, some corrections for this later,
 #>             but only in certain columns
 head(boston_exposure_mat)
-#>          date  tmax_C TOWN20 COUNTY20  explag1  explag2  explag3  explag4
-#>        <IDat>   <num> <char>   <char>    <num>    <num>    <num>    <num>
-#> 1: 2010-05-01 23.1386 BOSTON  SUFFOLK 15.73815  8.33770 10.85230 16.44320
-#> 2: 2010-05-02 26.1014 BOSTON  SUFFOLK 23.13860 15.73815  8.33770 10.85230
-#> 3: 2010-05-03 31.5648 BOSTON  SUFFOLK 26.10140 23.13860 15.73815  8.33770
-#> 4: 2010-05-04 27.7814 BOSTON  SUFFOLK 31.56480 26.10140 23.13860 15.73815
-#> 5: 2010-05-05 26.2820 BOSTON  SUFFOLK 27.78140 31.56480 26.10140 23.13860
-#> 6: 2010-05-06 25.8546 BOSTON  SUFFOLK 26.28200 27.78140 31.56480 26.10140
-#>     explag5
-#>       <num>
-#> 1: 18.74090
-#> 2: 16.44320
-#> 3: 10.85230
-#> 4:  8.33770
-#> 5: 15.73815
-#> 6: 23.13860
+#>          date  tmax_C TOWN20 COUNTY20                 strata explag1  explag2
+#>        <IDat>   <num> <char>   <char>                 <char>   <num>    <num>
+#> 1: 2010-05-02 26.1014 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 23.1386 15.73815
+#> 2: 2010-05-09 12.7026 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 20.8225 23.99430
+#> 3: 2010-05-16 20.8662 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 21.1532 20.56210
+#> 4: 2010-05-23 24.2529 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 22.2915 28.70030
+#> 5: 2010-05-30 26.6112 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 25.3396 24.91280
+#> 6: 2010-05-03 31.5648 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow2 26.1014 23.13860
+#>     explag3 explag4 explag5
+#>       <num>   <num>   <num>
+#> 1:  8.33770 10.8523 16.4432
+#> 2: 25.85460 26.2820 27.7814
+#> 3: 12.52140 15.6892 14.3792
+#> 4: 13.87970 19.2278 24.0815
+#> 5: 34.74360 32.0717 29.0724
+#> 6: 15.73815  8.3377 10.8523
 ```
 
 You can check that the two problems we saw before – missing data and NA
@@ -116,24 +116,39 @@ data – are gone now
 
 # Sept 17 2010 now has NA data
 boston_exposure_mat[138:142,]
-#>          date  tmax_C TOWN20 COUNTY20 explag1 explag2 explag3 explag4 explag5
-#>        <IDat>   <num> <char>   <char>   <num>   <num>   <num>   <num>   <num>
-#> 1: 2010-09-15 22.5722 BOSTON  SUFFOLK 19.8015 18.5063 22.8082 20.9759 22.0336
-#> 2: 2010-09-16 19.3761 BOSTON  SUFFOLK 22.5722 19.8015 18.5063 22.8082 20.9759
-#> 3: 2010-09-17 19.2204 BOSTON  SUFFOLK 19.3761 22.5722 19.8015 18.5063 22.8082
-#> 4: 2010-09-18 19.0647 BOSTON  SUFFOLK 19.2204 19.3761 22.5722 19.8015 18.5063
-#> 5: 2010-09-19 19.6014 BOSTON  SUFFOLK 19.0647 19.2204 19.3761 22.5722 19.8015
+#>          date  tmax_C TOWN20 COUNTY20                 strata explag1 explag2
+#>        <IDat>   <num> <char>   <char>                 <char>   <num>   <num>
+#> 1: 2010-09-15 22.5722 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow4 19.8015 18.5063
+#> 2: 2010-09-22 21.8626 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow4 20.8122 23.6339
+#> 3: 2010-09-29 24.5670 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow4 17.6530 20.1010
+#> 4: 2010-09-02 34.5557 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow5 34.5163 32.6854
+#> 5: 2010-09-09 27.5800 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow5 29.6411 25.3711
+#>    explag3 explag4 explag5
+#>      <num>   <num>   <num>
+#> 1: 22.8082 20.9759 22.0336
+#> 2: 19.6014 19.0647 19.2204
+#> 3: 30.1472 29.9431 23.5334
+#> 4: 33.2379 28.3939 25.3226
+#> 5: 23.4543 27.9166 29.8866
 
 # July 13 2010 is now not missing
 boston_exposure_mat[72:77,]
-#>          date  tmax_C TOWN20 COUNTY20 explag1 explag2 explag3 explag4 explag5
-#>        <IDat>   <num> <char>   <char>   <num>   <num>   <num>   <num>   <num>
-#> 1: 2010-07-11 29.1988 BOSTON  SUFFOLK 33.0867 32.8450 34.5714 37.1773 36.2254
-#> 2: 2010-07-12 31.7248 BOSTON  SUFFOLK 29.1988 33.0867 32.8450 34.5714 37.1773
-#> 3: 2010-07-13 31.8311 BOSTON  SUFFOLK 31.7248 29.1988 33.0867 32.8450 34.5714
-#> 4: 2010-07-14 31.9374 BOSTON  SUFFOLK 31.8311 31.7248 29.1988 33.0867 32.8450
-#> 5: 2010-07-15 23.7004 BOSTON  SUFFOLK 31.9374 31.8311 31.7248 29.1988 33.0867
-#> 6: 2010-07-16 28.7843 BOSTON  SUFFOLK 23.7004 31.9374 31.8311 31.7248 29.1988
+#>          date  tmax_C TOWN20 COUNTY20                 strata explag1 explag2
+#>        <IDat>   <num> <char>   <char>                 <char>   <num>   <num>
+#> 1: 2010-07-20 31.2000 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow3 31.9163 33.1227
+#> 2: 2010-07-27 28.9373 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow3 31.7191 32.1075
+#> 3: 2010-07-07 37.1773 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 36.2254 33.7484
+#> 4: 2010-07-14 31.9374 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 31.8311 31.7248
+#> 5: 2010-07-21 28.8115 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 31.2000 31.9163
+#> 6: 2010-07-28 32.6980 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 28.9373 31.7191
+#>    explag3 explag4 explag5
+#>      <num>   <num>   <num>
+#> 1: 33.3453 28.7843 23.7004
+#> 2: 27.4911 29.0821 32.0035
+#> 3: 31.8415 27.8356 23.6608
+#> 4: 29.1988 33.0867 32.8450
+#> 5: 33.1227 33.3453 28.7843
+#> 6: 32.1075 27.4911 29.0821
 ```
 
 Its probably a good idea to see if there is any systematic bias in the
@@ -206,12 +221,12 @@ boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
 head(boston_deaths_tbl)
 #>          date TOWN20 COUNTY20 daily_deaths                 strata strata_total
 #>        <IDat> <char>   <char>        <int>                 <char>        <num>
-#> 1: 2010-05-01 BOSTON  SUFFOLK         2238 BOSTON:yr2010:mn5:dow7        11312
-#> 2: 2010-05-02 BOSTON  SUFFOLK         2089 BOSTON:yr2010:mn5:dow1        10929
-#> 3: 2010-05-03 BOSTON  SUFFOLK         2374 BOSTON:yr2010:mn5:dow2        11435
-#> 4: 2010-05-04 BOSTON  SUFFOLK         2354 BOSTON:yr2010:mn5:dow3         9372
-#> 5: 2010-05-05 BOSTON  SUFFOLK         2489 BOSTON:yr2010:mn5:dow4         9193
-#> 6: 2010-05-06 BOSTON  SUFFOLK         2191 BOSTON:yr2010:mn5:dow5         8657
+#> 1: 2010-05-02 BOSTON  SUFFOLK         2089 BOSTON:yr2010:mn5:dow1        10929
+#> 2: 2010-05-09 BOSTON  SUFFOLK         2049 BOSTON:yr2010:mn5:dow1        10929
+#> 3: 2010-05-16 BOSTON  SUFFOLK         2156 BOSTON:yr2010:mn5:dow1        10929
+#> 4: 2010-05-23 BOSTON  SUFFOLK         2152 BOSTON:yr2010:mn5:dow1        10929
+#> 5: 2010-05-30 BOSTON  SUFFOLK         2483 BOSTON:yr2010:mn5:dow1        10929
+#> 6: 2010-05-03 BOSTON  SUFFOLK         2374 BOSTON:yr2010:mn5:dow2        11435
 ```
 
 Notice that two variables have been added:

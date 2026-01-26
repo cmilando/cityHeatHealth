@@ -46,14 +46,22 @@ And lets preview this
 ``` r
 
 head(ma_exposure_matrix)
-#>          date  tmax_C TOWN20  COUNTY20 explag1 explag2 explag3 explag4 explag5
-#>        <IDat>   <num> <char>    <char>   <num>   <num>   <num>   <num>   <num>
-#> 1: 2012-05-01 16.4633  ACTON MIDDLESEX 14.0179 14.1931 12.7975 17.5538 16.2753
-#> 2: 2012-05-02  8.6743  ACTON MIDDLESEX 16.4633 14.0179 14.1931 12.7975 17.5538
-#> 3: 2012-05-03 11.1778  ACTON MIDDLESEX  8.6743 16.4633 14.0179 14.1931 12.7975
-#> 4: 2012-05-04 12.4253  ACTON MIDDLESEX 11.1778  8.6743 16.4633 14.0179 14.1931
-#> 5: 2012-05-05 12.8489  ACTON MIDDLESEX 12.4253 11.1778  8.6743 16.4633 14.0179
-#> 6: 2012-05-06 17.7602  ACTON MIDDLESEX 12.8489 12.4253 11.1778  8.6743 16.4633
+#>          date  tmax_C TOWN20  COUNTY20                strata explag1 explag2
+#>        <IDat>   <num> <char>    <char>                <char>   <num>   <num>
+#> 1: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 12.8489 12.4253
+#> 2: 2012-05-13 26.2234  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 18.2676 17.8051
+#> 3: 2012-05-20 24.7840  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 21.4705 20.3042
+#> 4: 2012-05-27 29.9073  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 23.4173 24.4627
+#> 5: 2012-05-07 16.1798  ACTON MIDDLESEX ACTON:yr2012:mn5:dow2 17.7602 12.8489
+#> 6: 2012-05-14 28.5869  ACTON MIDDLESEX ACTON:yr2012:mn5:dow2 26.2234 18.2676
+#>    explag3 explag4 explag5
+#>      <num>   <num>   <num>
+#> 1: 11.1778  8.6743 16.4633
+#> 2: 17.9041 13.6660 20.2731
+#> 3: 22.6773 22.6600 19.8368
+#> 4: 25.0704 17.8687 21.3824
+#> 5: 12.4253 11.1778  8.6743
+#> 6: 17.8051 17.9041 13.6660
 ```
 
 ### Outcome
@@ -89,12 +97,12 @@ And lets preview this
 head(ma_outcomes_tbl)
 #>          date TOWN20  COUNTY20 daily_deaths                strata strata_total
 #>        <IDat> <char>    <char>        <int>                <char>        <num>
-#> 1: 2012-05-01  ACTON MIDDLESEX           73 ACTON:yr2012:mn5:dow3          423
-#> 2: 2012-05-02  ACTON MIDDLESEX           78 ACTON:yr2012:mn5:dow4          420
-#> 3: 2012-05-03  ACTON MIDDLESEX           78 ACTON:yr2012:mn5:dow5          414
-#> 4: 2012-05-04  ACTON MIDDLESEX           78 ACTON:yr2012:mn5:dow6          327
-#> 5: 2012-05-05  ACTON MIDDLESEX           78 ACTON:yr2012:mn5:dow7          334
-#> 6: 2012-05-06  ACTON MIDDLESEX           72 ACTON:yr2012:mn5:dow1          334
+#> 1: 2012-05-06  ACTON MIDDLESEX           72 ACTON:yr2012:mn5:dow1          334
+#> 2: 2012-05-13  ACTON MIDDLESEX           84 ACTON:yr2012:mn5:dow1          334
+#> 3: 2012-05-20  ACTON MIDDLESEX           90 ACTON:yr2012:mn5:dow1          334
+#> 4: 2012-05-27  ACTON MIDDLESEX           88 ACTON:yr2012:mn5:dow1          334
+#> 5: 2012-05-07  ACTON MIDDLESEX           79 ACTON:yr2012:mn5:dow2          349
+#> 6: 2012-05-14  ACTON MIDDLESEX           88 ACTON:yr2012:mn5:dow2          349
 ```
 
 ### Run the conditional poisson model
@@ -605,7 +613,7 @@ ma_AN$`_`$rate_table
 #>   5: ASHBURNHAM WORCESTER       6337      TRUE                  21.44153
 #>  ---                                                                    
 #> 224: WINCHESTER MIDDLESEX      22809     FALSE                   0.00000
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                  22.50236
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                  22.45052
 #> 226:     WOBURN MIDDLESEX      40992     FALSE                   0.00000
 #> 227:  WORCESTER WORCESTER     204191      TRUE                  25.62654
 #> 228:  WORCESTER WORCESTER     204191     FALSE                   0.00000
@@ -618,7 +626,7 @@ ma_AN$`_`$rate_table
 #>   5:                 13.12398                 29.34617
 #>  ---                                                  
 #> 224:                  0.00000                  0.00000
-#> 225:                 14.48530                 29.36996
+#> 225:                 14.70409                 29.94583
 #> 226:                  0.00000                  0.00000
 #> 227:                 15.26067                 34.07675
 #> 228:                  0.00000                  0.00000
@@ -638,7 +646,7 @@ ma_AN$`_`$number_table
 #>   5: ASHBURNHAM WORCESTER       6337      TRUE                 1.358750
 #>  ---                                                                   
 #> 224: WINCHESTER MIDDLESEX      22809     FALSE                 0.000000
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                 9.224167
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                 9.202917
 #> 226:     WOBURN MIDDLESEX      40992     FALSE                 0.000000
 #> 227:  WORCESTER WORCESTER     204191      TRUE                52.327083
 #> 228:  WORCESTER WORCESTER     204191     FALSE                 0.000000
@@ -651,7 +659,7 @@ ma_AN$`_`$number_table
 #>   5:               0.8316667                1.859667
 #>  ---                                                
 #> 224:               0.0000000                0.000000
-#> 225:               5.9378125               12.039333
+#> 225:               6.0275000               12.275396
 #> 226:               0.0000000                0.000000
 #> 227:              31.1609167               69.581667
 #> 228:               0.0000000                0.000000
@@ -699,22 +707,22 @@ Lets look at the result:
 ``` r
 
 head(ma_outcomes_tbl_fct)
-#>          date TOWN20  COUNTY20 age_grp daily_deaths
-#>        <IDat> <char>    <char>  <char>        <int>
-#> 1: 2012-05-01  ACTON MIDDLESEX    0-17           25
-#> 2: 2012-05-01  ACTON MIDDLESEX   18-64           24
-#> 3: 2012-05-01  ACTON MIDDLESEX     65+           24
-#> 4: 2012-05-02  ACTON MIDDLESEX    0-17           26
-#> 5: 2012-05-02  ACTON MIDDLESEX   18-64           26
-#> 6: 2012-05-02  ACTON MIDDLESEX     65+           26
-#>                                strata strata_total
-#>                                <char>        <num>
-#> 1:  ACTON:yr2012:mn5:dow3:age_grp0-17          147
-#> 2: ACTON:yr2012:mn5:dow3:age_grp18-64          136
-#> 3:   ACTON:yr2012:mn5:dow3:age_grp65+          140
-#> 4:  ACTON:yr2012:mn5:dow4:age_grp0-17          145
-#> 5: ACTON:yr2012:mn5:dow4:age_grp18-64          136
-#> 6:   ACTON:yr2012:mn5:dow4:age_grp65+          139
+#>          date TOWN20  COUNTY20 age_grp daily_deaths                strata
+#>        <IDat> <char>    <char>  <char>        <int>                <char>
+#> 1: 2012-05-06  ACTON MIDDLESEX    0-17           24 ACTON:yr2012:mn5:dow1
+#> 2: 2012-05-06  ACTON MIDDLESEX   18-64           24 ACTON:yr2012:mn5:dow1
+#> 3: 2012-05-06  ACTON MIDDLESEX     65+           24 ACTON:yr2012:mn5:dow1
+#> 4: 2012-05-13  ACTON MIDDLESEX    0-17           29 ACTON:yr2012:mn5:dow1
+#> 5: 2012-05-13  ACTON MIDDLESEX   18-64           27 ACTON:yr2012:mn5:dow1
+#> 6: 2012-05-13  ACTON MIDDLESEX     65+           28 ACTON:yr2012:mn5:dow1
+#>    strata_total
+#>           <num>
+#> 1:          334
+#> 2:          334
+#> 3:          334
+#> 4:          334
+#> 5:          334
+#> 6:          334
 ```
 
 Now, all of our other functions can stay the same:

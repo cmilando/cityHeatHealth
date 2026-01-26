@@ -115,7 +115,6 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
     stopifnot(is.numeric(global_cen))
   }
 
-
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' CREATE CROSSBASIS for this single zone

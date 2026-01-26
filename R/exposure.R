@@ -8,6 +8,7 @@
 #' @param maxgaps the maximum allowable missing exposure data gap, to be passed to zoo::na.approx (default is 5)
 #' @param maxlag the number of lags for the exposure variable (default is 5)
 #' @param grp_level whether to summarize to the group level or not (default)
+#' @param keep_unit_exposures if grp_level is true, whether to keep original unit-level exposures
 #' @param dt_by is it daily data, or weekly or ...
 #'
 #' @import data.table
@@ -23,7 +24,8 @@ make_exposure_matrix <- function(data,
                                  dt_by = 'day',
                                  maxgap = 5,
                                  maxlag = 5,
-                                 grp_level = FALSE) {
+                                 grp_level = FALSE,
+                                 keep_unit_exposures = FALSE) {
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -97,6 +99,19 @@ make_exposure_matrix <- function(data,
   # no month subset here, do not change from 1:12 for exposure!
   # this does change in outcomes but not here
   xgrid <- make_xgrid(data, column_mapping, months_subset = 1:12, dt_by)
+
+  # set the strata
+  date_col <- column_mapping$date
+  dow <- wday(xgrid[, get(date_col)])
+  mn  <- month(xgrid[, get(date_col)])
+  yr  <- year(xgrid[, get(date_col)])
+  if((grp_level & keep_unit_exposures) | !grp_level) {
+    xgrid$strata <- paste0(xgrid[, get(column_mapping$geo_unit)],
+                                     ":yr",yr, ":mn",mn, ":dow", dow)
+  } else {
+    xgrid$strata <- paste0(xgrid[, get(column_mapping$geo_unit_grp)],
+                           ":yr",yr, ":mn",mn, ":dow", dow)
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -185,33 +200,54 @@ make_exposure_matrix <- function(data,
   # grp_level summary?
   if(grp_level) {
 
-    geo_grp_col <- column_mapping$geo_unit_grp
-    unique_grps <- unlist(unique(data[, get(geo_grp_col)]))
-    n_grps <- length(unique_grps)
-    exposure2 <- do.call(rbind, exposure2_l)
+    # get exposure2
+    exposure2   <- do.call(rbind, exposure2_l)
     setDT(exposure2)
+
+    # no matter what since you are averaging to grp level you want to add this
+    exposure2$spatial_grp <- 'ALL'
+
+    # decide what resolution you are averaging to
+    # so here we are updating to the new geo_unit and geo_unit_grp
+    # but keeping the column names
+    if(keep_unit_exposures == TRUE) {
+
+      geo_col     <- column_mapping$geo_unit
+      geo_grp_col <- column_mapping$geo_unit_grp
+
+    } else {
+
+      geo_col     <- column_mapping$geo_unit_grp
+      geo_grp_col <- 'spatial_grp'
+
+    }
 
     # 3. Aggregate by group
     # Here I'm assuming you want the mean of exposure columns; adjust as needed
-    exposure2 <- exposure2[, lapply(.SD, mean, na.rm = TRUE),
-                           by = .(get(geo_grp_col), get(date_col)),
+    exposure2avg <- exposure2[, lapply(.SD, mean, na.rm = TRUE),
+                           by = .(get(geo_col), get(geo_grp_col),
+                                  get(date_col), strata),
                            .SDcols = exposure_col]
 
-    names(exposure2)[1:2] <- c(column_mapping$geo_unit_grp, column_mapping$date)
+    names(exposure2avg)[1:3] <- c(geo_col, geo_grp_col, column_mapping$date)
 
     # and make the dates ok again
     # warning("make type checks  (e.g., so Date == Date),
     #      for some reason this doesn't work in some cases? but ok in others?")
 
-    exposure2[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
+    exposure2avg[, (column_mapping$date) := as.IDate(get(column_mapping$date))]
+    exposure2avg$spatial_grp <- 'ALL'
+
+    # update the properties here
 
     # then in order to set up lags you need to split again
-    exposure2_l <- split(exposure2, f = exposure2[, get(geo_grp_col)])
+    exposure2_l <- split(exposure2avg, f = exposure2avg[, get(geo_col)])
     length(exposure2_l)
 
-    # and update column_mapping
+    #  update column_mapping
     column_mapping$geo_unit <- column_mapping$geo_unit_grp
-    column_mapping$geo_unit_grp <- 'ALL'
+    column_mapping$geo_unit_grp <- 'spatial_grp'
+
 
   }
 
@@ -254,11 +290,10 @@ make_exposure_matrix <- function(data,
   exposure_subset <- exposure2[rr, ]
 
   # reset the order
-  join_col <- column_mapping$geo_unit
   date_col <- column_mapping$date
   setorderv(
     exposure_subset,
-    c(join_col, date_col)
+    c("strata", date_col)
   )
 
   # set the class as an exposure

@@ -1,13 +1,12 @@
 # Todo
 
-Running list of ToDos \[1.5.2026\]:
+Running list of ToDos \[1.14.2026\]:
 
 - convert to using tests; <https://testthat.r-lib.org/index.html>
 
-- make a separate function that validates so you don’t have to repeat
-  things across cond1, cond2 and cond2b
-
-- how does weekly vs daily averaging work? should it?
+- how does weekly vs daily averaging work? should it? -\> right now, if
+  you say weekly but your information is daily I’m not sure what would
+  happen
 
 - mixmeta blup update from Gasp
 
