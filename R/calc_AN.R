@@ -235,10 +235,10 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   unique_years <- unique(year(outcomes_tbl[, get(date_col)]))
 
   ## now expand_grid for every year and above_MMT = c(T, F)
+  ## actually, removing nsim here
   xgrid <- tidyr::expand_grid(data.frame(unique_geos),
                        year = unique_years,
-                       above_MMT = c(T, F),
-                       nsim = 1:nsim)
+                       above_MMT = c(T, F))
   setDT(xgrid)
 
   ## join w population
@@ -277,7 +277,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
     ## do an initial fine grain summary
     group_cols = c(
-      geo_unit_col, geo_unit_grp_col, 'year', 'nsim', 'above_MMT'
+      geo_unit_col, geo_unit_grp_col, 'year', 'above_MMT'
     )
 
     AN_ANNUAL[[xi]] <- AN_sub_all[, .(
@@ -293,14 +293,15 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       on = setNames(group_cols, group_cols)
     ]
 
+    # mannual set xi
+    AN_ANNUAL[[xi]]$nsim = xi
+
     # fill in NAs
     rr <- which(is.na(AN_ANNUAL[[xi]]$annual_AN))
     AN_ANNUAL[[xi]]$annual_AN[rr] <- 0
     if(any(is.na(AN_ANNUAL[[xi]]))) stop("AN expand_grid didn't work correctly")
 
     ## and join pop
-
-
     AN_ANNUAL[[xi]] <- pop_data_collapse[
       AN_ANNUAL[[xi]],
       on = setNames(join_cols, join_cols)
@@ -326,8 +327,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       )
 
       AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
-        annual_AN = sum(annual_AN),
-        population = sum(population)
+        annual_AN = sum(annual_AN, na.rm = T),
+        population = sum(population, na.rm = T)
       ), by = group_cols]
 
     } else {
@@ -339,8 +340,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       )
 
       AN_ANNUAL[[xi]] = AN_ANNUAL[[xi]][,.(
-        annual_AN = sum(annual_AN),
-        population = sum(population)
+        annual_AN = sum(annual_AN, na.rm = T),
+        population = sum(population, na.rm = T)
       ), by = group_cols]
 
     }

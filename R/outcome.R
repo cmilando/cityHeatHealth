@@ -32,6 +32,7 @@ make_outcome_table <- function(data,
   #' //////////////////////////////////////////////////////////////////////////
 
   ##
+  stopifnot(nrow(data) > 0)
   setDT(data)
 
   #
