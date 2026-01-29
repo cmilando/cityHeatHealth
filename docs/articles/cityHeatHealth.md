@@ -606,30 +606,30 @@ From this you get a `rate_table` :
 ma_AN$`_`$rate_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>          <char>    <char>      <num>    <lgcl>                     <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                  24.56105
-#>   2:      ACTON MIDDLESEX      23864     FALSE                   0.00000
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                  30.11861
-#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                   0.00000
-#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  21.44153
+#>   1:      ACTON MIDDLESEX      23864      TRUE                  7368.316
+#>   2:      ACTON MIDDLESEX      23864     FALSE                     0.000
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                  9035.584
+#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                     0.000
+#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  6432.460
 #>  ---                                                                    
-#> 224: WINCHESTER MIDDLESEX      22809     FALSE                   0.00000
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                  22.45052
-#> 226:     WOBURN MIDDLESEX      40992     FALSE                   0.00000
-#> 227:  WORCESTER WORCESTER     204191      TRUE                  25.62654
-#> 228:  WORCESTER WORCESTER     204191     FALSE                   0.00000
+#> 224: WINCHESTER MIDDLESEX      22809     FALSE                     0.000
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                  6735.156
+#> 226:     WOBURN MIDDLESEX      40992     FALSE                     0.000
+#> 227:  WORCESTER WORCESTER     204191      TRUE                  7687.961
+#> 228:  WORCESTER WORCESTER     204191     FALSE                     0.000
 #>      mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                         <num>                    <num>
-#>   1:                 14.16036                 34.49521
-#>   2:                  0.00000                  0.00000
-#>   3:                 21.05122                 38.09419
-#>   4:                  0.00000                  0.00000
-#>   5:                 13.12398                 29.34617
+#>   1:                 4248.109                 10348.56
+#>   2:                    0.000                     0.00
+#>   3:                 6315.365                 11428.26
+#>   4:                    0.000                     0.00
+#>   5:                 3937.194                  8803.85
 #>  ---                                                  
-#> 224:                  0.00000                  0.00000
-#> 225:                 14.70409                 29.94583
-#> 226:                  0.00000                  0.00000
-#> 227:                 15.26067                 34.07675
-#> 228:                  0.00000                  0.00000
+#> 224:                    0.000                     0.00
+#> 225:                 4411.227                  8983.75
+#> 226:                    0.000                     0.00
+#> 227:                 4578.201                 10223.03
+#> 228:                    0.000                     0.00
 ```
 
 and a `number_table`:
@@ -639,30 +639,30 @@ and a `number_table`:
 ma_AN$`_`$number_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_num_est
 #>          <char>    <char>      <num>    <lgcl>                    <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                 5.861250
-#>   2:      ACTON MIDDLESEX      23864     FALSE                 0.000000
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                13.826250
-#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                 0.000000
-#>   5: ASHBURNHAM WORCESTER       6337      TRUE                 1.358750
+#>   1:      ACTON MIDDLESEX      23864      TRUE                 1758.375
+#>   2:      ACTON MIDDLESEX      23864     FALSE                    0.000
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 4147.875
+#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                    0.000
+#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  407.625
 #>  ---                                                                   
-#> 224: WINCHESTER MIDDLESEX      22809     FALSE                 0.000000
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                 9.202917
-#> 226:     WOBURN MIDDLESEX      40992     FALSE                 0.000000
-#> 227:  WORCESTER WORCESTER     204191      TRUE                52.327083
-#> 228:  WORCESTER WORCESTER     204191     FALSE                 0.000000
+#> 224: WINCHESTER MIDDLESEX      22809     FALSE                    0.000
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                 2760.875
+#> 226:     WOBURN MIDDLESEX      40992     FALSE                    0.000
+#> 227:  WORCESTER WORCESTER     204191      TRUE                15698.125
+#> 228:  WORCESTER WORCESTER     204191     FALSE                    0.000
 #>      mean_annual_attr_num_lb mean_annual_attr_num_ub
 #>                        <num>                   <num>
-#>   1:               3.3792292                8.231937
-#>   2:               0.0000000                0.000000
-#>   3:               9.6637708               17.487521
-#>   4:               0.0000000                0.000000
-#>   5:               0.8316667                1.859667
+#>   1:                1013.769                2469.581
+#>   2:                   0.000                   0.000
+#>   3:                2899.131                5246.256
+#>   4:                   0.000                   0.000
+#>   5:                 249.500                 557.900
 #>  ---                                                
-#> 224:               0.0000000                0.000000
-#> 225:               6.0275000               12.275396
-#> 226:               0.0000000                0.000000
-#> 227:              31.1609167               69.581667
-#> 228:               0.0000000                0.000000
+#> 224:                   0.000                   0.000
+#> 225:                1808.250                3682.619
+#> 226:                   0.000                   0.000
+#> 227:                9348.275               20874.500
+#> 228:                   0.000                   0.000
 ```
 
 And you can plot either one
