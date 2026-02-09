@@ -140,14 +140,14 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
   #' //////////////////////////////////////////////////////////////////////////
 
   if(any(names(column_mapping) == 'factor')) {
-    join_cols <- c(
+    spatial_join_col <- c(
       column_mapping$date,
       column_mapping$geo_unit,
       column_mapping$geo_unit_grp,
       column_mapping$factor
     )
   } else {
-    join_cols <- c(
+    spatial_join_col <- c(
       column_mapping$date,
       column_mapping$geo_unit,
       column_mapping$geo_unit_grp
@@ -156,7 +156,7 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
 
   xgrid <- data[
     xgrid,
-    on = setNames(join_cols, join_cols)
+    on = setNames(spatial_join_col, spatial_join_col)
   ]
 
   stopifnot(nrow(xgrid) > 0)

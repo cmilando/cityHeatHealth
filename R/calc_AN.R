@@ -3,8 +3,8 @@
 #' @param model a model object of class `condPois_2stage`, `condPois_1stage`, or `condPois_sb`
 #' @param outcomes_tbl a table of outcomes, of class `outcomes`
 #' @param pop_data population data
-#' @param agg_type what is the spatial resolution you are aggregating to
-#' @param join_cols how should you join population data to the outcome table
+#' @param spatial_agg_type what is the spatial resolution you are aggregating to
+#' @param spatial_join_col how should you join population data to the outcome table
 #' @param nsim number of simulations required for calculation of empirical CI (default = 300)
 #' @param verbose 0 = no printing, 1 = headers, 2 = detailed
 #' @import data.table
@@ -14,7 +14,7 @@
 #'
 #' @examples
 calc_AN <- function(model, outcomes_tbl, pop_data,
-                    agg_type, join_cols, nsim = 300, verbose = 0) {
+                    spatial_agg_type, spatial_join_col, nsim = 300, verbose = 0) {
 
 
   ## Check 1 -- that both inputs are the right class of variables
@@ -26,7 +26,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   stopifnot("outcome" %in% class(outcomes_tbl))
 
   stopifnot('population' %in% names(pop_data))
-  stopifnot(all(join_cols %in% names(pop_data)))
+  stopifnot(all(spatial_join_col %in% names(pop_data)))
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -70,8 +70,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       fct_outlist[[fct_i]] <- calc_AN(sub_model,        # <<< **Updated
                                       sub_outcomes_tbl, # <<< **Updated
                                       sub_pop_data,     # <<< **Updated
-                                      agg_type,
-                                      join_cols,
+                                      spatial_agg_type,
+                                      spatial_join_col,
                                       nsim = nsim,
                                       verbose = verbose)
 
@@ -101,12 +101,32 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   geo_unit_col     <- attributes(outcomes_tbl)$column_mapping$geo_unit
   geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
-  # check agg_type
-  stopifnot(agg_type %in% c(geo_unit_col, geo_unit_grp_col, 'all'))
+  # check spatial_agg_type
+  stopifnot(spatial_agg_type %in% c(geo_unit_col, geo_unit_grp_col, 'all'))
 
-  # check jointype
+  # TODO: check jointype
+  stopifnot(length(spatial_join_col) == 1)
+  stopifnot(length(spatial_agg_type) == 1)
 
+  # check pop data
   setDT(pop_data)
+
+  stopifnot(all(spatial_join_col %in% names(pop_data)))
+
+  pop_data_collapse <- pop_data[, .(
+    population = sum(population)),
+    by = spatial_join_col
+  ]
+
+  if(any(pop_data_collapse$population == 0)) {
+    warning("some pop data are zero")
+    pop_data_collapse <- subset(pop_data_collapse, population > 0)
+  }
+
+  # subsetting
+  safe_geos <- unique(pop_data_collapse[, ..spatial_join_col])
+  outcomes_tbl <- safe_geos[outcomes_tbl, on = spatial_join_col, nomatch = 0]
+
 
   if(verbose > 0) {
     cat("-- validation passed\n")
@@ -124,6 +144,9 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
   # starting here
   x <- model$`_`
+
+  ## DO SOME EXTRA SUBSETTING because not every x <- model$_ has
+  ## every geo_unit I think
 
   # get the blup object
   n_geo_units <- length(x$out)
@@ -152,10 +175,21 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     cen        <- x$out[[i]]$cen
     global_cen <- x$out[[i]]$global_cen
 
+    # stop if this isn't in pop_data
+    if(! (this_geo %in% as.vector(unlist(safe_geos)))) {
+      cat("skipping based on no population data: ", this_geo, "\t")
+      next
+    }
+
+
+
     # and the outcome database, which should match
     rr <- which(outcomes_tbl[, get(geo_unit_col)] == this_geo)
     single_outcomes_tbl <- outcomes_tbl[rr, ,drop = FALSE]
+    date_fmt <- single_outcomes_tbl[, get(date_col)]
+
     if(!identical(single_outcomes_tbl[, get(outcomes_col)], outcomes)) {
+      print(this_geo)
       print(head(single_outcomes_tbl))
       print(nrow(single_outcomes_tbl))
       print(head(outcomes))
@@ -193,6 +227,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
     AN_SIM_mat$this_exp = this_exp
     AN_SIM_mat$cen      = cen
+    AN_SIM_mat$date_fmt = date_fmt
 
     AN_SIM_mat[, (colnames(single_outcomes_tbl)) := single_outcomes_tbl]
 
@@ -216,13 +251,6 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     cat("-- summarize by simulation\n")
   }
 
-  # collapse population data
-  stopifnot(all(join_cols %in% names(pop_data)))
-  pop_data_collapse <- pop_data[, .(
-    population = sum(population)),
-    by = join_cols
-  ]
-
   ## you have missing rows here because not every
   ## place has values below MMT in every year
   ## so its almost like you need another xgrid
@@ -237,8 +265,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   ## now expand_grid for every year and above_MMT = c(T, F)
   ## actually, removing nsim here
   xgrid <- tidyr::expand_grid(data.frame(unique_geos),
-                       year = unique_years,
-                       above_MMT = c(T, F))
+                              year = unique_years,
+                              above_MMT = c(T, F))
   setDT(xgrid)
 
   ## join w population
@@ -256,18 +284,46 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     AN_sub <- vector("list", n_geo_units)
 
     get_cols <- c(geo_unit_col, geo_unit_grp_col,
-                  'this_exp', 'year', 'cen', this_col)
+                  'this_exp', 'year', 'cen', 'date_fmt', this_col)
 
     for(ani in 1:n_geo_units) {
 
-      setDT(AN[[ani]])
-      x1 <- AN[[ani]][, ..get_cols]
-      x1$nsim <- xi
-      AN_sub[[ani]] <- x1
+      if(!is.null(AN[[ani]])) {
+
+        setDT(AN[[ani]])
+        x1 <- AN[[ani]][, ..get_cols]
+        x1$nsim <- xi
+        AN_sub[[ani]] <- x1
+
+      }
     }
 
     AN_sub_all <- do.call(rbind, AN_sub)
-    stopifnot(nrow(AN_sub_all) == nrow(outcomes_tbl))
+
+    # check
+    if(!(nrow(AN_sub_all) == nrow(outcomes_tbl))) {
+      #
+      print(nrow(AN_sub_all))
+      print(AN_sub_all)
+
+      dt1 = AN_sub_all
+      dt1$date = dt1$date_fmt
+      dt1$town = dt1$TOWN20
+      #
+      print(nrow(outcomes_tbl))
+      print(outcomes_tbl)
+      #
+      dt2 = outcomes_tbl
+      dt2$date = dt2$RegistrationDate
+      dt2$town = dt2$TOWN20
+
+      # find rows in d2 that are not in d1
+      #             outcomes tbl        AN_sub
+      print(dt2[!dt1, on = .(date, town)])
+      stop("row mismatch between AN_sub_all and outcomes_tbl")
+    }
+
+    # rename
     names(AN_sub_all)[length(get_cols)] <- "attributable_number"
 
     ## get just those above the centering point
@@ -304,7 +360,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     ## and join pop
     AN_ANNUAL[[xi]] <- pop_data_collapse[
       AN_ANNUAL[[xi]],
-      on = setNames(join_cols, join_cols)
+      on = setNames(spatial_join_col, spatial_join_col)
     ]
 
     sum_AN_new <- sum(AN_ANNUAL[[xi]]$annual_AN)
@@ -314,13 +370,13 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     }
 
 
-    # and then summarize to the annual level per group based on agg_type
+    # and then summarize to the annual level per group based on spatial_agg_type
     # this is OK to do within an `xi` because you know its all the data
-    if(agg_type == geo_unit_col) {
+    if(spatial_agg_type == geo_unit_col) {
 
       invisible(1)
 
-    } else if(agg_type == geo_unit_grp_col) {
+    } else if(spatial_agg_type == geo_unit_grp_col) {
 
       group_cols = c(
         geo_unit_grp_col, 'year', 'nsim', 'above_MMT'
@@ -370,14 +426,31 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   x1 <- AN_ANNUAL[,.(
     mean_annual_AN = mean(annual_AN)
   ), by = g1_cols]
+
+  # final checks
   if(any(is.na(x1$mean_annual_AN))) {
     rr <- which(is.na(x1$mean_annual_AN))
     print(x1[rr, ])
-    stop('annual_AN has NA, find out why')
+    warning('annual_AN has NA, find out why')
+    return(x1)
+  }
+
+  if(any(is.na(x1$population))) {
+    rr <- which(is.na(x1$population))
+    print(x1[rr, ])
+    warning('population has NA, find out why')
+    return(x1)
   }
 
   # rate column
   x1[, mean_annual_AN_rate := mean_annual_AN / population * 1e5]
+
+  if(any(is.na(x1$mean_annual_AN_rate))) {
+    rr <- which(is.na(x1$mean_annual_AN_rate))
+    print(x1[rr, ])
+    warning('mean_annual_AN_rate has NA, find out why')
+    return(x1)
+  }
 
   # rate eCI
   g2_cols <- c(names(AN_ANNUAL)[c1], "population", 'above_MMT')
@@ -440,6 +513,7 @@ print.calcAN_list <- function(x) {
 #' @param x an object of class plot.calcAN
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
+#' @param plot_sub an option argument to subset the geo_units investigated
 #' @importFrom ggplot2 ggplot
 #' @importFrom scales number
 #' @import data.table
@@ -447,7 +521,7 @@ print.calcAN_list <- function(x) {
 #' @export
 #'
 #' @examples
-plot.calcAN <- function(x, table_type, above_MMT) {
+plot.calcAN <- function(x, table_type, above_MMT, plot_sub = NULL) {
 
   stopifnot(table_type %in% c('rate', 'num'))
   stopifnot(above_MMT %in% c(T, F))
@@ -460,6 +534,9 @@ plot.calcAN <- function(x, table_type, above_MMT) {
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
+
+
+
     if(nrow(byX_df) > 20) {
       warning("plot elements > 20, subsetting to top 20")
       setorder(byX_df, -mean_annual_attr_num_est)
@@ -691,7 +768,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT, pal = 'Purples') 
              theme_classic() +
              geom_sf(aes(fill = mean_annual_attr_num_est)) +
              scale_fill_binned(name = paste0("Annual Temp Attr.\nOutcomes\n",
-                                                ylab_flag, "\n(#)"),
+                                             ylab_flag, "\n(#)"),
                                palette = pal) +
              theme(axis.text = element_blank(),
                    axis.ticks = element_blank(),
@@ -713,7 +790,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT, pal = 'Purples') 
              theme_classic() +
              geom_sf(aes(fill = mean_annual_attr_rate_est)) +
              scale_fill_binned(name = paste0("Annual Temp Attr.\nOutcomes Rate\n",
-                                                ylab_flag, "\n(# per 100,000)"),
+                                             ylab_flag, "\n(# per 100,000)"),
                                palette = pal) +
              theme(axis.text = element_blank(),
                    axis.ticks = element_blank(),

@@ -233,8 +233,8 @@ change it</p></li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_AN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="va">ma_outcomes_tbl</span>, <span class="va">ma_pop_data_long</span>,</span>
-<span>                 agg_type <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
-<span>                 join_cols <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
+<span>                 spatial_agg_type <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
+<span>                 spatial_join_col <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
 <span>                 nsim <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
@@ -296,12 +296,12 @@ change it</p></li>
 <span><span class="co">#&gt; 226:                -96.0125               -31.21250</span></span>
 <span><span class="co">#&gt; 227:               5461.6125              7333.48750</span></span>
 <span><span class="co">#&gt; 228:               -776.4437              -366.10625</span></span></code></pre></div>
-<p>you can change <code>agg_type</code> to be a different spatial
+<p>you can change <code>spatial_agg_type</code> to be a different spatial
 resolution – either whatever the group variable was or “all”</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_AN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="va">ma_outcomes_tbl</span>, <span class="va">ma_pop_data_long</span>,</span>
-<span>                 agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
-<span>                 join_cols <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
+<span>                 spatial_agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
+<span>                 spatial_join_col <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
 <span>                 nsim <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
@@ -1155,8 +1155,8 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="co">#&gt; exposure variable.</span></span>
 <span></span>
 <span><span class="va">ma_AN_s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">ma_outcomes_tbl</span>, <span class="va">ma_pop_data_long</span>,</span>
-<span>                 agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
-<span>                 join_cols <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
+<span>                 spatial_agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
+<span>                 spatial_join_col <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
 <span>                 nsim <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
@@ -1931,8 +1931,8 @@ won’t be exactly the same because of how the averaging works.</p>
 <span></span>
 <span><span class="va">ma_AN_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, <span class="va">ma_outcomes_tbl_fct</span>,</span>
 <span>                     <span class="va">ma_pop_data_long</span>,</span>
-<span>                 agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
-<span>                 join_cols <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
+<span>                 spatial_agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
+<span>                 spatial_join_col <span class="op">=</span> <span class="st">'TOWN20'</span>, </span>
 <span>                 nsim <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>

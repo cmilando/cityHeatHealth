@@ -244,7 +244,7 @@ make_outcome_table <- function(data,
         # just over-write the collapse_to
         rr <- which(names(column_mapping) == 'factor')
         column_mapping[rr] <- NULL
-        column_mapping[['factor']] <- 'collapse_to'
+        column_mapping[['factor']] <- collapse_to
 
       }
 
@@ -274,7 +274,10 @@ make_outcome_table <- function(data,
   ## ADD ZEROS back in given the now full calendar
   rr <- which(is.na(xgrid[[outcome_col]]))
   xgrid[rr, (outcome_col) := 0]
-  if(any(is.na(xgrid))) stop('some NA in xgrid, investigate')
+  if(any(is.na(xgrid))) {
+    message('some NA in xgrid, investigate')
+    return(xgrid)
+  }
 
   # **************
   ## create the strata

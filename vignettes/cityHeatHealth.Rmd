@@ -269,12 +269,12 @@ Now, you can easily calculate attributrable numbers (and rates) using `calcAN()`
 
 There are two new inputs that this function needs, in addition to population data:
 
-* `agg_type` - what spatial resolution are you summarizing to: 'geo_unit', 'geo_unit_grp', or 'all'
-* `join_cols` - which columns in `ma_outcomes_tbl` are you joining `ma_pop_data_long` by
+* `spatial_agg_type` - what spatial resolution are you summarizing to: 'geo_unit', 'geo_unit_grp', or 'all'
+* `spatial_join_col` - which columns in `ma_outcomes_tbl` are you joining `ma_pop_data_long` by
 
 ```{r calcAN}
 ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'TOWN20', join_cols = 'TOWN20')
+                 spatial_agg_type = 'TOWN20', spatial_join_col = 'TOWN20')
 ```
 
 From this you get a `rate_table` :
@@ -352,7 +352,7 @@ And finally, you can `calcAN`, note that both `ma_outcomes_tbl_fct` and `ma_mode
 ma_AN_fct <- calc_AN(ma_model_fct, 
                      ma_outcomes_tbl_fct, 
                      ma_pop_data_long,
-                 agg_type = 'TOWN20', join_cols = 'TOWN20',
+                 spatial_agg_type = 'TOWN20', spatial_join_col = 'TOWN20',
                  verbose = 1)
 ```
 

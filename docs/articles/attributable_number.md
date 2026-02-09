@@ -195,8 +195,8 @@ In this block you need:
 ``` r
 
 ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'TOWN20', 
-                 join_cols = 'TOWN20', 
+                 spatial_agg_type = 'TOWN20', 
+                 spatial_join_col = 'TOWN20', 
                  nsim = 100,
                  verbose = 2)
 #> -- validation passed
@@ -260,14 +260,14 @@ ma_AN$`_`$number_table
 #> 228:               -776.4437              -366.10625
 ```
 
-you can change `agg_type` to be a different spatial resolution – either
+you can change `spatial_agg_type` to be a different spatial resolution – either
 whatever the group variable was or “all”
 
 ``` r
 
 ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'COUNTY20', 
-                 join_cols = 'TOWN20', 
+                 spatial_agg_type = 'COUNTY20', 
+                 spatial_join_col = 'TOWN20', 
                  nsim = 100,
                  verbose = 2)
 #> -- validation passed
@@ -1133,8 +1133,8 @@ m2 <- condPois_1stage(exposure_matrix = ma_exposure_matrix,
 #> exposure variable.
 
 ma_AN_s1 <- calc_AN(m2, ma_outcomes_tbl, ma_pop_data_long,
-                 agg_type = 'COUNTY20', 
-                 join_cols = 'TOWN20', 
+                 spatial_agg_type = 'COUNTY20', 
+                 spatial_join_col = 'TOWN20', 
                  nsim = 100,
                  verbose = 2)
 #> -- validation passed
@@ -1912,8 +1912,8 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 
 ma_AN_fct <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct,
                      ma_pop_data_long,
-                 agg_type = 'COUNTY20', 
-                 join_cols = 'TOWN20', 
+                 spatial_agg_type = 'COUNTY20', 
+                 spatial_join_col = 'TOWN20', 
                  nsim = 100,
                  verbose = 1)
 #> < age_grp : 0-17 >

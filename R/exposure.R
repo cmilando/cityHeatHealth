@@ -305,7 +305,7 @@ make_exposure_matrix <- function(data,
 
   # at the end there shouldn't be any NAs, so give a warning to investigate
   if(any(is.na(exposure_subset))) {
-    stop("some NAs persist, investigate (might be zoo::na_approx) and submit a Github issue :)")
+    warning("some NAs persist, investigate (might be zoo::na_approx) and submit a Github issue :)")
   }
 
   return(exposure_subset)

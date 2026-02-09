@@ -9,8 +9,8 @@ calc_AN(
   model,
   outcomes_tbl,
   pop_data,
-  agg_type,
-  join_cols,
+  spatial_agg_type,
+  spatial_join_col,
   nsim = 300,
   verbose = 0
 )
@@ -31,11 +31,11 @@ calc_AN(
 
   population data
 
-- agg_type:
+- spatial_agg_type:
 
   what is the spatial resolution you are aggregating to
 
-- join_cols:
+- spatial_join_col:
 
   how should you join population data to the outcome table
 

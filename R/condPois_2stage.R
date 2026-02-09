@@ -24,6 +24,7 @@
 #' @param maxlag an integer of the maximum lag
 #' @param min_n an integer describing the minimum number of cases for a single region
 #' @param strata_min minimum number of cases per strata
+#' @param rf optional character string to use as the random formula in mixmeta
 #'
 #' @importFrom mixmeta mixmeta
 #' @importFrom mixmeta blup
@@ -42,6 +43,7 @@ condPois_2stage <- function(exposure_matrix,
                             arglag = NULL,
                             maxlag = NULL,
                             min_n = NULL,
+                            rf = NULL,
                             strata_min = 0,
                             verbose = 0) {
 
@@ -244,6 +246,10 @@ condPois_2stage <- function(exposure_matrix,
     exp_IQR[[i]]    <- cp_list[[i]]$exp_IQR
   }
 
+  if(verbose > 0) {
+    cat("\n")
+  }
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' MIXMETA
@@ -266,8 +272,20 @@ condPois_2stage <- function(exposure_matrix,
   # ~ 1 | geo_unit_grp / geo_unit
   # TODO will this work if geo_unit_grp is 'ALL' ?
   #      easy to create a switch if not
-  rf = as.formula(paste0("~ 1 | ", out_geo_unit_grp_col, " / ",
-                         out_geo_unit_col))
+  if(is.null(rf)) {
+    if(out_geo_unit_grp_col != "spatial_grp") {
+      rf = as.formula(paste0("~ 1 | ", out_geo_unit_grp_col, " / ",
+                             out_geo_unit_col))
+    } else {
+      rf = as.formula(paste0("~ 1 | ", out_geo_unit_col))
+    }
+  } else {
+    rf = as.formula(rf)
+  }
+
+  if(verbose > -1) {
+    cat("formula:", as.character(rf), "\n")
+  }
 
   # see function description for references for this
   meta_fit <- mixmeta(coef_matrix ~ exp_mean + exp_IQR,
@@ -455,6 +473,10 @@ condPois_2stage <- function(exposure_matrix,
 
   # set names
   names(out) <- unique_geos[, get(out_geo_unit_col)]
+
+  if(verbose > 0) {
+    cat("\n")
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================

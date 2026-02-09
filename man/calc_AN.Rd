@@ -8,8 +8,8 @@ calc_AN(
   model,
   outcomes_tbl,
   pop_data,
-  agg_type,
-  join_cols,
+  spatial_agg_type,
+  spatial_join_col,
   nsim = 300,
   verbose = 0
 )
@@ -21,9 +21,9 @@ calc_AN(
 
 \item{pop_data}{population data}
 
-\item{agg_type}{what is the spatial resolution you are aggregating to}
+\item{spatial_agg_type}{what is the spatial resolution you are aggregating to}
 
-\item{join_cols}{how should you join population data to the outcome table}
+\item{spatial_join_col}{how should you join population data to the outcome table}
 
 \item{nsim}{number of simulations required for calculation of empirical CI (default = 300)}
 

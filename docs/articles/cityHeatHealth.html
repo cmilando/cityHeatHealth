@@ -673,16 +673,16 @@ analysis, but you could also make a version of this dataset with a
 population data:</p>
 <ul>
 <li>
-<code>agg_type</code> - what spatial resolution are you summarizing
+<code>spatial_agg_type</code> - what spatial resolution are you summarizing
 to: ‘geo_unit’, ‘geo_unit_grp’, or ‘all’</li>
 <li>
-<code>join_cols</code> - which columns in
+<code>spatial_join_col</code> - which columns in
 <code>ma_outcomes_tbl</code> are you joining
 <code>ma_pop_data_long</code> by</li>
 </ul>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_AN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="va">ma_outcomes_tbl</span>, <span class="va">ma_pop_data_long</span>,</span>
-<span>                 agg_type <span class="op">=</span> <span class="st">'TOWN20'</span>, join_cols <span class="op">=</span> <span class="st">'TOWN20'</span><span class="op">)</span></span></code></pre></div>
+<span>                 spatial_agg_type <span class="op">=</span> <span class="st">'TOWN20'</span>, spatial_join_col <span class="op">=</span> <span class="st">'TOWN20'</span><span class="op">)</span></span></code></pre></div>
 <p>From this you get a <code>rate_table</code> :</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_AN</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">rate_table</span></span>
@@ -1578,7 +1578,7 @@ have factors, again adding the verbose so you can see the progress</p>
 <code class="sourceCode R"><span><span class="va">ma_AN_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, </span>
 <span>                     <span class="va">ma_outcomes_tbl_fct</span>, </span>
 <span>                     <span class="va">ma_pop_data_long</span>,</span>
-<span>                 agg_type <span class="op">=</span> <span class="st">'TOWN20'</span>, join_cols <span class="op">=</span> <span class="st">'TOWN20'</span>,</span>
+<span>                 spatial_agg_type <span class="op">=</span> <span class="st">'TOWN20'</span>, spatial_join_col <span class="op">=</span> <span class="st">'TOWN20'</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
