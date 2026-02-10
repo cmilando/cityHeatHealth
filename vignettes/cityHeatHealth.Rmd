@@ -156,7 +156,8 @@ Now you have several options for running the conditional poisson model:
 We show code for each but just run `condPois_2stage` in this vignette.
 
 ```{r runModel, eval=TRUE} 
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl)
+ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl,
+                            global_cen = 15)
 ```
 
 For `condPois_1stage` the call would look like this, where you'd need to add the argument `multi_zone = T` because there are multiple `geo_units` in `ma_exposure_matrix`:
@@ -324,7 +325,7 @@ Now, all of our other functions can stay the same:
 Running the model (adding the `verbose` argument so you can follow along)
 ```{r runRestfct}
 ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
-                                verbose = 1)
+                                verbose = 1, global_cen = 15)
 ```
 
 And plotting the output

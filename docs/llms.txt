@@ -167,7 +167,6 @@ Vignettes aimed at advanced users
   \`cityHeatHealth\`](http://chadmilando.com/cityHeatHealth/articles/dlnm_sensitivity.md):
 - [Comparison of \`cityHeatHealth\` to other AN
   tutorials](http://chadmilando.com/cityHeatHealth/articles/comparison.md):
-- [group-check](http://chadmilando.com/cityHeatHealth/articles/group-check.md):
 - [Todo](http://chadmilando.com/cityHeatHealth/articles/TODO.md):
 - [QA_testing](http://chadmilando.com/cityHeatHealth/articles/QA_testing.md):
 - [Methods for working with non-daily

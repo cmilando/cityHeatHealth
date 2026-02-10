@@ -46,22 +46,22 @@ And lets preview this
 ``` r
 
 head(ma_exposure_matrix)
-#>          date  tmax_C TOWN20  COUNTY20                strata explag1 explag2
-#>        <IDat>   <num> <char>    <char>                <char>   <num>   <num>
-#> 1: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 12.8489 12.4253
-#> 2: 2012-05-13 26.2234  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 18.2676 17.8051
-#> 3: 2012-05-20 24.7840  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 21.4705 20.3042
-#> 4: 2012-05-27 29.9073  ACTON MIDDLESEX ACTON:yr2012:mn5:dow1 23.4173 24.4627
-#> 5: 2012-05-07 16.1798  ACTON MIDDLESEX ACTON:yr2012:mn5:dow2 17.7602 12.8489
-#> 6: 2012-05-14 28.5869  ACTON MIDDLESEX ACTON:yr2012:mn5:dow2 26.2234 18.2676
-#>    explag3 explag4 explag5
-#>      <num>   <num>   <num>
-#> 1: 11.1778  8.6743 16.4633
-#> 2: 17.9041 13.6660 20.2731
-#> 3: 22.6773 22.6600 19.8368
-#> 4: 25.0704 17.8687 21.3824
-#> 5: 12.4253 11.1778  8.6743
-#> 6: 17.8051 17.9041 13.6660
+#>          date  tmax_C TOWN20  COUNTY20                  strata     match_strata
+#>        <IDat>   <num> <char>    <char>                  <char>           <char>
+#> 1: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-06
+#> 2: 2012-05-13 26.2234  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-13
+#> 3: 2012-05-20 24.7840  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-20
+#> 4: 2012-05-27 29.9073  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-27
+#> 5: 2012-05-07 16.1798  ACTON MIDDLESEX ACTON:yr2012:mn05:dow02 ACTON:2012-05-07
+#> 6: 2012-05-14 28.5869  ACTON MIDDLESEX ACTON:yr2012:mn05:dow02 ACTON:2012-05-14
+#>    explag1 explag2 explag3 explag4 explag5
+#>      <num>   <num>   <num>   <num>   <num>
+#> 1: 12.8489 12.4253 11.1778  8.6743 16.4633
+#> 2: 18.2676 17.8051 17.9041 13.6660 20.2731
+#> 3: 21.4705 20.3042 22.6773 22.6600 19.8368
+#> 4: 23.4173 24.4627 25.0704 17.8687 21.3824
+#> 5: 17.7602 12.8489 12.4253 11.1778  8.6743
+#> 6: 26.2234 18.2676 17.8051 17.9041 13.6660
 ```
 
 ### Outcome
@@ -88,6 +88,7 @@ outcome_columns <- list(
 
 # create the object
 ma_outcomes_tbl <- make_outcome_table(deaths_sub, outcome_columns)
+#> Some NA values in outcome xgrid were removed
 ```
 
 And lets preview this
@@ -95,14 +96,22 @@ And lets preview this
 ``` r
 
 head(ma_outcomes_tbl)
-#>          date TOWN20  COUNTY20 daily_deaths                strata strata_total
-#>        <IDat> <char>    <char>        <int>                <char>        <num>
-#> 1: 2012-05-06  ACTON MIDDLESEX           72 ACTON:yr2012:mn5:dow1          334
-#> 2: 2012-05-13  ACTON MIDDLESEX           84 ACTON:yr2012:mn5:dow1          334
-#> 3: 2012-05-20  ACTON MIDDLESEX           90 ACTON:yr2012:mn5:dow1          334
-#> 4: 2012-05-27  ACTON MIDDLESEX           88 ACTON:yr2012:mn5:dow1          334
-#> 5: 2012-05-07  ACTON MIDDLESEX           79 ACTON:yr2012:mn5:dow2          349
-#> 6: 2012-05-14  ACTON MIDDLESEX           88 ACTON:yr2012:mn5:dow2          349
+#>          date TOWN20  COUNTY20 daily_deaths                  strata
+#>        <IDat> <char>    <char>        <int>                  <char>
+#> 1: 2012-05-01  ACTON MIDDLESEX           73 ACTON:yr2012:mn05:dow03
+#> 2: 2012-05-02  ACTON MIDDLESEX           78 ACTON:yr2012:mn05:dow04
+#> 3: 2012-05-03  ACTON MIDDLESEX           78 ACTON:yr2012:mn05:dow05
+#> 4: 2012-05-04  ACTON MIDDLESEX           78 ACTON:yr2012:mn05:dow06
+#> 5: 2012-05-05  ACTON MIDDLESEX           78 ACTON:yr2012:mn05:dow07
+#> 6: 2012-05-06  ACTON MIDDLESEX           72 ACTON:yr2012:mn05:dow01
+#>    strata_total     match_strata
+#>           <num>           <char>
+#> 1:          423 ACTON:2012-05-01
+#> 2:          420 ACTON:2012-05-02
+#> 3:          414 ACTON:2012-05-03
+#> 4:          327 ACTON:2012-05-04
+#> 5:          334 ACTON:2012-05-05
+#> 6:          334 ACTON:2012-05-06
 ```
 
 ### Run the conditional poisson model
@@ -379,6 +388,7 @@ ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl)
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
 #> your exposure variable.
+#> formula: ~ 1 | COUNTY20/TOWN20
 ```
 
 For `condPois_1stage` the call would look like this, where you’d need to
@@ -454,16 +464,16 @@ getRR(ma_model)
 #>           TOWN20  COUNTY20 tmax_C       RR      RRlb     RRub     model_class
 #>           <char>    <char>  <num>    <num>     <num>    <num>          <char>
 #>     1:     ACTON MIDDLESEX    7.0 1.000000 1.0000000 1.000000 condPois_2stage
-#>     2:     ACTON MIDDLESEX    7.1 1.000516 0.9999447 1.001088 condPois_2stage
-#>     3:     ACTON MIDDLESEX    7.2 1.001033 0.9998894 1.002177 condPois_2stage
-#>     4:     ACTON MIDDLESEX    7.3 1.001549 0.9998343 1.003267 condPois_2stage
-#>     5:     ACTON MIDDLESEX    7.4 1.002067 0.9997795 1.004359 condPois_2stage
+#>     2:     ACTON MIDDLESEX    7.1 1.000516 0.9999453 1.001087 condPois_2stage
+#>     3:     ACTON MIDDLESEX    7.2 1.001033 0.9998907 1.002176 condPois_2stage
+#>     4:     ACTON MIDDLESEX    7.3 1.001549 0.9998362 1.003265 condPois_2stage
+#>     5:     ACTON MIDDLESEX    7.4 1.002066 0.9997820 1.004356 condPois_2stage
 #>    ---                                                                       
-#> 32510: WORCESTER WORCESTER   33.6 1.288946 1.2000454 1.384432 condPois_2stage
-#> 32511: WORCESTER WORCESTER   33.7 1.290732 1.2010888 1.387065 condPois_2stage
-#> 32512: WORCESTER WORCESTER   33.8 1.292520 1.2021282 1.389709 condPois_2stage
-#> 32513: WORCESTER WORCESTER   33.9 1.294311 1.2031641 1.392363 condPois_2stage
-#> 32514: WORCESTER WORCESTER   34.0 1.296105 1.2041968 1.395027 condPois_2stage
+#> 32510: WORCESTER WORCESTER   33.6 1.288973 1.2001156 1.384409 condPois_2stage
+#> 32511: WORCESTER WORCESTER   33.7 1.290760 1.2011627 1.387040 condPois_2stage
+#> 32512: WORCESTER WORCESTER   33.8 1.292549 1.2022058 1.389682 condPois_2stage
+#> 32513: WORCESTER WORCESTER   33.9 1.294341 1.2032454 1.392334 condPois_2stage
+#> 32514: WORCESTER WORCESTER   34.0 1.296136 1.2042818 1.394996 condPois_2stage
 ```
 
 ## Calculate attributable numbers
@@ -590,8 +600,8 @@ population data:
 
 - `spatial_agg_type` - what spatial resolution are you summarizing to:
   ‘geo_unit’, ‘geo_unit_grp’, or ‘all’
-- `spatial_join_col` - which columns in `ma_outcomes_tbl` are you joining
-  `ma_pop_data_long` by
+- `spatial_join_col` - which columns in `ma_outcomes_tbl` are you
+  joining `ma_pop_data_long` by
 
 ``` r
 
@@ -606,30 +616,30 @@ From this you get a `rate_table` :
 ma_AN$`_`$rate_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>          <char>    <char>      <num>    <lgcl>                     <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                  7368.316
+#>   1:      ACTON MIDDLESEX      23864      TRUE                  7588.837
 #>   2:      ACTON MIDDLESEX      23864     FALSE                     0.000
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                  9035.584
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                  9034.767
 #>   4:  ARLINGTON MIDDLESEX      45906     FALSE                     0.000
-#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  6432.460
+#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  6434.433
 #>  ---                                                                    
 #> 224: WINCHESTER MIDDLESEX      22809     FALSE                     0.000
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                  6735.156
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                  6691.855
 #> 226:     WOBURN MIDDLESEX      40992     FALSE                     0.000
-#> 227:  WORCESTER WORCESTER     204191      TRUE                  7687.961
+#> 227:  WORCESTER WORCESTER     204191      TRUE                  7688.696
 #> 228:  WORCESTER WORCESTER     204191     FALSE                     0.000
 #>      mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                         <num>                    <num>
-#>   1:                 4248.109                 10348.56
-#>   2:                    0.000                     0.00
-#>   3:                 6315.365                 11428.26
-#>   4:                    0.000                     0.00
-#>   5:                 3937.194                  8803.85
+#>   1:                 4425.521                10539.620
+#>   2:                    0.000                    0.000
+#>   3:                 6315.365                11426.080
+#>   4:                    0.000                    0.000
+#>   5:                 3937.194                 8801.779
 #>  ---                                                  
-#> 224:                    0.000                     0.00
-#> 225:                 4411.227                  8983.75
-#> 226:                    0.000                     0.00
-#> 227:                 4578.201                 10223.03
-#> 228:                    0.000                     0.00
+#> 224:                    0.000                    0.000
+#> 225:                 4283.473                 8903.506
+#> 226:                    0.000                    0.000
+#> 227:                 4579.863                10222.420
+#> 228:                    0.000                    0.000
 ```
 
 and a `number_table`:
@@ -639,30 +649,30 @@ and a `number_table`:
 ma_AN$`_`$number_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_num_est
 #>          <char>    <char>      <num>    <lgcl>                    <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                 1758.375
+#>   1:      ACTON MIDDLESEX      23864      TRUE                 1811.000
 #>   2:      ACTON MIDDLESEX      23864     FALSE                    0.000
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 4147.875
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 4147.500
 #>   4:  ARLINGTON MIDDLESEX      45906     FALSE                    0.000
-#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  407.625
+#>   5: ASHBURNHAM WORCESTER       6337      TRUE                  407.750
 #>  ---                                                                   
 #> 224: WINCHESTER MIDDLESEX      22809     FALSE                    0.000
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                 2760.875
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                 2743.125
 #> 226:     WOBURN MIDDLESEX      40992     FALSE                    0.000
-#> 227:  WORCESTER WORCESTER     204191      TRUE                15698.125
+#> 227:  WORCESTER WORCESTER     204191      TRUE                15699.625
 #> 228:  WORCESTER WORCESTER     204191     FALSE                    0.000
 #>      mean_annual_attr_num_lb mean_annual_attr_num_ub
 #>                        <num>                   <num>
-#>   1:                1013.769                2469.581
-#>   2:                   0.000                   0.000
-#>   3:                2899.131                5246.256
-#>   4:                   0.000                   0.000
-#>   5:                 249.500                 557.900
+#>   1:                1056.106               2515.1750
+#>   2:                   0.000                  0.0000
+#>   3:                2899.131               5245.2563
+#>   4:                   0.000                  0.0000
+#>   5:                 249.500                557.7687
 #>  ---                                                
-#> 224:                   0.000                   0.000
-#> 225:                1808.250                3682.619
-#> 226:                   0.000                   0.000
-#> 227:                9348.275               20874.500
-#> 228:                   0.000                   0.000
+#> 224:                   0.000                  0.0000
+#> 225:                1755.881               3649.7250
+#> 226:                   0.000                  0.0000
+#> 227:                9351.669              20873.2625
+#> 228:                   0.000                  0.0000
 ```
 
 And you can plot either one
@@ -700,6 +710,7 @@ We can easily do this, by using the `collapse_to` argument:
 
 ma_outcomes_tbl_fct <- make_outcome_table(
   deaths_sub, outcome_columns, collapse_to = 'age_grp')
+#> Some NA values in outcome xgrid were removed
 ```
 
 Lets look at the result:
@@ -707,22 +718,22 @@ Lets look at the result:
 ``` r
 
 head(ma_outcomes_tbl_fct)
-#>          date TOWN20  COUNTY20 age_grp daily_deaths                strata
-#>        <IDat> <char>    <char>  <char>        <int>                <char>
-#> 1: 2012-05-06  ACTON MIDDLESEX    0-17           24 ACTON:yr2012:mn5:dow1
-#> 2: 2012-05-06  ACTON MIDDLESEX   18-64           24 ACTON:yr2012:mn5:dow1
-#> 3: 2012-05-06  ACTON MIDDLESEX     65+           24 ACTON:yr2012:mn5:dow1
-#> 4: 2012-05-13  ACTON MIDDLESEX    0-17           29 ACTON:yr2012:mn5:dow1
-#> 5: 2012-05-13  ACTON MIDDLESEX   18-64           27 ACTON:yr2012:mn5:dow1
-#> 6: 2012-05-13  ACTON MIDDLESEX     65+           28 ACTON:yr2012:mn5:dow1
-#>    strata_total
-#>           <num>
-#> 1:          334
-#> 2:          334
-#> 3:          334
-#> 4:          334
-#> 5:          334
-#> 6:          334
+#>          date TOWN20  COUNTY20 age_grp daily_deaths                  strata
+#>        <IDat> <char>    <char>  <char>        <int>                  <char>
+#> 1: 2012-05-01  ACTON MIDDLESEX    0-17           25 ACTON:yr2012:mn05:dow03
+#> 2: 2012-05-01  ACTON MIDDLESEX   18-64           24 ACTON:yr2012:mn05:dow03
+#> 3: 2012-05-01  ACTON MIDDLESEX     65+           24 ACTON:yr2012:mn05:dow03
+#> 4: 2012-05-02  ACTON MIDDLESEX    0-17           26 ACTON:yr2012:mn05:dow04
+#> 5: 2012-05-02  ACTON MIDDLESEX   18-64           26 ACTON:yr2012:mn05:dow04
+#> 6: 2012-05-02  ACTON MIDDLESEX     65+           26 ACTON:yr2012:mn05:dow04
+#>    strata_total     match_strata
+#>           <num>           <char>
+#> 1:          423 ACTON:2012-05-01
+#> 2:          423 ACTON:2012-05-01
+#> 3:          423 ACTON:2012-05-01
+#> 4:          420 ACTON:2012-05-02
+#> 5:          420 ACTON:2012-05-02
+#> 6:          420 ACTON:2012-05-02
 ```
 
 Now, all of our other functions can stay the same:
@@ -761,13 +772,6 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BOXBOROUGH. This means your zones are across too large of
-#> an area, or there are differences in exposures so much that the bases are quite
-#> different. Try limiting the geo-units passed in to those that are more similar,
-#> manually setting a centering point that you know each geo-unit has, or changing
-#> your exposure variable.
-#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
-#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
-#> exposures in geo-unit CARLISLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
@@ -1017,28 +1021,17 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
 #> your exposure variable.
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
+#> 
 #> < age_grp : 18-64 >
 #> -- validation passed
 #> -- stage 1
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
-#> exposures in geo-unit BARRE. This means your zones are across too large of an
-#> area, or there are differences in exposures so much that the bases are quite
-#> different. Try limiting the geo-units passed in to those that are more similar,
-#> manually setting a centering point that you know each geo-unit has, or changing
-#> your exposure variable.
-#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
-#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BILLERICA. This means your zones are across too large of
-#> an area, or there are differences in exposures so much that the bases are quite
-#> different. Try limiting the geo-units passed in to those that are more similar,
-#> manually setting a centering point that you know each geo-unit has, or changing
-#> your exposure variable.
-#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
-#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
-#> exposures in geo-unit CARLISLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
@@ -1218,8 +1211,11 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
 #> your exposure variable.
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
+#> 
 #> < age_grp : 65+ >
 #> -- validation passed
 #> -- stage 1
@@ -1351,11 +1347,25 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
 #> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit NEW BRAINTREE. This means your zones are across too large
+#> of an area, or there are differences in exposures so much that the bases are
+#> quite different. Try limiting the geo-units passed in to those that are more
+#> similar, manually setting a centering point that you know each geo-unit has, or
+#> changing your exposure variable.
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit NORTHBRIDGE. This means your zones are across too large
 #> of an area, or there are differences in exposures so much that the bases are
 #> quite different. Try limiting the geo-units passed in to those that are more
 #> similar, manually setting a centering point that you know each geo-unit has, or
 #> changing your exposure variable.
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit PETERSHAM. This means your zones are across too large of
+#> an area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit READING. This means your zones are across too large of an
@@ -1468,7 +1478,9 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
 #> your exposure variable.
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
 ```
 
@@ -1507,16 +1519,16 @@ getRR(ma_model_fct)
 #>           TOWN20  COUNTY20 tmax_C       RR      RRlb     RRub age_grp
 #>           <char>    <char>  <num>    <num>     <num>    <num>  <char>
 #>     1:     ACTON MIDDLESEX    7.0 1.000000 1.0000000 1.000000    0-17
-#>     2:     ACTON MIDDLESEX    7.1 1.000694 0.9999329 1.001456    0-17
-#>     3:     ACTON MIDDLESEX    7.2 1.001389 0.9998659 1.002915    0-17
-#>     4:     ACTON MIDDLESEX    7.3 1.002085 0.9997992 1.004375    0-17
-#>     5:     ACTON MIDDLESEX    7.4 1.002781 0.9997327 1.005838    0-17
+#>     2:     ACTON MIDDLESEX    7.1 1.000690 0.9998838 1.001496    0-17
+#>     3:     ACTON MIDDLESEX    7.2 1.001380 0.9997678 1.002994    0-17
+#>     4:     ACTON MIDDLESEX    7.3 1.002070 0.9996520 1.004495    0-17
+#>     5:     ACTON MIDDLESEX    7.4 1.002762 0.9995366 1.005997    0-17
 #>    ---                                                               
-#> 97538: WORCESTER WORCESTER   33.6 1.300465 1.2147953 1.392175     65+
-#> 97539: WORCESTER WORCESTER   33.7 1.302040 1.2155758 1.394654     65+
-#> 97540: WORCESTER WORCESTER   33.8 1.303616 1.2163410 1.397154     65+
-#> 97541: WORCESTER WORCESTER   33.9 1.305195 1.2170919 1.399676     65+
-#> 97542: WORCESTER WORCESTER   34.0 1.306775 1.2178291 1.402218     65+
+#> 97478: WORCESTER WORCESTER   33.6 1.299134 1.2144378 1.389736     65+
+#> 97479: WORCESTER WORCESTER   33.7 1.300693 1.2152463 1.392147     65+
+#> 97480: WORCESTER WORCESTER   33.8 1.302253 1.2160380 1.394581     65+
+#> 97481: WORCESTER WORCESTER   33.9 1.303816 1.2168139 1.397038     65+
+#> 97482: WORCESTER WORCESTER   34.0 1.305380 1.2175747 1.399518     65+
 #>                 model_class
 #>                      <char>
 #>     1: condPois_2stage_list
@@ -1525,11 +1537,11 @@ getRR(ma_model_fct)
 #>     4: condPois_2stage_list
 #>     5: condPois_2stage_list
 #>    ---                     
-#> 97538: condPois_2stage_list
-#> 97539: condPois_2stage_list
-#> 97540: condPois_2stage_list
-#> 97541: condPois_2stage_list
-#> 97542: condPois_2stage_list
+#> 97478: condPois_2stage_list
+#> 97479: condPois_2stage_list
+#> 97480: condPois_2stage_list
+#> 97481: condPois_2stage_list
+#> 97482: condPois_2stage_list
 ```
 
 And finally, you can `calcAN`, note that both `ma_outcomes_tbl_fct` and
@@ -1544,6 +1556,8 @@ ma_AN_fct <- calc_AN(ma_model_fct,
                  spatial_agg_type = 'TOWN20', spatial_join_col = 'TOWN20',
                  verbose = 1)
 #> < age_grp : 0-17 >
+#> Warning in calc_AN(sub_model, sub_outcomes_tbl, sub_pop_data, spatial_agg_type,
+#> : some pop data are zero
 #> -- validation passed
 #> -- estimate in each geo_unit
 #> -- summarize by simulation

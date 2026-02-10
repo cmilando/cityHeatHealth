@@ -41,6 +41,7 @@ outcome_columns <- list(
 ma_outcomes_tbl <- make_outcome_table(
   subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), outcome_columns)
+#> Some NA values in outcome xgrid were removed
 ```
 
 Now run by using `condPois_2stage`. This does the Gasp Extended2stage
@@ -57,7 +58,9 @@ ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl,
                             verbose = 1, global_cen = 10)
 #> -- validation passed
 #> -- stage 1
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
 ```
 
@@ -161,17 +164,17 @@ and You can get an RR table
 getRR(ma_model)
 #>           TOWN20  COUNTY20 tmax_C        RR      RRlb     RRub     model_class
 #>           <char>    <char>  <num>     <num>     <num>    <num>          <char>
-#>     1:     ACTON MIDDLESEX    7.0 0.9844671 0.9679222 1.001295 condPois_2stage
-#>     2:     ACTON MIDDLESEX    7.1 0.9849752 0.9689752 1.001239 condPois_2stage
-#>     3:     ACTON MIDDLESEX    7.2 0.9854837 0.9700294 1.001184 condPois_2stage
-#>     4:     ACTON MIDDLESEX    7.3 0.9859924 0.9710848 1.001129 condPois_2stage
-#>     5:     ACTON MIDDLESEX    7.4 0.9865016 0.9721413 1.001074 condPois_2stage
+#>     1:     ACTON MIDDLESEX    7.0 0.9844686 0.9679433 1.001276 condPois_2stage
+#>     2:     ACTON MIDDLESEX    7.1 0.9849767 0.9689956 1.001221 condPois_2stage
+#>     3:     ACTON MIDDLESEX    7.2 0.9854851 0.9700492 1.001167 condPois_2stage
+#>     4:     ACTON MIDDLESEX    7.3 0.9859939 0.9711038 1.001112 condPois_2stage
+#>     5:     ACTON MIDDLESEX    7.4 0.9865030 0.9721596 1.001058 condPois_2stage
 #>    ---                                                                        
-#> 32510: WORCESTER WORCESTER   33.6 1.2626515 1.1955548 1.333514 condPois_2stage
-#> 32511: WORCESTER WORCESTER   33.7 1.2644009 1.1966017 1.336042 condPois_2stage
-#> 32512: WORCESTER WORCESTER   33.8 1.2661529 1.1976434 1.338581 condPois_2stage
-#> 32513: WORCESTER WORCESTER   33.9 1.2679074 1.1986804 1.341132 condPois_2stage
-#> 32514: WORCESTER WORCESTER   34.0 1.2696643 1.1997131 1.343694 condPois_2stage
+#> 32510: WORCESTER WORCESTER   33.6 1.2626629 1.1955724 1.333518 condPois_2stage
+#> 32511: WORCESTER WORCESTER   33.7 1.2644134 1.1966232 1.336044 condPois_2stage
+#> 32512: WORCESTER WORCESTER   33.8 1.2661664 1.1976688 1.338582 condPois_2stage
+#> 32513: WORCESTER WORCESTER   33.9 1.2679219 1.1987097 1.341130 condPois_2stage
+#> 32514: WORCESTER WORCESTER   34.0 1.2696799 1.1997463 1.343690 condPois_2stage
 ```
 
 ### Model by factor
@@ -185,24 +188,25 @@ ma_outcomes_tbl_fct <- make_outcome_table(
   subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015),
   outcome_columns,collapse_to = 'age_grp')
+#> Some NA values in outcome xgrid were removed
 
 head(ma_outcomes_tbl_fct)
-#>          date TOWN20  COUNTY20 age_grp daily_deaths                strata
-#>        <IDat> <char>    <char>  <char>        <int>                <char>
-#> 1: 2012-05-06  ACTON MIDDLESEX    0-17           24 ACTON:yr2012:mn5:dow1
-#> 2: 2012-05-06  ACTON MIDDLESEX   18-64           24 ACTON:yr2012:mn5:dow1
-#> 3: 2012-05-06  ACTON MIDDLESEX     65+           24 ACTON:yr2012:mn5:dow1
-#> 4: 2012-05-13  ACTON MIDDLESEX    0-17           29 ACTON:yr2012:mn5:dow1
-#> 5: 2012-05-13  ACTON MIDDLESEX   18-64           27 ACTON:yr2012:mn5:dow1
-#> 6: 2012-05-13  ACTON MIDDLESEX     65+           28 ACTON:yr2012:mn5:dow1
-#>    strata_total
-#>           <num>
-#> 1:          334
-#> 2:          334
-#> 3:          334
-#> 4:          334
-#> 5:          334
-#> 6:          334
+#>          date TOWN20  COUNTY20 age_grp daily_deaths                  strata
+#>        <IDat> <char>    <char>  <char>        <int>                  <char>
+#> 1: 2012-05-01  ACTON MIDDLESEX    0-17           25 ACTON:yr2012:mn05:dow03
+#> 2: 2012-05-01  ACTON MIDDLESEX   18-64           24 ACTON:yr2012:mn05:dow03
+#> 3: 2012-05-01  ACTON MIDDLESEX     65+           24 ACTON:yr2012:mn05:dow03
+#> 4: 2012-05-02  ACTON MIDDLESEX    0-17           26 ACTON:yr2012:mn05:dow04
+#> 5: 2012-05-02  ACTON MIDDLESEX   18-64           26 ACTON:yr2012:mn05:dow04
+#> 6: 2012-05-02  ACTON MIDDLESEX     65+           26 ACTON:yr2012:mn05:dow04
+#>    strata_total     match_strata
+#>           <num>           <char>
+#> 1:          423 ACTON:2012-05-01
+#> 2:          423 ACTON:2012-05-01
+#> 3:          423 ACTON:2012-05-01
+#> 4:          420 ACTON:2012-05-02
+#> 5:          420 ACTON:2012-05-02
+#> 6:          420 ACTON:2012-05-02
 ```
 
 Run the model
@@ -214,17 +218,25 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct,
 #> < age_grp : 0-17 >
 #> -- validation passed
 #> -- stage 1
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
+#> 
 #> < age_grp : 18-64 >
 #> -- validation passed
 #> -- stage 1
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
+#> 
 #> < age_grp : 65+ >
 #> -- validation passed
 #> -- stage 1
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
 #> -- stage 2
 ```
 
@@ -266,17 +278,17 @@ an RR table
 getRR(ma_model_fct)
 #>           TOWN20  COUNTY20 tmax_C        RR      RRlb     RRub age_grp
 #>           <char>    <char>  <num>     <num>     <num>    <num>  <char>
-#>     1:     ACTON MIDDLESEX    7.0 0.9791444 0.9572711 1.001518    0-17
-#>     2:     ACTON MIDDLESEX    7.1 0.9798242 0.9586651 1.001450    0-17
-#>     3:     ACTON MIDDLESEX    7.2 0.9805045 0.9600612 1.001383    0-17
-#>     4:     ACTON MIDDLESEX    7.3 0.9811855 0.9614593 1.001316    0-17
-#>     5:     ACTON MIDDLESEX    7.4 0.9818670 0.9628594 1.001250    0-17
+#>     1:     ACTON MIDDLESEX    7.0 0.9792812 0.9561486 1.002974    0-17
+#>     2:     ACTON MIDDLESEX    7.1 0.9799565 0.9575789 1.002857    0-17
+#>     3:     ACTON MIDDLESEX    7.2 0.9806323 0.9590114 1.002741    0-17
+#>     4:     ACTON MIDDLESEX    7.3 0.9813087 0.9604460 1.002625    0-17
+#>     5:     ACTON MIDDLESEX    7.4 0.9819857 0.9618827 1.002509    0-17
 #>    ---                                                                
-#> 97538: WORCESTER WORCESTER   33.6 1.2671613 1.2062789 1.331117     65+
-#> 97539: WORCESTER WORCESTER   33.7 1.2686961 1.2070137 1.333531     65+
-#> 97540: WORCESTER WORCESTER   33.8 1.2702324 1.2077292 1.335970     65+
-#> 97541: WORCESTER WORCESTER   33.9 1.2717706 1.2084263 1.338435     65+
-#> 97542: WORCESTER WORCESTER   34.0 1.2733105 1.2091064 1.340924     65+
+#> 97478: WORCESTER WORCESTER   33.6 1.2660845 1.2054266 1.329795     65+
+#> 97479: WORCESTER WORCESTER   33.7 1.2676039 1.2062073 1.332126     65+
+#> 97480: WORCESTER WORCESTER   33.8 1.2691249 1.2069663 1.334485     65+
+#> 97481: WORCESTER WORCESTER   33.9 1.2706476 1.2077049 1.336871     65+
+#> 97482: WORCESTER WORCESTER   34.0 1.2721721 1.2084240 1.339283     65+
 #>                 model_class
 #>                      <char>
 #>     1: condPois_2stage_list
@@ -285,11 +297,11 @@ getRR(ma_model_fct)
 #>     4: condPois_2stage_list
 #>     5: condPois_2stage_list
 #>    ---                     
-#> 97538: condPois_2stage_list
-#> 97539: condPois_2stage_list
-#> 97540: condPois_2stage_list
-#> 97541: condPois_2stage_list
-#> 97542: condPois_2stage_list
+#> 97478: condPois_2stage_list
+#> 97479: condPois_2stage_list
+#> 97480: condPois_2stage_list
+#> 97481: condPois_2stage_list
+#> 97482: condPois_2stage_list
 ```
 
 ## Change the strata level
@@ -329,20 +341,25 @@ ma_outcomes_tbl <- make_outcome_table(
   subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER', 'SUFFOLK') &
            year(date) %in% 2012:2015), outcome_columns,
   grp_level = T, keep_unit_outcomes = T)
+#> Some NA values in outcome xgrid were removed
 
 ma_model <- condPois_2stage(ma_exposure_matrix, 
                             ma_outcomes_tbl, 
                             verbose = 2, global_cen = 10)
 #> -- validation passed
 #> -- stage 1
-#> MIDDLESEX    WORCESTER   SUFFOLK     -- mixmeta
+#> MIDDLESEX    WORCESTER   SUFFOLK     
+#> -- mixmeta
+#> formula: ~ 1 | COUNTY20 
 #> IGLS iterations:
-#> iter 0: value 2.319922e-12
+#> iter 0: value 8.657963e-12
 #> converged
 #> Newton iterations:
 #> initial  value 0.000000 
-#> iter   1 value 0.000000
-#> final  value 0.000000 
+#> iter   2 value -0.000000
+#> iter   2 value 0.000000
+#> iter   2 value 0.000000
+#> final  value -0.000000 
 #> converged
 #> -- stage 2
 #> MIDDLESEX    WORCESTER   SUFFOLK     

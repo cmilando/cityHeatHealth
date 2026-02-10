@@ -70,14 +70,22 @@ head(exposure_matrix)
 #> 4:      2018-05-26    28.69714                  01073 Southeast
 #> 5:      2018-06-02    28.35000                  01073 Southeast
 #> 6:      2018-06-09    30.47857                  01073 Southeast
-#>                   strata  explag1  explag2  explag3  explag4  explag5
-#>                   <char>    <num>    <num>    <num>    <num>    <num>
-#> 1: 01073:yr2018:mn5:dow7 20.02857 19.90857 21.19714 20.80714 19.44286
-#> 2: 01073:yr2018:mn5:dow7 25.03714 20.02857 19.90857 21.19714 20.80714
-#> 3: 01073:yr2018:mn5:dow7 28.61286 25.03714 20.02857 19.90857 21.19714
-#> 4: 01073:yr2018:mn5:dow7 29.71857 28.61286 25.03714 20.02857 19.90857
-#> 5: 01073:yr2018:mn6:dow7 28.69714 29.71857 28.61286 25.03714 20.02857
-#> 6: 01073:yr2018:mn6:dow7 28.35000 28.69714 29.71857 28.61286 25.03714
+#>                     strata     match_strata  explag1  explag2  explag3  explag4
+#>                     <char>           <char>    <num>    <num>    <num>    <num>
+#> 1: 01073:yr2018:mn05:dow07 01073:2018-05-05 20.02857 19.90857 21.19714 20.80714
+#> 2: 01073:yr2018:mn05:dow07 01073:2018-05-12 25.03714 20.02857 19.90857 21.19714
+#> 3: 01073:yr2018:mn05:dow07 01073:2018-05-19 28.61286 25.03714 20.02857 19.90857
+#> 4: 01073:yr2018:mn05:dow07 01073:2018-05-26 29.71857 28.61286 25.03714 20.02857
+#> 5: 01073:yr2018:mn06:dow07 01073:2018-06-02 28.69714 29.71857 28.61286 25.03714
+#> 6: 01073:yr2018:mn06:dow07 01073:2018-06-09 28.35000 28.69714 29.71857 28.61286
+#>     explag5
+#>       <num>
+#> 1: 19.44286
+#> 2: 20.80714
+#> 3: 21.19714
+#> 4: 19.90857
+#> 5: 20.02857
+#> 6: 25.03714
 ```
 
 Outcome
@@ -101,6 +109,7 @@ out_data <- data[, .(
 )]
 
 outcomes_tbl <- make_outcome_table(out_data, outcome_columns)
+#> Some NA values in outcome xgrid were removed
 outcomes_tbl
 #>       X_week_end_date occurrence_county_code    region X_deaths
 #>                <IDat>                 <char>    <char>    <int>
@@ -115,19 +124,19 @@ outcomes_tbl
 #> 9299:      2024-09-14                  51810 Southeast       54
 #> 9300:      2024-09-21                  51810 Southeast       58
 #> 9301:      2024-09-28                  51810 Southeast       59
-#>                      strata strata_total
-#>                      <char>        <num>
-#>    1: 01073:yr2018:mn5:dow7          741
-#>    2: 01073:yr2018:mn5:dow7          741
-#>    3: 01073:yr2018:mn5:dow7          741
-#>    4: 01073:yr2018:mn5:dow7          741
-#>    5: 01073:yr2018:mn6:dow7          893
-#>   ---                                   
-#> 9297: 51810:yr2024:mn8:dow7          312
-#> 9298: 51810:yr2024:mn9:dow7          243
-#> 9299: 51810:yr2024:mn9:dow7          243
-#> 9300: 51810:yr2024:mn9:dow7          243
-#> 9301: 51810:yr2024:mn9:dow7          243
+#>                        strata strata_total     match_strata
+#>                        <char>        <num>           <char>
+#>    1: 01073:yr2018:mn05:dow07          741 01073:2018-05-05
+#>    2: 01073:yr2018:mn05:dow07          741 01073:2018-05-12
+#>    3: 01073:yr2018:mn05:dow07          741 01073:2018-05-19
+#>    4: 01073:yr2018:mn05:dow07          741 01073:2018-05-26
+#>    5: 01073:yr2018:mn06:dow07          893 01073:2018-06-02
+#>   ---                                                      
+#> 9297: 51810:yr2024:mn08:dow07          312 51810:2024-08-31
+#> 9298: 51810:yr2024:mn09:dow07          243 51810:2024-09-07
+#> 9299: 51810:yr2024:mn09:dow07          243 51810:2024-09-14
+#> 9300: 51810:yr2024:mn09:dow07          243 51810:2024-09-21
+#> 9301: 51810:yr2024:mn09:dow07          243 51810:2024-09-28
 ```
 
 ``` r
@@ -210,7 +219,9 @@ model2 <- condPois_2stage(exposure_matrix, outcomes_tbl,
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
 #> your exposure variable.
+#> 
 #> -- mixmeta
+#> formula: ~ 1 | region/occurrence_county_code 
 #> -- stage 2
 ```
 

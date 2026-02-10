@@ -139,14 +139,22 @@
 <span><span class="co">#&gt; 4:      2018-05-26    28.69714                  01073 Southeast</span></span>
 <span><span class="co">#&gt; 5:      2018-06-02    28.35000                  01073 Southeast</span></span>
 <span><span class="co">#&gt; 6:      2018-06-09    30.47857                  01073 Southeast</span></span>
-<span><span class="co">#&gt;                   strata  explag1  explag2  explag3  explag4  explag5</span></span>
-<span><span class="co">#&gt;                   &lt;char&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 01073:yr2018:mn5:dow7 20.02857 19.90857 21.19714 20.80714 19.44286</span></span>
-<span><span class="co">#&gt; 2: 01073:yr2018:mn5:dow7 25.03714 20.02857 19.90857 21.19714 20.80714</span></span>
-<span><span class="co">#&gt; 3: 01073:yr2018:mn5:dow7 28.61286 25.03714 20.02857 19.90857 21.19714</span></span>
-<span><span class="co">#&gt; 4: 01073:yr2018:mn5:dow7 29.71857 28.61286 25.03714 20.02857 19.90857</span></span>
-<span><span class="co">#&gt; 5: 01073:yr2018:mn6:dow7 28.69714 29.71857 28.61286 25.03714 20.02857</span></span>
-<span><span class="co">#&gt; 6: 01073:yr2018:mn6:dow7 28.35000 28.69714 29.71857 28.61286 25.03714</span></span></code></pre></div>
+<span><span class="co">#&gt;                     strata     match_strata  explag1  explag2  explag3  explag4</span></span>
+<span><span class="co">#&gt;                     &lt;char&gt;           &lt;char&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 01073:yr2018:mn05:dow07 01073:2018-05-05 20.02857 19.90857 21.19714 20.80714</span></span>
+<span><span class="co">#&gt; 2: 01073:yr2018:mn05:dow07 01073:2018-05-12 25.03714 20.02857 19.90857 21.19714</span></span>
+<span><span class="co">#&gt; 3: 01073:yr2018:mn05:dow07 01073:2018-05-19 28.61286 25.03714 20.02857 19.90857</span></span>
+<span><span class="co">#&gt; 4: 01073:yr2018:mn05:dow07 01073:2018-05-26 29.71857 28.61286 25.03714 20.02857</span></span>
+<span><span class="co">#&gt; 5: 01073:yr2018:mn06:dow07 01073:2018-06-02 28.69714 29.71857 28.61286 25.03714</span></span>
+<span><span class="co">#&gt; 6: 01073:yr2018:mn06:dow07 01073:2018-06-09 28.35000 28.69714 29.71857 28.61286</span></span>
+<span><span class="co">#&gt;     explag5</span></span>
+<span><span class="co">#&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 19.44286</span></span>
+<span><span class="co">#&gt; 2: 20.80714</span></span>
+<span><span class="co">#&gt; 3: 21.19714</span></span>
+<span><span class="co">#&gt; 4: 19.90857</span></span>
+<span><span class="co">#&gt; 5: 20.02857</span></span>
+<span><span class="co">#&gt; 6: 25.03714</span></span></code></pre></div>
 <p>Outcome</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outcome_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -166,6 +174,7 @@
 <span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">outcomes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span><span class="va">out_data</span>, <span class="va">outcome_columns</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Some NA values in outcome xgrid were removed</span></span>
 <span><span class="va">outcomes_tbl</span></span>
 <span><span class="co">#&gt;       X_week_end_date occurrence_county_code    region X_deaths</span></span>
 <span><span class="co">#&gt;                &lt;IDat&gt;                 &lt;char&gt;    &lt;char&gt;    &lt;int&gt;</span></span>
@@ -180,19 +189,19 @@
 <span><span class="co">#&gt; 9299:      2024-09-14                  51810 Southeast       54</span></span>
 <span><span class="co">#&gt; 9300:      2024-09-21                  51810 Southeast       58</span></span>
 <span><span class="co">#&gt; 9301:      2024-09-28                  51810 Southeast       59</span></span>
-<span><span class="co">#&gt;                      strata strata_total</span></span>
-<span><span class="co">#&gt;                      &lt;char&gt;        &lt;num&gt;</span></span>
-<span><span class="co">#&gt;    1: 01073:yr2018:mn5:dow7          741</span></span>
-<span><span class="co">#&gt;    2: 01073:yr2018:mn5:dow7          741</span></span>
-<span><span class="co">#&gt;    3: 01073:yr2018:mn5:dow7          741</span></span>
-<span><span class="co">#&gt;    4: 01073:yr2018:mn5:dow7          741</span></span>
-<span><span class="co">#&gt;    5: 01073:yr2018:mn6:dow7          893</span></span>
-<span><span class="co">#&gt;   ---                                   </span></span>
-<span><span class="co">#&gt; 9297: 51810:yr2024:mn8:dow7          312</span></span>
-<span><span class="co">#&gt; 9298: 51810:yr2024:mn9:dow7          243</span></span>
-<span><span class="co">#&gt; 9299: 51810:yr2024:mn9:dow7          243</span></span>
-<span><span class="co">#&gt; 9300: 51810:yr2024:mn9:dow7          243</span></span>
-<span><span class="co">#&gt; 9301: 51810:yr2024:mn9:dow7          243</span></span></code></pre></div>
+<span><span class="co">#&gt;                        strata strata_total     match_strata</span></span>
+<span><span class="co">#&gt;                        &lt;char&gt;        &lt;num&gt;           &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: 01073:yr2018:mn05:dow07          741 01073:2018-05-05</span></span>
+<span><span class="co">#&gt;    2: 01073:yr2018:mn05:dow07          741 01073:2018-05-12</span></span>
+<span><span class="co">#&gt;    3: 01073:yr2018:mn05:dow07          741 01073:2018-05-19</span></span>
+<span><span class="co">#&gt;    4: 01073:yr2018:mn05:dow07          741 01073:2018-05-26</span></span>
+<span><span class="co">#&gt;    5: 01073:yr2018:mn06:dow07          893 01073:2018-06-02</span></span>
+<span><span class="co">#&gt;   ---                                                      </span></span>
+<span><span class="co">#&gt; 9297: 51810:yr2024:mn08:dow07          312 51810:2024-08-31</span></span>
+<span><span class="co">#&gt; 9298: 51810:yr2024:mn09:dow07          243 51810:2024-09-07</span></span>
+<span><span class="co">#&gt; 9299: 51810:yr2024:mn09:dow07          243 51810:2024-09-14</span></span>
+<span><span class="co">#&gt; 9300: 51810:yr2024:mn09:dow07          243 51810:2024-09-21</span></span>
+<span><span class="co">#&gt; 9301: 51810:yr2024:mn09:dow07          243 51810:2024-09-28</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span><span class="va">exposure_matrix</span>, <span class="va">outcomes_tbl</span>, </span>
 <span>                         multi_zone <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
@@ -265,7 +274,9 @@
 <span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
 <span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
 <span><span class="co">#&gt; your exposure variable.</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- mixmeta</span></span>
+<span><span class="co">#&gt; formula: ~ 1 | region/occurrence_county_code </span></span>
 <span><span class="co">#&gt; -- stage 2</span></span></code></pre></div>
 <p>```</p>
   </main>

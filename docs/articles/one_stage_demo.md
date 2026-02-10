@@ -91,22 +91,22 @@ boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
 #> Warning in make_exposure_matrix(boston_exposure, exposure_columns): check about any NA, some corrections for this later,
 #>             but only in certain columns
 head(boston_exposure_mat)
-#>          date  tmax_C TOWN20 COUNTY20                 strata explag1  explag2
-#>        <IDat>   <num> <char>   <char>                 <char>   <num>    <num>
-#> 1: 2010-05-02 26.1014 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 23.1386 15.73815
-#> 2: 2010-05-09 12.7026 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 20.8225 23.99430
-#> 3: 2010-05-16 20.8662 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 21.1532 20.56210
-#> 4: 2010-05-23 24.2529 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 22.2915 28.70030
-#> 5: 2010-05-30 26.6112 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow1 25.3396 24.91280
-#> 6: 2010-05-03 31.5648 BOSTON  SUFFOLK BOSTON:yr2010:mn5:dow2 26.1014 23.13860
-#>     explag3 explag4 explag5
-#>       <num>   <num>   <num>
-#> 1:  8.33770 10.8523 16.4432
-#> 2: 25.85460 26.2820 27.7814
-#> 3: 12.52140 15.6892 14.3792
-#> 4: 13.87970 19.2278 24.0815
-#> 5: 34.74360 32.0717 29.0724
-#> 6: 15.73815  8.3377 10.8523
+#>          date  tmax_C TOWN20 COUNTY20                   strata
+#>        <IDat>   <num> <char>   <char>                   <char>
+#> 1: 2010-05-02 26.1014 BOSTON  SUFFOLK BOSTON:yr2010:mn05:dow01
+#> 2: 2010-05-09 12.7026 BOSTON  SUFFOLK BOSTON:yr2010:mn05:dow01
+#> 3: 2010-05-16 20.8662 BOSTON  SUFFOLK BOSTON:yr2010:mn05:dow01
+#> 4: 2010-05-23 24.2529 BOSTON  SUFFOLK BOSTON:yr2010:mn05:dow01
+#> 5: 2010-05-30 26.6112 BOSTON  SUFFOLK BOSTON:yr2010:mn05:dow01
+#> 6: 2010-05-03 31.5648 BOSTON  SUFFOLK BOSTON:yr2010:mn05:dow02
+#>         match_strata explag1  explag2  explag3 explag4 explag5
+#>               <char>   <num>    <num>    <num>   <num>   <num>
+#> 1: BOSTON:2010-05-02 23.1386 15.73815  8.33770 10.8523 16.4432
+#> 2: BOSTON:2010-05-09 20.8225 23.99430 25.85460 26.2820 27.7814
+#> 3: BOSTON:2010-05-16 21.1532 20.56210 12.52140 15.6892 14.3792
+#> 4: BOSTON:2010-05-23 22.2915 28.70030 13.87970 19.2278 24.0815
+#> 5: BOSTON:2010-05-30 25.3396 24.91280 34.74360 32.0717 29.0724
+#> 6: BOSTON:2010-05-03 26.1014 23.13860 15.73815  8.3377 10.8523
 ```
 
 You can check that the two problems we saw before – missing data and NA
@@ -116,39 +116,39 @@ data – are gone now
 
 # Sept 17 2010 now has NA data
 boston_exposure_mat[138:142,]
-#>          date  tmax_C TOWN20 COUNTY20                 strata explag1 explag2
-#>        <IDat>   <num> <char>   <char>                 <char>   <num>   <num>
-#> 1: 2010-09-15 22.5722 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow4 19.8015 18.5063
-#> 2: 2010-09-22 21.8626 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow4 20.8122 23.6339
-#> 3: 2010-09-29 24.5670 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow4 17.6530 20.1010
-#> 4: 2010-09-02 34.5557 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow5 34.5163 32.6854
-#> 5: 2010-09-09 27.5800 BOSTON  SUFFOLK BOSTON:yr2010:mn9:dow5 29.6411 25.3711
-#>    explag3 explag4 explag5
-#>      <num>   <num>   <num>
-#> 1: 22.8082 20.9759 22.0336
-#> 2: 19.6014 19.0647 19.2204
-#> 3: 30.1472 29.9431 23.5334
-#> 4: 33.2379 28.3939 25.3226
-#> 5: 23.4543 27.9166 29.8866
+#>          date  tmax_C TOWN20 COUNTY20                   strata
+#>        <IDat>   <num> <char>   <char>                   <char>
+#> 1: 2010-09-15 22.5722 BOSTON  SUFFOLK BOSTON:yr2010:mn09:dow04
+#> 2: 2010-09-22 21.8626 BOSTON  SUFFOLK BOSTON:yr2010:mn09:dow04
+#> 3: 2010-09-29 24.5670 BOSTON  SUFFOLK BOSTON:yr2010:mn09:dow04
+#> 4: 2010-09-02 34.5557 BOSTON  SUFFOLK BOSTON:yr2010:mn09:dow05
+#> 5: 2010-09-09 27.5800 BOSTON  SUFFOLK BOSTON:yr2010:mn09:dow05
+#>         match_strata explag1 explag2 explag3 explag4 explag5
+#>               <char>   <num>   <num>   <num>   <num>   <num>
+#> 1: BOSTON:2010-09-15 19.8015 18.5063 22.8082 20.9759 22.0336
+#> 2: BOSTON:2010-09-22 20.8122 23.6339 19.6014 19.0647 19.2204
+#> 3: BOSTON:2010-09-29 17.6530 20.1010 30.1472 29.9431 23.5334
+#> 4: BOSTON:2010-09-02 34.5163 32.6854 33.2379 28.3939 25.3226
+#> 5: BOSTON:2010-09-09 29.6411 25.3711 23.4543 27.9166 29.8866
 
 # July 13 2010 is now not missing
 boston_exposure_mat[72:77,]
-#>          date  tmax_C TOWN20 COUNTY20                 strata explag1 explag2
-#>        <IDat>   <num> <char>   <char>                 <char>   <num>   <num>
-#> 1: 2010-07-20 31.2000 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow3 31.9163 33.1227
-#> 2: 2010-07-27 28.9373 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow3 31.7191 32.1075
-#> 3: 2010-07-07 37.1773 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 36.2254 33.7484
-#> 4: 2010-07-14 31.9374 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 31.8311 31.7248
-#> 5: 2010-07-21 28.8115 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 31.2000 31.9163
-#> 6: 2010-07-28 32.6980 BOSTON  SUFFOLK BOSTON:yr2010:mn7:dow4 28.9373 31.7191
-#>    explag3 explag4 explag5
-#>      <num>   <num>   <num>
-#> 1: 33.3453 28.7843 23.7004
-#> 2: 27.4911 29.0821 32.0035
-#> 3: 31.8415 27.8356 23.6608
-#> 4: 29.1988 33.0867 32.8450
-#> 5: 33.1227 33.3453 28.7843
-#> 6: 32.1075 27.4911 29.0821
+#>          date  tmax_C TOWN20 COUNTY20                   strata
+#>        <IDat>   <num> <char>   <char>                   <char>
+#> 1: 2010-07-20 31.2000 BOSTON  SUFFOLK BOSTON:yr2010:mn07:dow03
+#> 2: 2010-07-27 28.9373 BOSTON  SUFFOLK BOSTON:yr2010:mn07:dow03
+#> 3: 2010-07-07 37.1773 BOSTON  SUFFOLK BOSTON:yr2010:mn07:dow04
+#> 4: 2010-07-14 31.9374 BOSTON  SUFFOLK BOSTON:yr2010:mn07:dow04
+#> 5: 2010-07-21 28.8115 BOSTON  SUFFOLK BOSTON:yr2010:mn07:dow04
+#> 6: 2010-07-28 32.6980 BOSTON  SUFFOLK BOSTON:yr2010:mn07:dow04
+#>         match_strata explag1 explag2 explag3 explag4 explag5
+#>               <char>   <num>   <num>   <num>   <num>   <num>
+#> 1: BOSTON:2010-07-20 31.9163 33.1227 33.3453 28.7843 23.7004
+#> 2: BOSTON:2010-07-27 31.7191 32.1075 27.4911 29.0821 32.0035
+#> 3: BOSTON:2010-07-07 36.2254 33.7484 31.8415 27.8356 23.6608
+#> 4: BOSTON:2010-07-14 31.8311 31.7248 29.1988 33.0867 32.8450
+#> 5: BOSTON:2010-07-21 31.2000 31.9163 33.1227 33.3453 28.7843
+#> 6: BOSTON:2010-07-28 28.9373 31.7191 32.1075 27.4911 29.0821
 ```
 
 Its probably a good idea to see if there is any systematic bias in the
@@ -219,14 +219,22 @@ using and to the correct spatial unit for this analysis. The
 
 boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
 head(boston_deaths_tbl)
-#>          date TOWN20 COUNTY20 daily_deaths                 strata strata_total
-#>        <IDat> <char>   <char>        <int>                 <char>        <num>
-#> 1: 2010-05-02 BOSTON  SUFFOLK         2089 BOSTON:yr2010:mn5:dow1        10929
-#> 2: 2010-05-09 BOSTON  SUFFOLK         2049 BOSTON:yr2010:mn5:dow1        10929
-#> 3: 2010-05-16 BOSTON  SUFFOLK         2156 BOSTON:yr2010:mn5:dow1        10929
-#> 4: 2010-05-23 BOSTON  SUFFOLK         2152 BOSTON:yr2010:mn5:dow1        10929
-#> 5: 2010-05-30 BOSTON  SUFFOLK         2483 BOSTON:yr2010:mn5:dow1        10929
-#> 6: 2010-05-03 BOSTON  SUFFOLK         2374 BOSTON:yr2010:mn5:dow2        11435
+#>          date TOWN20 COUNTY20 daily_deaths                   strata
+#>        <IDat> <char>   <char>        <int>                   <char>
+#> 1: 2010-05-01 BOSTON  SUFFOLK         2238 BOSTON:yr2010:mn05:dow07
+#> 2: 2010-05-02 BOSTON  SUFFOLK         2089 BOSTON:yr2010:mn05:dow01
+#> 3: 2010-05-03 BOSTON  SUFFOLK         2374 BOSTON:yr2010:mn05:dow02
+#> 4: 2010-05-04 BOSTON  SUFFOLK         2354 BOSTON:yr2010:mn05:dow03
+#> 5: 2010-05-05 BOSTON  SUFFOLK         2489 BOSTON:yr2010:mn05:dow04
+#> 6: 2010-05-06 BOSTON  SUFFOLK         2191 BOSTON:yr2010:mn05:dow05
+#>    strata_total      match_strata
+#>           <num>            <char>
+#> 1:        11312 BOSTON:2010-05-01
+#> 2:        10929 BOSTON:2010-05-02
+#> 3:        11435 BOSTON:2010-05-03
+#> 4:         9372 BOSTON:2010-05-04
+#> 5:         9193 BOSTON:2010-05-05
+#> 6:         8657 BOSTON:2010-05-06
 ```
 
 Notice that two variables have been added:
@@ -306,29 +314,29 @@ summary(m_sub)
 #>         0)
 #> 
 #> Deviance Residuals: 
-#>       Min         1Q     Median         3Q        Max  
-#> -4.256444  -1.184418  -0.001925   1.220153   4.449963  
+#>      Min        1Q    Median        3Q       Max  
+#> -7.09716  -1.71614  -0.04516   1.67676   9.19458  
 #> 
 #> Coefficients of interest:
-#>          Estimate Std. Error t value Pr(>|t|)    
-#> cbv1.l1  0.021822   0.010661   2.047  0.04088 *  
-#> cbv1.l2 -0.001086   0.009771  -0.111  0.91149    
-#> cbv1.l3  0.116198   0.006092  19.073  < 2e-16 ***
-#> cbv1.l4 -0.056545   0.006158  -9.183  < 2e-16 ***
-#> cbv2.l1  0.081805   0.037565   2.178  0.02961 *  
-#> cbv2.l2  0.002893   0.035155   0.082  0.93442    
-#> cbv2.l3  0.178086   0.023194   7.678 3.18e-14 ***
-#> cbv2.l4 -0.103412   0.022561  -4.584 5.01e-06 ***
-#> cbv3.l1  0.077537   0.023385   3.316  0.00094 ***
-#> cbv3.l2 -0.013910   0.021415  -0.650  0.51609    
-#> cbv3.l3  0.159186   0.014131  11.265  < 2e-16 ***
-#> cbv3.l4 -0.082510   0.013555  -6.087 1.51e-09 ***
+#>           Estimate Std. Error t value Pr(>|t|)   
+#> cbv1.l1 -0.0062824  0.0160422  -0.392  0.69540   
+#> cbv1.l2 -0.0203900  0.0144357  -1.412  0.15805   
+#> cbv1.l3  0.0187655  0.0095433   1.966  0.04947 * 
+#> cbv1.l4 -0.0041672  0.0095326  -0.437  0.66207   
+#> cbv2.l1 -0.1311410  0.0571982  -2.293  0.02202 * 
+#> cbv2.l2 -0.0577130  0.0538960  -1.071  0.28445   
+#> cbv2.l3  0.1009308  0.0369021   2.735  0.00632 **
+#> cbv2.l4 -0.0001544  0.0350564  -0.004  0.99649   
+#> cbv3.l1 -0.0910604  0.0370196  -2.460  0.01403 * 
+#> cbv3.l2  0.0216860  0.0335858   0.646  0.51859   
+#> cbv3.l3  0.0331571  0.0227715   1.456  0.14561   
+#> cbv3.l4  0.0175751  0.0208682   0.842  0.39984   
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> (Dispersion parameter for quasipoisson family taken to be 3.366306)
+#> (Dispersion parameter for quasipoisson family taken to be 8.06704)
 #> 
-#> Residual deviance: 4330.3 on 1286 degrees of freedom
+#> Residual deviance: 10357 on 1286 degrees of freedom
 #> AIC: NA
 #> 
 #> Number of iterations: 2
@@ -383,7 +391,7 @@ dispersion <- calc_dispersion(y = boston_deaths_tbl$daily_deaths,
                 stratum_vector = boston_deaths_tbl$strata, 
                 beta = coef(m_sub))
 dispersion
-#> [1] 3.366306
+#> [1] 8.06704
 ```
 
 Next to check vcov
@@ -518,6 +526,7 @@ outcome_columns <- list(
 )
 middlesex_deaths   <- subset(ma_deaths, COUNTY20 == 'MIDDLESEX')
 middlesex_deaths_tbl <- make_outcome_table(middlesex_deaths,  outcome_columns)
+#> Some NA values in outcome xgrid were removed
 
 # run the model
 m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
@@ -912,16 +921,16 @@ getRR(m2)
 #>      tmax_C       RR    RRlow   RRhigh                   n_geo_names
 #>       <num>    <num>    <num>    <num>                        <char>
 #>   1:    3.4 1.000000 1.000000 1.000000 ACTON:ARLINGTON...(truncated)
-#>   2:    3.5 1.000553 1.000479 1.000628 ACTON:ARLINGTON...(truncated)
+#>   2:    3.5 1.000554 1.000479 1.000628 ACTON:ARLINGTON...(truncated)
 #>   3:    3.6 1.001107 1.000959 1.001256 ACTON:ARLINGTON...(truncated)
-#>   4:    3.7 1.001662 1.001439 1.001884 ACTON:ARLINGTON...(truncated)
-#>   5:    3.8 1.002216 1.001919 1.002514 ACTON:ARLINGTON...(truncated)
+#>   4:    3.7 1.001662 1.001439 1.001885 ACTON:ARLINGTON...(truncated)
+#>   5:    3.8 1.002217 1.001919 1.002514 ACTON:ARLINGTON...(truncated)
 #>  ---                                                                
-#> 350:   38.3 1.495273 1.471733 1.519190 ACTON:ARLINGTON...(truncated)
-#> 351:   38.4 1.498303 1.474447 1.522545 ACTON:ARLINGTON...(truncated)
-#> 352:   38.5 1.501340 1.477166 1.525909 ACTON:ARLINGTON...(truncated)
-#> 353:   38.6 1.504383 1.479889 1.529282 ACTON:ARLINGTON...(truncated)
-#> 354:   38.7 1.507432 1.482616 1.532664 ACTON:ARLINGTON...(truncated)
+#> 350:   38.3 1.495329 1.471790 1.519244 ACTON:ARLINGTON...(truncated)
+#> 351:   38.4 1.498360 1.474506 1.522600 ACTON:ARLINGTON...(truncated)
+#> 352:   38.5 1.501397 1.477225 1.525965 ACTON:ARLINGTON...(truncated)
+#> 353:   38.6 1.504442 1.479949 1.529339 ACTON:ARLINGTON...(truncated)
+#> 354:   38.7 1.507492 1.482678 1.532722 ACTON:ARLINGTON...(truncated)
 #>          model_class
 #>               <char>
 #>   1: condPois_1stage
@@ -945,6 +954,7 @@ you can also get it for factors
 
 middlesex_deaths_tbl <- make_outcome_table(
   middlesex_deaths,  outcome_columns, collapse_to = 'age_grp')
+#> Some NA values in outcome xgrid were removed
 
 # run the model
 m3 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
@@ -2078,16 +2088,16 @@ getRR(m3)
 #>       tmax_C age_grp       RR    RRlow   RRhigh          model_class
 #>        <num>  <char>    <num>    <num>    <num>               <char>
 #>    1:    3.4    0-17 1.000000 1.000000 1.000000 condPois_1stage_list
-#>    2:    3.5    0-17 1.000805 1.000724 1.000886 condPois_1stage_list
-#>    3:    3.6    0-17 1.001611 1.001448 1.001773 condPois_1stage_list
-#>    4:    3.7    0-17 1.002417 1.002174 1.002661 condPois_1stage_list
-#>    5:    3.8    0-17 1.003224 1.002899 1.003549 condPois_1stage_list
+#>    2:    3.5    0-17 1.000791 1.000711 1.000870 condPois_1stage_list
+#>    3:    3.6    0-17 1.001582 1.001423 1.001741 condPois_1stage_list
+#>    4:    3.7    0-17 1.002374 1.002136 1.002612 condPois_1stage_list
+#>    5:    3.8    0-17 1.003167 1.002850 1.003485 condPois_1stage_list
 #>   ---                                                               
-#> 1058:   38.3     65+ 1.482591 1.456637 1.509008 condPois_1stage_list
-#> 1059:   38.4     65+ 1.485307 1.459010 1.512078 condPois_1stage_list
-#> 1060:   38.5     65+ 1.488028 1.461386 1.515156 condPois_1stage_list
-#> 1061:   38.6     65+ 1.490755 1.463765 1.518242 condPois_1stage_list
-#> 1062:   38.7     65+ 1.493486 1.466147 1.521335 condPois_1stage_list
+#> 1058:   38.3     65+ 1.481270 1.455925 1.507056 condPois_1stage_list
+#> 1059:   38.4     65+ 1.483985 1.458306 1.510117 condPois_1stage_list
+#> 1060:   38.5     65+ 1.486706 1.460689 1.513186 condPois_1stage_list
+#> 1061:   38.6     65+ 1.489431 1.463075 1.516263 condPois_1stage_list
+#> 1062:   38.7     65+ 1.492162 1.465464 1.519347 condPois_1stage_list
 ```
 
 ### Changing the global_cen

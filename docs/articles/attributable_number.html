@@ -200,13 +200,16 @@ analysis, but you could also make a version of this dataset with a
 <span></span>
 <span><span class="va">ma_outcomes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
-<span>           <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>, <span class="va">outcome_columns</span><span class="op">)</span></span></code></pre></div>
+<span>           <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>, <span class="va">outcome_columns</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Some NA values in outcome xgrid were removed</span></span></code></pre></div>
 <p>models</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_2stage.html">condPois_2stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl</span>, verbose <span class="op">=</span> <span class="fl">1</span>, global_cen <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
 <span><span class="co">#&gt; -- stage 1</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- mixmeta</span></span>
+<span><span class="co">#&gt; formula: ~ 1 | COUNTY20/TOWN20 </span></span>
 <span><span class="co">#&gt; -- stage 2</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -245,59 +248,59 @@ change it</p></li>
 <span><span class="va">ma_AN</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">rate_table</span></span>
 <span><span class="co">#&gt;          TOWN20  COUNTY20 population above_MMT mean_annual_attr_rate_est</span></span>
 <span><span class="co">#&gt;          &lt;char&gt;    &lt;char&gt;      &lt;num&gt;    &lt;lgcl&gt;                     &lt;num&gt;</span></span>
-<span><span class="co">#&gt;   1:      ACTON MIDDLESEX      23864      TRUE                 3514.7083</span></span>
-<span><span class="co">#&gt;   2:      ACTON MIDDLESEX      23864     FALSE                 -213.7110</span></span>
-<span><span class="co">#&gt;   3:  ARLINGTON MIDDLESEX      45906      TRUE                 3563.2597</span></span>
-<span><span class="co">#&gt;   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -245.8829</span></span>
+<span><span class="co">#&gt;   1:      ACTON MIDDLESEX      23864      TRUE                 3523.0892</span></span>
+<span><span class="co">#&gt;   2:      ACTON MIDDLESEX      23864     FALSE                 -223.6633</span></span>
+<span><span class="co">#&gt;   3:  ARLINGTON MIDDLESEX      45906      TRUE                 3564.8935</span></span>
+<span><span class="co">#&gt;   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -245.6106</span></span>
 <span><span class="co">#&gt;   5: ASHBURNHAM WORCESTER       6337      TRUE                 2426.2269</span></span>
 <span><span class="co">#&gt;  ---                                                                    </span></span>
 <span><span class="co">#&gt; 224: WINCHESTER MIDDLESEX      22809     FALSE                 -310.1846</span></span>
-<span><span class="co">#&gt; 225:     WOBURN MIDDLESEX      40992      TRUE                 3370.1698</span></span>
-<span><span class="co">#&gt; 226:     WOBURN MIDDLESEX      40992     FALSE                 -161.6169</span></span>
-<span><span class="co">#&gt; 227:  WORCESTER WORCESTER     204191      TRUE                 3107.4460</span></span>
+<span><span class="co">#&gt; 225:     WOBURN MIDDLESEX      40992      TRUE                 3408.2870</span></span>
+<span><span class="co">#&gt; 226:     WOBURN MIDDLESEX      40992     FALSE                 -165.2762</span></span>
+<span><span class="co">#&gt; 227:  WORCESTER WORCESTER     204191      TRUE                 3106.9562</span></span>
 <span><span class="co">#&gt; 228:  WORCESTER WORCESTER     204191     FALSE                 -268.1925</span></span>
 <span><span class="co">#&gt;      mean_annual_attr_rate_lb mean_annual_attr_rate_ub</span></span>
 <span><span class="co">#&gt;                         &lt;num&gt;                    &lt;num&gt;</span></span>
-<span><span class="co">#&gt;   1:                2774.7339               4245.69959</span></span>
-<span><span class="co">#&gt;   2:                -333.7663               -108.34835</span></span>
-<span><span class="co">#&gt;   3:                2801.4720               4172.54825</span></span>
+<span><span class="co">#&gt;   1:                2849.4542               4336.81487</span></span>
+<span><span class="co">#&gt;   2:                -336.8830               -100.46514</span></span>
+<span><span class="co">#&gt;   3:                2799.5251               4175.58435</span></span>
 <span><span class="co">#&gt;   4:                -335.8902               -159.08868</span></span>
-<span><span class="co">#&gt;   5:                1739.4864               3013.55136</span></span>
+<span><span class="co">#&gt;   5:                1731.7934               3015.42528</span></span>
 <span><span class="co">#&gt;  ---                                                  </span></span>
 <span><span class="co">#&gt; 224:                -418.7492               -211.48450</span></span>
-<span><span class="co">#&gt; 225:                2925.1439               3908.07963</span></span>
-<span><span class="co">#&gt; 226:                -234.2225                -76.14291</span></span>
-<span><span class="co">#&gt; 227:                2674.7567               3591.48420</span></span>
+<span><span class="co">#&gt; 225:                2792.2521               4015.95128</span></span>
+<span><span class="co">#&gt; 226:                -242.3034                -93.31089</span></span>
+<span><span class="co">#&gt; 227:                2672.7794               3591.71376</span></span>
 <span><span class="co">#&gt; 228:                -380.2537               -179.29598</span></span>
 <span><span class="va">ma_AN</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">number_table</span></span>
 <span><span class="co">#&gt;          TOWN20  COUNTY20 population above_MMT mean_annual_attr_num_est</span></span>
 <span><span class="co">#&gt;          &lt;char&gt;    &lt;char&gt;      &lt;num&gt;    &lt;lgcl&gt;                    &lt;num&gt;</span></span>
-<span><span class="co">#&gt;   1:      ACTON MIDDLESEX      23864      TRUE                  838.750</span></span>
-<span><span class="co">#&gt;   2:      ACTON MIDDLESEX      23864     FALSE                  -51.000</span></span>
-<span><span class="co">#&gt;   3:  ARLINGTON MIDDLESEX      45906      TRUE                 1635.750</span></span>
-<span><span class="co">#&gt;   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -112.875</span></span>
+<span><span class="co">#&gt;   1:      ACTON MIDDLESEX      23864      TRUE                  840.750</span></span>
+<span><span class="co">#&gt;   2:      ACTON MIDDLESEX      23864     FALSE                  -53.375</span></span>
+<span><span class="co">#&gt;   3:  ARLINGTON MIDDLESEX      45906      TRUE                 1636.500</span></span>
+<span><span class="co">#&gt;   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -112.750</span></span>
 <span><span class="co">#&gt;   5: ASHBURNHAM WORCESTER       6337      TRUE                  153.750</span></span>
 <span><span class="co">#&gt;  ---                                                                   </span></span>
 <span><span class="co">#&gt; 224: WINCHESTER MIDDLESEX      22809     FALSE                  -70.750</span></span>
-<span><span class="co">#&gt; 225:     WOBURN MIDDLESEX      40992      TRUE                 1381.500</span></span>
-<span><span class="co">#&gt; 226:     WOBURN MIDDLESEX      40992     FALSE                  -66.250</span></span>
-<span><span class="co">#&gt; 227:  WORCESTER WORCESTER     204191      TRUE                 6345.125</span></span>
+<span><span class="co">#&gt; 225:     WOBURN MIDDLESEX      40992      TRUE                 1397.125</span></span>
+<span><span class="co">#&gt; 226:     WOBURN MIDDLESEX      40992     FALSE                  -67.750</span></span>
+<span><span class="co">#&gt; 227:  WORCESTER WORCESTER     204191      TRUE                 6344.125</span></span>
 <span><span class="co">#&gt; 228:  WORCESTER WORCESTER     204191     FALSE                 -547.625</span></span>
 <span><span class="co">#&gt;      mean_annual_attr_num_lb mean_annual_attr_num_ub</span></span>
 <span><span class="co">#&gt;                        &lt;num&gt;                   &lt;num&gt;</span></span>
-<span><span class="co">#&gt;   1:                662.1625              1013.19375</span></span>
-<span><span class="co">#&gt;   2:                -79.6500               -25.85625</span></span>
-<span><span class="co">#&gt;   3:               1286.0438              1915.45000</span></span>
-<span><span class="co">#&gt;   4:               -154.1938               -73.03125</span></span>
-<span><span class="co">#&gt;   5:                110.2313               190.96875</span></span>
+<span><span class="co">#&gt;   1:               679.99375              1034.93750</span></span>
+<span><span class="co">#&gt;   2:               -80.39375               -23.97500</span></span>
+<span><span class="co">#&gt;   3:              1285.15000              1916.84375</span></span>
+<span><span class="co">#&gt;   4:              -154.19375               -73.03125</span></span>
+<span><span class="co">#&gt;   5:               109.74375               191.08750</span></span>
 <span><span class="co">#&gt;  ---                                                </span></span>
-<span><span class="co">#&gt; 224:                -95.5125               -48.23750</span></span>
-<span><span class="co">#&gt; 225:               1199.0750              1602.00000</span></span>
-<span><span class="co">#&gt; 226:                -96.0125               -31.21250</span></span>
-<span><span class="co">#&gt; 227:               5461.6125              7333.48750</span></span>
-<span><span class="co">#&gt; 228:               -776.4437              -366.10625</span></span></code></pre></div>
-<p>you can change <code>spatial_agg_type</code> to be a different spatial
-resolution – either whatever the group variable was or “all”</p>
+<span><span class="co">#&gt; 224:               -95.51250               -48.23750</span></span>
+<span><span class="co">#&gt; 225:              1144.60000              1646.21875</span></span>
+<span><span class="co">#&gt; 226:               -99.32500               -38.25000</span></span>
+<span><span class="co">#&gt; 227:              5457.57500              7333.95625</span></span>
+<span><span class="co">#&gt; 228:              -776.44375              -366.10625</span></span></code></pre></div>
+<p>you can change <code>spatial_agg_type</code> to be a different
+spatial resolution – either whatever the group variable was or “all”</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ma_AN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model</span>, <span class="va">ma_outcomes_tbl</span>, <span class="va">ma_pop_data_long</span>,</span>
 <span>                 spatial_agg_type <span class="op">=</span> <span class="st">'COUNTY20'</span>, </span>
@@ -312,29 +315,29 @@ resolution – either whatever the group variable was or “all”</p>
 <span><span class="va">ma_AN</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">rate_table</span></span>
 <span><span class="co">#&gt;     COUNTY20 population above_MMT mean_annual_attr_rate_est</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;      &lt;num&gt;    &lt;lgcl&gt;                     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: MIDDLESEX    1623109      TRUE                 3447.9046</span></span>
-<span><span class="co">#&gt; 2: MIDDLESEX    1623109     FALSE                 -208.5042</span></span>
-<span><span class="co">#&gt; 3: WORCESTER     858898      TRUE                 3014.6187</span></span>
-<span><span class="co">#&gt; 4: WORCESTER     858898     FALSE                 -221.9414</span></span>
+<span><span class="co">#&gt; 1: MIDDLESEX    1623109      TRUE                 3448.0586</span></span>
+<span><span class="co">#&gt; 2: MIDDLESEX    1623109     FALSE                 -208.0267</span></span>
+<span><span class="co">#&gt; 3: WORCESTER     858898      TRUE                 3008.6227</span></span>
+<span><span class="co">#&gt; 4: WORCESTER     858898     FALSE                 -218.3321</span></span>
 <span><span class="co">#&gt;    mean_annual_attr_rate_lb mean_annual_attr_rate_ub</span></span>
 <span><span class="co">#&gt;                       &lt;num&gt;                    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:                3330.5118                3568.8403</span></span>
-<span><span class="co">#&gt; 2:                -225.4081                -197.1714</span></span>
-<span><span class="co">#&gt; 3:                2869.3694                3162.1675</span></span>
-<span><span class="co">#&gt; 4:                -244.8792                -196.2311</span></span>
+<span><span class="co">#&gt; 1:                3344.3152                3571.5154</span></span>
+<span><span class="co">#&gt; 2:                -223.6067                -192.6222</span></span>
+<span><span class="co">#&gt; 3:                2865.7325                3151.9029</span></span>
+<span><span class="co">#&gt; 4:                -246.5900                -194.2082</span></span>
 <span><span class="va">ma_AN</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">number_table</span></span>
 <span><span class="co">#&gt;     COUNTY20 population above_MMT mean_annual_attr_num_est</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;      &lt;num&gt;    &lt;lgcl&gt;                    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: MIDDLESEX    1623109      TRUE                 55963.25</span></span>
-<span><span class="co">#&gt; 2: MIDDLESEX    1623109     FALSE                 -3384.25</span></span>
-<span><span class="co">#&gt; 3: WORCESTER     858898      TRUE                 25892.50</span></span>
-<span><span class="co">#&gt; 4: WORCESTER     858898     FALSE                 -1906.25</span></span>
+<span><span class="co">#&gt; 1: MIDDLESEX    1623109      TRUE                 55965.75</span></span>
+<span><span class="co">#&gt; 2: MIDDLESEX    1623109     FALSE                 -3376.50</span></span>
+<span><span class="co">#&gt; 3: WORCESTER     858898      TRUE                 25841.00</span></span>
+<span><span class="co">#&gt; 4: WORCESTER     858898     FALSE                 -1875.25</span></span>
 <span><span class="co">#&gt;    mean_annual_attr_num_lb mean_annual_attr_num_ub</span></span>
 <span><span class="co">#&gt;                      &lt;num&gt;                   &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:               54057.837               57926.169</span></span>
-<span><span class="co">#&gt; 2:               -3658.619               -3200.306</span></span>
-<span><span class="co">#&gt; 3:               24644.956               27159.794</span></span>
-<span><span class="co">#&gt; 4:               -2103.262               -1685.425</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:               54281.881               57969.587</span></span>
+<span><span class="co">#&gt; 2:               -3629.381               -3126.469</span></span>
+<span><span class="co">#&gt; 3:               24613.719               27071.631</span></span>
+<span><span class="co">#&gt; 4:               -2117.956               -1668.050</span></span></code></pre></div>
 <p>See that the numbers are roughly the same for Suffolk county ? They
 won’t be exactly the same because of how the averaging works.</p>
 <p>Some plot functions exist:</p>
@@ -1168,16 +1171,16 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="va">ma_AN_s1</span><span class="op">$</span><span class="va">`_`</span><span class="op">$</span><span class="va">rate_table</span></span>
 <span><span class="co">#&gt;     COUNTY20 population above_MMT mean_annual_attr_rate_est</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;      &lt;num&gt;    &lt;lgcl&gt;                     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: MIDDLESEX    1623109      TRUE                  8312.219</span></span>
+<span><span class="co">#&gt; 1: MIDDLESEX    1623109      TRUE                  8317.194</span></span>
 <span><span class="co">#&gt; 2: MIDDLESEX    1623109     FALSE                     0.000</span></span>
-<span><span class="co">#&gt; 3: WORCESTER     858898      TRUE                  8067.140</span></span>
+<span><span class="co">#&gt; 3: WORCESTER     858898      TRUE                  8073.558</span></span>
 <span><span class="co">#&gt; 4: WORCESTER     858898     FALSE                     0.000</span></span>
 <span><span class="co">#&gt;    mean_annual_attr_rate_lb mean_annual_attr_rate_ub</span></span>
 <span><span class="co">#&gt;                       &lt;num&gt;                    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:                 8227.440                  8384.84</span></span>
-<span><span class="co">#&gt; 2:                    0.000                     0.00</span></span>
-<span><span class="co">#&gt; 3:                 7886.134                  8208.31</span></span>
-<span><span class="co">#&gt; 4:                    0.000                     0.00</span></span>
+<span><span class="co">#&gt; 1:                 8217.711                 8412.344</span></span>
+<span><span class="co">#&gt; 2:                    0.000                    0.000</span></span>
+<span><span class="co">#&gt; 3:                 7948.111                 8252.355</span></span>
+<span><span class="co">#&gt; 4:                    0.000                    0.000</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_AN_s1</span>, <span class="st">"num"</span>, above_MMT <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="attributable_number_files/figure-html/checkSingle1-1.png" class="r-plt" width="768"></p>
 </div>
@@ -1190,6 +1193,7 @@ won’t be exactly the same because of how the averaging works.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>           <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span>, </span>
 <span>  <span class="va">outcome_columns</span>, collapse_to <span class="op">=</span> <span class="st">'age_grp'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Some NA values in outcome xgrid were removed</span></span>
 <span></span>
 <span><span class="va">ma_model_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_2stage.html">condPois_2stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl_fct</span>, verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>
@@ -1219,13 +1223,6 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
 <span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
 <span><span class="co">#&gt; exposures in geo-unit BOXBOROUGH. This means your zones are across too large of</span></span>
-<span><span class="co">#&gt; an area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit CARLISLE. This means your zones are across too large of</span></span>
 <span><span class="co">#&gt; an area, or there are differences in exposures so much that the bases are quite</span></span>
 <span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
 <span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
@@ -1475,28 +1472,17 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
 <span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
 <span><span class="co">#&gt; your exposure variable.</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- mixmeta</span></span>
+<span><span class="co">#&gt; formula: ~ 1 | COUNTY20/TOWN20 </span></span>
 <span><span class="co">#&gt; -- stage 2</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; &lt; age_grp : 18-64 &gt;</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
 <span><span class="co">#&gt; -- stage 1</span></span>
 <span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
 <span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit BARRE. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
 <span><span class="co">#&gt; exposures in geo-unit BILLERICA. This means your zones are across too large of</span></span>
-<span><span class="co">#&gt; an area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit CARLISLE. This means your zones are across too large of</span></span>
 <span><span class="co">#&gt; an area, or there are differences in exposures so much that the bases are quite</span></span>
 <span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
 <span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
@@ -1676,8 +1662,11 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
 <span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
 <span><span class="co">#&gt; your exposure variable.</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- mixmeta</span></span>
+<span><span class="co">#&gt; formula: ~ 1 | COUNTY20/TOWN20 </span></span>
 <span><span class="co">#&gt; -- stage 2</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; &lt; age_grp : 65+ &gt;</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
 <span><span class="co">#&gt; -- stage 1</span></span>
@@ -1809,11 +1798,25 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="co">#&gt; your exposure variable.</span></span>
 <span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
 <span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
+<span><span class="co">#&gt; exposures in geo-unit NEW BRAINTREE. This means your zones are across too large</span></span>
+<span><span class="co">#&gt; of an area, or there are differences in exposures so much that the bases are</span></span>
+<span><span class="co">#&gt; quite different. Try limiting the geo-units passed in to those that are more</span></span>
+<span><span class="co">#&gt; similar, manually setting a centering point that you know each geo-unit has, or</span></span>
+<span><span class="co">#&gt; changing your exposure variable.</span></span>
+<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
+<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
 <span><span class="co">#&gt; exposures in geo-unit NORTHBRIDGE. This means your zones are across too large</span></span>
 <span><span class="co">#&gt; of an area, or there are differences in exposures so much that the bases are</span></span>
 <span><span class="co">#&gt; quite different. Try limiting the geo-units passed in to those that are more</span></span>
 <span><span class="co">#&gt; similar, manually setting a centering point that you know each geo-unit has, or</span></span>
 <span><span class="co">#&gt; changing your exposure variable.</span></span>
+<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
+<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
+<span><span class="co">#&gt; exposures in geo-unit PETERSHAM. This means your zones are across too large of</span></span>
+<span><span class="co">#&gt; an area, or there are differences in exposures so much that the bases are quite</span></span>
+<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
+<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
+<span><span class="co">#&gt; your exposure variable.</span></span>
 <span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
 <span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
 <span><span class="co">#&gt; exposures in geo-unit READING. This means your zones are across too large of an</span></span>
@@ -1926,7 +1929,9 @@ won’t be exactly the same because of how the averaging works.</p>
 <span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
 <span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
 <span><span class="co">#&gt; your exposure variable.</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; -- mixmeta</span></span>
+<span><span class="co">#&gt; formula: ~ 1 | COUNTY20/TOWN20 </span></span>
 <span><span class="co">#&gt; -- stage 2</span></span>
 <span></span>
 <span><span class="va">ma_AN_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calc_AN.html">calc_AN</a></span><span class="op">(</span><span class="va">ma_model_fct</span>, <span class="va">ma_outcomes_tbl_fct</span>,</span>
@@ -1936,6 +1941,8 @@ won’t be exactly the same because of how the averaging works.</p>
 <span>                 nsim <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                 verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>
+<span><span class="co">#&gt; Warning in calc_AN(sub_model, sub_outcomes_tbl, sub_pop_data, spatial_agg_type,</span></span>
+<span><span class="co">#&gt; : some pop data are zero</span></span>
 <span><span class="co">#&gt; -- validation passed</span></span>
 <span><span class="co">#&gt; -- estimate in each geo_unit</span></span>
 <span><span class="co">#&gt; -- summarize by simulation</span></span>
