@@ -106,13 +106,22 @@ make_exposure_matrix <- function(data,
   dow <- wday(xgrid[, get(date_col)])
   mn  <- month(xgrid[, get(date_col)])
   yr  <- year(xgrid[, get(date_col)])
+
   if((grp_level & keep_unit_exposures) | !grp_level) {
     xgrid$strata <- paste0(xgrid[, get(column_mapping$geo_unit)],
-                                     ":yr",yr, ":mn",mn, ":dow", dow)
+                           ":yr", yr,
+                           ":mn", sprintf("%02i", mn),
+                           ":dow", sprintf("%02i", dow))
   } else {
     xgrid$strata <- paste0(xgrid[, get(column_mapping$geo_unit_grp)],
-                           ":yr",yr, ":mn",mn, ":dow", dow)
+                           ":yr",yr, ":mn",sprintf("%02i", mn),
+                           ":dow", sprintf("%02i", dow))
   }
+
+  # also make match strata
+  xgrid$match_strata = paste0(
+    xgrid[, get(column_mapping$geo_unit)], ":",
+    xgrid[, get(date_col)])
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -227,7 +236,7 @@ make_exposure_matrix <- function(data,
     # Here I'm assuming you want the mean of exposure columns; adjust as needed
     exposure2avg <- exposure2[, lapply(.SD, mean, na.rm = TRUE),
                            by = .(get(geo_col), get(geo_grp_col),
-                                  get(date_col), strata),
+                                  get(date_col), strata, match_strata),
                            .SDcols = exposure_col]
 
     names(exposure2avg)[1:3] <- c(geo_col, geo_grp_col, column_mapping$date)
@@ -269,6 +278,11 @@ make_exposure_matrix <- function(data,
       for (k in seq_len(maxlag)) {
         lag_name <- paste0("explag", k)
         x[, (lag_name) := shift(get(exposure_col), k)]
+      }
+
+      # only in the case of months_sub = 1:12, chop off the first 1:(maxlag-1) rows
+      if(identical(months_subset, 1:12)) {
+        x <- x[(maxlag+1):nrow(x), ]
       }
 
       exposure2_l[[i]] <- x

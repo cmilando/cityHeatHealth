@@ -271,11 +271,15 @@ make_outcome_table <- function(data,
   xgrid <- make_xgrid(data, column_mapping, months_subset, dt_by)
 
   # **************
-  ## ADD ZEROS back in given the now full calendar
+  ## remove missing values
   rr <- which(is.na(xgrid[[outcome_col]]))
-  xgrid[rr, (outcome_col) := 0]
+  if(length(rr) > 0) {
+    message("Some NA values in outcome xgrid were removed")
+    xgrid <- xgrid[-rr, ]
+  }
+
   if(any(is.na(xgrid))) {
-    message('some NA in xgrid, investigate')
+    message('some NA in outcome xgrid, investigate')
     return(xgrid)
   }
 
@@ -285,7 +289,9 @@ make_outcome_table <- function(data,
   mn  <- month(xgrid[, get(date_col)])
   yr  <- year(xgrid[, get(date_col)])
   xgrid$strata <- paste0(xgrid[, get(geo_unit_col)],
-                         ":yr",yr, ":mn",mn, ":dow",dow)
+                         ":yr", yr,
+                         ":mn", sprintf("%02i", mn),
+                         ":dow", sprintf("%02i", dow))
 
   # **************
   # Label strata that have no cases, these will be removed later
@@ -307,6 +313,12 @@ make_outcome_table <- function(data,
   # TODO
   rr <- which(xgrid_comb$strata_total > 0)
   xgrid_comb <- xgrid_comb[rr, ,drop = FALSE]
+
+  # now that you have a final version, make match_strata
+  # also make match strata
+  xgrid_comb$match_strata = paste0(
+    xgrid_comb[, get(column_mapping$geo_unit)], ":",
+    xgrid_comb[, get(date_col)])
 
   # **************
   # Lastly, re-set column mapping if group-level = TRUE but keep_orig = TRUE
@@ -340,7 +352,7 @@ make_outcome_table <- function(data,
   date_col <- column_mapping$date
   setorderv(
     xgrid_comb,
-    c("strata", date_col)
+    'match_strata'
   )
 
   # set the class as an exposure

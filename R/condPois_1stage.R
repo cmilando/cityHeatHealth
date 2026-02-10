@@ -320,6 +320,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                geo_unit_grp = this_geo_grp,       ## --> individual
                basis_cen = this_centered_cb,      ## --> individual
                strata_vec = single_outcomes_tbl$strata, ## --> individual
+               match_strata = single_outcomes_tbl$match_strata, ## --> individual
                orig_basis = this_cb,              ## --> individual
                orig_coef = m_coef,                ## whole group
                orig_vcov = m_vcov,                ## whole group

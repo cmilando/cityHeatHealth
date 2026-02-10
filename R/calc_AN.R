@@ -145,8 +145,13 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   # starting here
   x <- model$`_`
 
+  ## >>>>>>>>>>>
+  ## TODO
   ## DO SOME EXTRA SUBSETTING because not every x <- model$_ has
-  ## every geo_unit I think
+  ## every geo_unit I think, so the purpose of this is to remove
+  ## the difference between pop_data and model
+  ## >>>>>>>>>>>
+
 
   # get the blup object
   n_geo_units <- length(x$out)
@@ -154,6 +159,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     stop("the model object is empty, check that model and outcomes are the same type (e.g., that one is not a `_list` type while the other is a standard.")
   }
   stopifnot(n_geo_units >= 1)
+
   AN <- vector("list", n_geo_units)
 
   #
@@ -166,14 +172,15 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     }
 
     # things you need
-    this_geo   <- x$out[[i]]$geo_unit
-    basis_cen  <- x$out[[i]]$basis_cen
-    xcoef      <- x$out[[i]]$coef
-    xvcov      <- x$out[[i]]$vcov
-    outcomes   <- x$out[[i]]$outcomes
-    this_exp   <- x$out[[i]]$this_exp
-    cen        <- x$out[[i]]$cen
-    global_cen <- x$out[[i]]$global_cen
+    this_geo     <- x$out[[i]]$geo_unit
+    basis_cen    <- x$out[[i]]$basis_cen
+    xcoef        <- x$out[[i]]$coef
+    xvcov        <- x$out[[i]]$vcov
+    outcomes     <- x$out[[i]]$outcomes
+    match_strata <- x$out[[i]]$match_strata
+    this_exp     <- x$out[[i]]$this_exp
+    cen          <- x$out[[i]]$cen
+    global_cen   <- x$out[[i]]$global_cen
 
     # stop if this isn't in pop_data
     if(! (this_geo %in% as.vector(unlist(safe_geos)))) {
@@ -181,10 +188,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
       next
     }
 
-
-
     # and the outcome database, which should match
-    rr <- which(outcomes_tbl[, get(geo_unit_col)] == this_geo)
+    rr <- which(outcomes_tbl$match_strata %in% match_strata)
     single_outcomes_tbl <- outcomes_tbl[rr, ,drop = FALSE]
     date_fmt <- single_outcomes_tbl[, get(date_col)]
 
@@ -299,29 +304,6 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     }
 
     AN_sub_all <- do.call(rbind, AN_sub)
-
-    # check
-    if(!(nrow(AN_sub_all) == nrow(outcomes_tbl))) {
-      #
-      print(nrow(AN_sub_all))
-      print(AN_sub_all)
-
-      dt1 = AN_sub_all
-      dt1$date = dt1$date_fmt
-      dt1$town = dt1$TOWN20
-      #
-      print(nrow(outcomes_tbl))
-      print(outcomes_tbl)
-      #
-      dt2 = outcomes_tbl
-      dt2$date = dt2$RegistrationDate
-      dt2$town = dt2$TOWN20
-
-      # find rows in d2 that are not in d1
-      #             outcomes tbl        AN_sub
-      print(dt2[!dt1, on = .(date, town)])
-      stop("row mismatch between AN_sub_all and outcomes_tbl")
-    }
 
     # rename
     names(AN_sub_all)[length(get_cols)] <- "attributable_number"

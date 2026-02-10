@@ -35,31 +35,37 @@ input_validation <- function(exposure_matrix, outcomes_tbl) {
 
   # subset so its a complete match based on DATE and GEO_UNIT
   # Update this actually to be based on STRATA
-  rr <- which(exposure_matrix$strata %in% outcomes_tbl$strata)
+  exp_strata = unique(exposure_matrix$match_strata)
+  out_strata = unique(outcomes_tbl$match_strata)
+  all_strata = intersect(exp_strata, out_strata)
+
+  # exposure subset
+  rr <- which(exposure_matrix$match_strata %in% all_strata)
   exposure_matrix <- exposure_matrix[rr, ]
 
   # and you also have to remove outcomes for which there are no exposures
-  rr <- which(outcomes_tbl$strata %in% exposure_matrix$strata)
-  outcomes_tbl <- outcomes_tbl[rr, ]
+  ss <- which(outcomes_tbl$match_strata %in% all_strata)
+  outcomes_tbl <- outcomes_tbl[ss, ]
 
   # get the order correct
   setorderv(
     exposure_matrix,
-    c("strata", exp_date_col)
+    "match_strata"
   )
 
   setorderv(
     outcomes_tbl,
-    c("strata", outcome_date_col)
+    "match_strata"
   )
-
-  stopifnot(exposure_matrix$strata == outcomes_tbl$strata)
 
   # check that it worked
   stopifnot(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])
 
   stopifnot(identical(exposure_matrix[, get(exp_date_col)],
                       outcomes_tbl[, get(outcome_date_col)]))
+
+  # they should be line by line equal
+  stopifnot(identical(exposure_matrix$strata, outcomes_tbl$strata))
 
   if(!identical(exposure_matrix[, get(exp_geo_unit_col)],
                       outcomes_tbl[, get(out_geo_unit_col)])) {

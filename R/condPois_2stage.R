@@ -113,6 +113,9 @@ condPois_2stage <- function(exposure_matrix,
   exposure_matrix <- validated$exposure_matrix
   outcomes_tbl    <- validated$outcomes_tbl
 
+  # print(attributes(exposure_matrix)$column_mapping)
+  # print(attributes(outcomes_tbl)$column_mapping)
+
   # make objects available
   exp_geo_unit_col     <- attributes(exposure_matrix)$column_mapping$geo_unit
   exp_geo_unit_grp_col <- attributes(exposure_matrix)$column_mapping$geo_unit_grp
@@ -131,17 +134,23 @@ condPois_2stage <- function(exposure_matrix,
   }
 
   geos_to_remove <- c()
+
   unique_geos <- unique(outcomes_tbl[, get(out_geo_unit_col)])
+
+  stopifnot(length(unique_geos) > 0)
 
   for(geo_i in 1:length(unique_geos)) {
     this_geo <- unique_geos[geo_i]
     rr <- which(outcomes_tbl[, get(out_geo_unit_col)] == this_geo)
     if(sum(outcomes_tbl[rr, get(outcome_col)]) < min_n) {
+      # print(paste0('added', this_geo))
       geos_to_remove <- c(geos_to_remove, this_geo)
+      # print(geos_to_remove)
     }
   }
 
   if(length(geos_to_remove) > 0) {
+    # print(geos_to_remove)
     cat("Removed due to min_n:", geos_to_remove, "\n")
     #
     rr <- which(outcomes_tbl[, get(out_geo_unit_col)] %in% geos_to_remove)
@@ -193,6 +202,7 @@ condPois_2stage <- function(exposure_matrix,
   vcov_list   <- vector("list", n_geos);
   coef_list   <- vector("list", n_geos);
   outc_list   <- vector("list", n_geos);
+  match_strata   <- vector("list", n_geos);
   names(vcov_model) <- unique_geos[, get(out_geo_unit_col)]
   names(coef_list) <- unique_geos[, get(out_geo_unit_col)]
 
@@ -240,6 +250,7 @@ condPois_2stage <- function(exposure_matrix,
     argvar_list[[i]]   <- cp_list[[i]]$argvar
     cen_list[[i]]      <- cp_list[[i]]$cen
     outc_list[[i]]     <- cp_list[[i]]$outcomes
+    match_strata[[i]]  <- cp_list[[i]]$match_strata
 
     # other things for mixmeta scaling
     exp_mean[[i]]   <- cp_list[[i]]$exp_mean
@@ -457,16 +468,17 @@ condPois_2stage <- function(exposure_matrix,
 
     #
     out[[i]] <- list(
-      geo_unit = this_geo,
-      basis_cen = blup_cp$basis_cen,
+      geo_unit     = this_geo,
+      basis_cen    = blup_cp$basis_cen,
       exposure_col = exposure_col,
-      this_exp = this_exp,
-      cen = blup_cp$cp$cen,
-      global_cen = global_cen,
-      outcomes = outc_list[[i]],
-      coef = blup_geo[[i]]$blup,
-      vcov = blup_geo[[i]]$vcov,
-      RRdf = RRdf
+      this_exp     = this_exp,
+      cen          = blup_cp$cp$cen,
+      global_cen   = global_cen,
+      outcomes     = outc_list[[i]],
+      match_strata =  match_strata[[i]],
+      coef         = blup_geo[[i]]$blup,
+      vcov         = blup_geo[[i]]$vcov,
+      RRdf         = RRdf
     )
 
   }
