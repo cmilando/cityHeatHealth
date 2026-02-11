@@ -272,10 +272,16 @@ make_outcome_table <- function(data,
 
   # **************
   ## remove missing values
+  ## --> you probably want to set these to 0 I think instead
   rr <- which(is.na(xgrid[[outcome_col]]))
   if(length(rr) > 0) {
-    message("Some NA values in outcome xgrid were removed")
-    xgrid <- xgrid[-rr, ]
+    message("Missing values in outcome xgrid were set to 0")
+
+    # default
+    xgrid[rr, (outcome_col) := 0]
+
+    # --> could also switch to just removing them altogether
+    # xgrid <- xgrid[-rr, ]
   }
 
   if(any(is.na(xgrid))) {

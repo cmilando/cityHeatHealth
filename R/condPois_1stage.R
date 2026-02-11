@@ -180,7 +180,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   m_vcov <- vcov(m_sub)
 
   # there should be no NAs
-  if(any(is.na(m_coef))) stop("coef has NULL, something went wrong")
+  if(any(is.na(m_coef))) stop("coef has NULL, something went wrong. Usually this happens when strata counts are too low")
   if(any(is.na(m_vcov))) stop("vcov has NULL, something went wrong")
 
   #' //////////////////////////////////////////////////////////////////////////
