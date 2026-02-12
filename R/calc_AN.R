@@ -496,6 +496,7 @@ print.calcAN_list <- function(x) {
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
 #' @param spatial_sub an option argument to subset the geo_units investigated
+#' @param ordered_labels an optional argument to order the factor labels
 #' @importFrom ggplot2 ggplot
 #' @importFrom scales number
 #' @import data.table
@@ -607,13 +608,15 @@ plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
 #' @param spatial_sub
+#' @param ordered_levels
 #' @importFrom ggplot2 ggplot
 #' @import data.table
 #' @returns
 #' @export
 #'
 #' @examples
-plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL) {
+plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL,
+                             ordered_levels = NULL) {
 
   stopifnot(table_type %in% c('rate', 'num'))
   ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
@@ -649,6 +652,13 @@ plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 
     ##
     pd <- position_dodge2(width = 0.9, preserve = "single")
+
+    ##
+    if(!is.null(ordered_levels)) {
+      byX_df[[fct_lab]] = factor(byX_df[[fct_lab]],
+                                 levels  = ordered_levels,
+                                 ordered = T)
+    }
 
 
     ggplot(byX_df) +
@@ -706,6 +716,13 @@ plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 
     ##
     pd <- position_dodge2(width = 0.9, preserve = "single")
+
+    ##
+    if(!is.null(ordered_levels)) {
+      byX_df[[fct_lab]] = factor(byX_df[[fct_lab]],
+                                 levels  = ordered_levels,
+                                 ordered = T)
+    }
 
     ggplot(byX_df) +
       coord_cartesian() +

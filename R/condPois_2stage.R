@@ -137,7 +137,9 @@ condPois_2stage <- function(exposure_matrix,
 
   unique_geos <- unique(outcomes_tbl[, get(out_geo_unit_col)])
 
-  stopifnot(length(unique_geos) > 0)
+  if(!(length(unique_geos) > 0)) {
+    stop("error : n_unique_geos !> 0 - usually this means a match_strata mismatch")
+  }
 
   for(geo_i in 1:length(unique_geos)) {
     this_geo <- unique_geos[geo_i]

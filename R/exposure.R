@@ -119,9 +119,16 @@ make_exposure_matrix <- function(data,
   }
 
   # also make match strata
-  xgrid$match_strata = paste0(
-    xgrid[, get(column_mapping$geo_unit)], ":",
-    xgrid[, get(date_col)])
+  # either do it here if you are keeping unit exposures, or later if you aren't
+  if(keep_unit_exposures) {
+    xgrid$match_strata = paste0(
+      xgrid[, get(column_mapping$geo_unit)], ":",
+      xgrid[, get(date_col)])
+  } else {
+    xgrid$match_strata = paste0(
+      xgrid[, get(column_mapping$geo_unit_grp)], ":",
+      xgrid[, get(date_col)])
+  }
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
