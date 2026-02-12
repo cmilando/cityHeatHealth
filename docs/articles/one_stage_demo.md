@@ -526,7 +526,7 @@ outcome_columns <- list(
 )
 middlesex_deaths   <- subset(ma_deaths, COUNTY20 == 'MIDDLESEX')
 middlesex_deaths_tbl <- make_outcome_table(middlesex_deaths,  outcome_columns)
-#> Some NA values in outcome xgrid were removed
+#> Missing values in outcome xgrid were set to 0
 
 # run the model
 m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
@@ -921,16 +921,16 @@ getRR(m2)
 #>      tmax_C       RR    RRlow   RRhigh                   n_geo_names
 #>       <num>    <num>    <num>    <num>                        <char>
 #>   1:    3.4 1.000000 1.000000 1.000000 ACTON:ARLINGTON...(truncated)
-#>   2:    3.5 1.000554 1.000479 1.000628 ACTON:ARLINGTON...(truncated)
+#>   2:    3.5 1.000553 1.000479 1.000628 ACTON:ARLINGTON...(truncated)
 #>   3:    3.6 1.001107 1.000959 1.001256 ACTON:ARLINGTON...(truncated)
-#>   4:    3.7 1.001662 1.001439 1.001885 ACTON:ARLINGTON...(truncated)
-#>   5:    3.8 1.002217 1.001919 1.002514 ACTON:ARLINGTON...(truncated)
+#>   4:    3.7 1.001662 1.001439 1.001884 ACTON:ARLINGTON...(truncated)
+#>   5:    3.8 1.002216 1.001919 1.002514 ACTON:ARLINGTON...(truncated)
 #>  ---                                                                
-#> 350:   38.3 1.495329 1.471790 1.519244 ACTON:ARLINGTON...(truncated)
-#> 351:   38.4 1.498360 1.474506 1.522600 ACTON:ARLINGTON...(truncated)
-#> 352:   38.5 1.501397 1.477225 1.525965 ACTON:ARLINGTON...(truncated)
-#> 353:   38.6 1.504442 1.479949 1.529339 ACTON:ARLINGTON...(truncated)
-#> 354:   38.7 1.507492 1.482678 1.532722 ACTON:ARLINGTON...(truncated)
+#> 350:   38.3 1.495273 1.471733 1.519190 ACTON:ARLINGTON...(truncated)
+#> 351:   38.4 1.498303 1.474447 1.522545 ACTON:ARLINGTON...(truncated)
+#> 352:   38.5 1.501340 1.477166 1.525909 ACTON:ARLINGTON...(truncated)
+#> 353:   38.6 1.504383 1.479889 1.529282 ACTON:ARLINGTON...(truncated)
+#> 354:   38.7 1.507432 1.482616 1.532664 ACTON:ARLINGTON...(truncated)
 #>          model_class
 #>               <char>
 #>   1: condPois_1stage
@@ -954,7 +954,7 @@ you can also get it for factors
 
 middlesex_deaths_tbl <- make_outcome_table(
   middlesex_deaths,  outcome_columns, collapse_to = 'age_grp')
-#> Some NA values in outcome xgrid were removed
+#> Missing values in outcome xgrid were set to 0
 
 # run the model
 m3 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
@@ -2088,16 +2088,16 @@ getRR(m3)
 #>       tmax_C age_grp       RR    RRlow   RRhigh          model_class
 #>        <num>  <char>    <num>    <num>    <num>               <char>
 #>    1:    3.4    0-17 1.000000 1.000000 1.000000 condPois_1stage_list
-#>    2:    3.5    0-17 1.000791 1.000711 1.000870 condPois_1stage_list
-#>    3:    3.6    0-17 1.001582 1.001423 1.001741 condPois_1stage_list
-#>    4:    3.7    0-17 1.002374 1.002136 1.002612 condPois_1stage_list
-#>    5:    3.8    0-17 1.003167 1.002850 1.003485 condPois_1stage_list
+#>    2:    3.5    0-17 1.000805 1.000724 1.000886 condPois_1stage_list
+#>    3:    3.6    0-17 1.001611 1.001448 1.001773 condPois_1stage_list
+#>    4:    3.7    0-17 1.002417 1.002174 1.002661 condPois_1stage_list
+#>    5:    3.8    0-17 1.003224 1.002899 1.003549 condPois_1stage_list
 #>   ---                                                               
-#> 1058:   38.3     65+ 1.481270 1.455925 1.507056 condPois_1stage_list
-#> 1059:   38.4     65+ 1.483985 1.458306 1.510117 condPois_1stage_list
-#> 1060:   38.5     65+ 1.486706 1.460689 1.513186 condPois_1stage_list
-#> 1061:   38.6     65+ 1.489431 1.463075 1.516263 condPois_1stage_list
-#> 1062:   38.7     65+ 1.492162 1.465464 1.519347 condPois_1stage_list
+#> 1058:   38.3     65+ 1.482591 1.456637 1.509008 condPois_1stage_list
+#> 1059:   38.4     65+ 1.485307 1.459010 1.512078 condPois_1stage_list
+#> 1060:   38.5     65+ 1.488028 1.461386 1.515156 condPois_1stage_list
+#> 1061:   38.6     65+ 1.490755 1.463765 1.518242 condPois_1stage_list
+#> 1062:   38.7     65+ 1.493486 1.466147 1.521335 condPois_1stage_list
 ```
 
 ### Changing the global_cen

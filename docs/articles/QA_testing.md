@@ -109,7 +109,7 @@ out_data <- data[, .(
 )]
 
 outcomes_tbl <- make_outcome_table(out_data, outcome_columns)
-#> Some NA values in outcome xgrid were removed
+#> Missing values in outcome xgrid were set to 0
 outcomes_tbl
 #>       X_week_end_date occurrence_county_code    region X_deaths
 #>                <IDat>                 <char>    <char>    <int>

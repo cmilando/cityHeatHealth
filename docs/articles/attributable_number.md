@@ -153,7 +153,7 @@ outcome_columns <- list(
 ma_outcomes_tbl <- make_outcome_table(
   subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), outcome_columns)
-#> Some NA values in outcome xgrid were removed
+#> Missing values in outcome xgrid were set to 0
 ```
 
 models
@@ -210,56 +210,56 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
 ma_AN$`_`$rate_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>          <char>    <char>      <num>    <lgcl>                     <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                 3523.0892
-#>   2:      ACTON MIDDLESEX      23864     FALSE                 -223.6633
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 3564.8935
-#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -245.6106
+#>   1:      ACTON MIDDLESEX      23864      TRUE                 3514.7083
+#>   2:      ACTON MIDDLESEX      23864     FALSE                 -213.7110
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 3563.2597
+#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -245.8829
 #>   5: ASHBURNHAM WORCESTER       6337      TRUE                 2426.2269
 #>  ---                                                                    
-#> 224: WINCHESTER MIDDLESEX      22809     FALSE                 -310.1846
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                 3408.2870
-#> 226:     WOBURN MIDDLESEX      40992     FALSE                 -165.2762
-#> 227:  WORCESTER WORCESTER     204191      TRUE                 3106.9562
+#> 224: WINCHESTER MIDDLESEX      22809     FALSE                 -311.2806
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                 3408.8969
+#> 226:     WOBURN MIDDLESEX      40992     FALSE                 -161.3120
+#> 227:  WORCESTER WORCESTER     204191      TRUE                 3107.4460
 #> 228:  WORCESTER WORCESTER     204191     FALSE                 -268.1925
 #>      mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                         <num>                    <num>
-#>   1:                2849.4542               4336.81487
-#>   2:                -336.8830               -100.46514
-#>   3:                2799.5251               4175.58435
-#>   4:                -335.8902               -159.08868
-#>   5:                1731.7934               3015.42528
+#>   1:                2774.7339                4245.6996
+#>   2:                -333.7663                -108.3483
+#>   3:                2801.4720                4172.5483
+#>   4:                -335.8902                -159.0887
+#>   5:                1739.4864                3013.5514
 #>  ---                                                  
-#> 224:                -418.7492               -211.48450
-#> 225:                2792.2521               4015.95128
-#> 226:                -242.3034                -93.31089
-#> 227:                2672.7794               3591.71376
-#> 228:                -380.2537               -179.29598
+#> 224:                -423.6540                -211.3749
+#> 225:                2853.8648                3965.4689
+#> 226:                -233.6127                 -79.8479
+#> 227:                2674.7567                3591.4842
+#> 228:                -380.2537                -179.2960
 ma_AN$`_`$number_table
 #>          TOWN20  COUNTY20 population above_MMT mean_annual_attr_num_est
 #>          <char>    <char>      <num>    <lgcl>                    <num>
-#>   1:      ACTON MIDDLESEX      23864      TRUE                  840.750
-#>   2:      ACTON MIDDLESEX      23864     FALSE                  -53.375
-#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 1636.500
-#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -112.750
+#>   1:      ACTON MIDDLESEX      23864      TRUE                  838.750
+#>   2:      ACTON MIDDLESEX      23864     FALSE                  -51.000
+#>   3:  ARLINGTON MIDDLESEX      45906      TRUE                 1635.750
+#>   4:  ARLINGTON MIDDLESEX      45906     FALSE                 -112.875
 #>   5: ASHBURNHAM WORCESTER       6337      TRUE                  153.750
 #>  ---                                                                   
-#> 224: WINCHESTER MIDDLESEX      22809     FALSE                  -70.750
-#> 225:     WOBURN MIDDLESEX      40992      TRUE                 1397.125
-#> 226:     WOBURN MIDDLESEX      40992     FALSE                  -67.750
-#> 227:  WORCESTER WORCESTER     204191      TRUE                 6344.125
+#> 224: WINCHESTER MIDDLESEX      22809     FALSE                  -71.000
+#> 225:     WOBURN MIDDLESEX      40992      TRUE                 1397.375
+#> 226:     WOBURN MIDDLESEX      40992     FALSE                  -66.125
+#> 227:  WORCESTER WORCESTER     204191      TRUE                 6345.125
 #> 228:  WORCESTER WORCESTER     204191     FALSE                 -547.625
 #>      mean_annual_attr_num_lb mean_annual_attr_num_ub
 #>                        <num>                   <num>
-#>   1:               679.99375              1034.93750
-#>   2:               -80.39375               -23.97500
-#>   3:              1285.15000              1916.84375
+#>   1:               662.16250              1013.19375
+#>   2:               -79.65000               -25.85625
+#>   3:              1286.04375              1915.45000
 #>   4:              -154.19375               -73.03125
-#>   5:               109.74375               191.08750
+#>   5:               110.23125               190.96875
 #>  ---                                                
-#> 224:               -95.51250               -48.23750
-#> 225:              1144.60000              1646.21875
-#> 226:               -99.32500               -38.25000
-#> 227:              5457.57500              7333.95625
+#> 224:               -96.63125               -48.21250
+#> 225:              1169.85625              1625.52500
+#> 226:               -95.76250               -32.73125
+#> 227:              5461.61250              7333.48750
 #> 228:              -776.44375              -366.10625
 ```
 
@@ -281,29 +281,29 @@ ma_AN <- calc_AN(ma_model, ma_outcomes_tbl, ma_pop_data_long,
 ma_AN$`_`$rate_table
 #>     COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>       <char>      <num>    <lgcl>                     <num>
-#> 1: MIDDLESEX    1623109      TRUE                 3448.0586
-#> 2: MIDDLESEX    1623109     FALSE                 -208.0267
-#> 3: WORCESTER     858898      TRUE                 3008.6227
-#> 4: WORCESTER     858898     FALSE                 -218.3321
+#> 1: MIDDLESEX    1623109      TRUE                 3453.4957
+#> 2: MIDDLESEX    1623109     FALSE                 -210.3140
+#> 3: WORCESTER     858898      TRUE                 3007.8804
+#> 4: WORCESTER     858898     FALSE                 -219.9912
 #>    mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                       <num>                    <num>
-#> 1:                3344.3152                3571.5154
-#> 2:                -223.6067                -192.6222
-#> 3:                2865.7325                3151.9029
-#> 4:                -246.5900                -194.2082
+#> 1:                3347.3387                3581.1705
+#> 2:                -223.1200                -195.3061
+#> 3:                2857.9740                3153.6261
+#> 4:                -247.0106                -196.4167
 ma_AN$`_`$number_table
 #>     COUNTY20 population above_MMT mean_annual_attr_num_est
 #>       <char>      <num>    <lgcl>                    <num>
-#> 1: MIDDLESEX    1623109      TRUE                 55965.75
-#> 2: MIDDLESEX    1623109     FALSE                 -3376.50
-#> 3: WORCESTER     858898      TRUE                 25841.00
-#> 4: WORCESTER     858898     FALSE                 -1875.25
+#> 1: MIDDLESEX    1623109      TRUE                56054.000
+#> 2: MIDDLESEX    1623109     FALSE                -3413.625
+#> 3: WORCESTER     858898      TRUE                25834.625
+#> 4: WORCESTER     858898     FALSE                -1889.500
 #>    mean_annual_attr_num_lb mean_annual_attr_num_ub
 #>                      <num>                   <num>
-#> 1:               54281.881               57969.587
-#> 2:               -3629.381               -3126.469
-#> 3:               24613.719               27071.631
-#> 4:               -2117.956               -1668.050
+#> 1:               54330.956               58126.300
+#> 2:               -3621.481               -3170.031
+#> 3:               24547.081               27086.431
+#> 4:               -2121.569               -1687.019
 ```
 
 See that the numbers are roughly the same for Suffolk county ? They
@@ -1149,15 +1149,15 @@ ma_AN_s1 <- calc_AN(m2, ma_outcomes_tbl, ma_pop_data_long,
 ma_AN_s1$`_`$rate_table
 #>     COUNTY20 population above_MMT mean_annual_attr_rate_est
 #>       <char>      <num>    <lgcl>                     <num>
-#> 1: MIDDLESEX    1623109      TRUE                  8317.194
+#> 1: MIDDLESEX    1623109      TRUE                  8309.755
 #> 2: MIDDLESEX    1623109     FALSE                     0.000
-#> 3: WORCESTER     858898      TRUE                  8073.558
+#> 3: WORCESTER     858898      TRUE                  8060.896
 #> 4: WORCESTER     858898     FALSE                     0.000
 #>    mean_annual_attr_rate_lb mean_annual_attr_rate_ub
 #>                       <num>                    <num>
-#> 1:                 8217.711                 8412.344
+#> 1:                 8214.084                 8407.091
 #> 2:                    0.000                    0.000
-#> 3:                 7948.111                 8252.355
+#> 3:                 7876.969                 8188.347
 #> 4:                    0.000                    0.000
 plot(ma_AN_s1, "num", above_MMT = T)
 ```
@@ -1174,7 +1174,7 @@ ma_outcomes_tbl_fct <- make_outcome_table(
   subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015), 
   outcome_columns, collapse_to = 'age_grp')
-#> Some NA values in outcome xgrid were removed
+#> Missing values in outcome xgrid were set to 0
 
 ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
 #> < age_grp : 0-17 >
@@ -1204,6 +1204,13 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BOXBOROUGH. This means your zones are across too large of
+#> an area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit CARLISLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
@@ -1463,7 +1470,21 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 #> -- stage 1
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit BARRE. This means your zones are across too large of an
+#> area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit BILLERICA. This means your zones are across too large of
+#> an area, or there are differences in exposures so much that the bases are quite
+#> different. Try limiting the geo-units passed in to those that are more similar,
+#> manually setting a centering point that you know each geo-unit has, or changing
+#> your exposure variable.
+#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
+#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
+#> exposures in geo-unit CARLISLE. This means your zones are across too large of
 #> an area, or there are differences in exposures so much that the bases are quite
 #> different. Try limiting the geo-units passed in to those that are more similar,
 #> manually setting a centering point that you know each geo-unit has, or changing
@@ -1779,25 +1800,11 @@ ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose
 #> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
-#> exposures in geo-unit NEW BRAINTREE. This means your zones are across too large
-#> of an area, or there are differences in exposures so much that the bases are
-#> quite different. Try limiting the geo-units passed in to those that are more
-#> similar, manually setting a centering point that you know each geo-unit has, or
-#> changing your exposure variable.
-#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
-#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit NORTHBRIDGE. This means your zones are across too large
 #> of an area, or there are differences in exposures so much that the bases are
 #> quite different. Try limiting the geo-units passed in to those that are more
 #> similar, manually setting a centering point that you know each geo-unit has, or
 #> changing your exposure variable.
-#> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
-#> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
-#> exposures in geo-unit PETERSHAM. This means your zones are across too large of
-#> an area, or there are differences in exposures so much that the bases are quite
-#> different. Try limiting the geo-units passed in to those that are more similar,
-#> manually setting a centering point that you know each geo-unit has, or changing
-#> your exposure variable.
 #> Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,
 #> outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of
 #> exposures in geo-unit READING. This means your zones are across too large of an

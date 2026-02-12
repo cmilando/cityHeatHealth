@@ -495,7 +495,7 @@ print.calcAN_list <- function(x) {
 #' @param x an object of class plot.calcAN
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
-#' @param plot_sub an option argument to subset the geo_units investigated
+#' @param spatial_sub an option argument to subset the geo_units investigated
 #' @importFrom ggplot2 ggplot
 #' @importFrom scales number
 #' @import data.table
@@ -503,7 +503,7 @@ print.calcAN_list <- function(x) {
 #' @export
 #'
 #' @examples
-plot.calcAN <- function(x, table_type, above_MMT, plot_sub = NULL) {
+plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 
   stopifnot(table_type %in% c('rate', 'num'))
   stopifnot(above_MMT %in% c(T, F))
@@ -517,7 +517,10 @@ plot.calcAN <- function(x, table_type, above_MMT, plot_sub = NULL) {
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
 
-
+    if(length(spatial_sub) > 0) {
+      rr <- which(byX_df[[x_col]] %in% spatial_sub)
+      byX_df <- byX_df[rr, ]
+    }
 
     if(nrow(byX_df) > 20) {
       warning("plot elements > 20, subsetting to top 20")
@@ -555,6 +558,12 @@ plot.calcAN <- function(x, table_type, above_MMT, plot_sub = NULL) {
     rr <- which(byX_df$above_MMT == above_MMT)
     byX_df <- byX_df[rr, ]
     x_col <- names(byX_df)[1]
+
+    if(length(spatial_sub) > 0) {
+      rr <- which(byX_df[[x_col]] %in% spatial_sub)
+      byX_df <- byX_df[rr, ]
+    }
+
     if(nrow(byX_df) > 20) {
       warning("plot elements > 20, subsetting to top 20")
       setorder(byX_df, -mean_annual_attr_rate_est)
@@ -597,13 +606,14 @@ plot.calcAN <- function(x, table_type, above_MMT, plot_sub = NULL) {
 #' @param x an object of class plot.calcAN_list
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
+#' @param spatial_sub
 #' @importFrom ggplot2 ggplot
 #' @import data.table
 #' @returns
 #' @export
 #'
 #' @examples
-plot.calcAN_list <- function(x, table_type, above_MMT) {
+plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 
   stopifnot(table_type %in% c('rate', 'num'))
   ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
@@ -618,6 +628,13 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
     for(i in 1:length(byX_df)) {
       byX_df[[i]] <- x[[fct_names[i]]]$`_`$number_table
       byX_df[[i]][, (fct_lab) := fct_names[i]]
+      x_col <- names(byX_df[[i]])[1]
+
+      if(length(spatial_sub) > 0) {
+        rr <- which(byX_df[[i]][[x_col]] %in% spatial_sub)
+        byX_df[[i]] <- byX_df[[i]][rr, ]
+      }
+
       if(nrow(byX_df[[i]]) > 20) {
         warning("plot elements > 20, subsetting to top 20")
         setorder(byX_df[[i]], -mean_annual_attr_num_est)
@@ -667,6 +684,14 @@ plot.calcAN_list <- function(x, table_type, above_MMT) {
     for(i in 1:length(byX_df)) {
       byX_df[[i]] <- x[[fct_names[i]]]$`_`$rate_table
       byX_df[[i]][, (fct_lab) := fct_names[i]]
+
+      x_col <- names(byX_df[[i]])[1]
+
+      if(length(spatial_sub) > 0) {
+        rr <- which(byX_df[[i]][[x_col]] %in% spatial_sub)
+        byX_df[[i]] <- byX_df[[i]][rr, ]
+      }
+
       if(nrow(byX_df[[i]]) > 20) {
         warning("plot elements > 20, subsetting to top 20")
         setorder(byX_df[[i]], -mean_annual_attr_rate_est)
