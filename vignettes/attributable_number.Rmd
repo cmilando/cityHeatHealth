@@ -174,7 +174,7 @@ check of single
 # run the model
 m2 <- condPois_1stage(exposure_matrix = ma_exposure_matrix, 
                   outcomes_tbl = ma_outcomes_tbl, 
-                  multi_zone = TRUE)
+                  multi_zone = TRUE, global_cen = 15)
 
 ma_AN_s1 <- calc_AN(m2, ma_outcomes_tbl, ma_pop_data_long,
                  spatial_agg_type = 'COUNTY20', 
@@ -197,7 +197,10 @@ ma_outcomes_tbl_fct <- make_outcome_table(
            year(date) %in% 2012:2015), 
   outcome_columns, collapse_to = 'age_grp')
 
-ma_model_fct <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl_fct, verbose = 1)
+ma_model_fct <- condPois_2stage(ma_exposure_matrix, 
+                                ma_outcomes_tbl_fct, 
+                                global_cen = 15,
+                                verbose = 1)
 
 ma_AN_fct <- calc_AN(ma_model_fct, ma_outcomes_tbl_fct,
                      ma_pop_data_long,

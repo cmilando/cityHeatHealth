@@ -88,7 +88,8 @@ oo_list <- vector("list", 4)
 for(bb in 1:4) {
   m1 <- condPois_1stage(
     subset(exposure_mat, TOWN20 == TOWNLIST[bb]),
-    subset(deaths_tbl, TOWN20 == TOWNLIST[bb]))
+    subset(deaths_tbl, TOWN20 == TOWNLIST[bb]),
+    global_cen = 15)
   
   cb_list[[bb]] <- m1$`_`$out[[1]]$orig_basis
   oo_list[[bb]] <- m1$`_`$out[[1]]$outcomes
@@ -100,20 +101,6 @@ for(bb in 1:4) {
   plot_l[[bb]] <- plot(m1)
   
 }
-#> Warning in condPois_1stage(subset(exposure_mat, TOWN20 == TOWNLIST[bb]), :
-#> Centering point is outside the range of exposures in geo-unit CHELSEA. This
-#> means your zones are across too large of an area, or there are differences in
-#> exposures so much that the bases are quite different. Try limiting the
-#> geo-units passed in to those that are more similar, manually setting a
-#> centering point that you know each geo-unit has, or changing your exposure
-#> variable.
-#> Warning in condPois_1stage(subset(exposure_mat, TOWN20 == TOWNLIST[bb]), :
-#> Centering point is outside the range of exposures in geo-unit REVERE. This
-#> means your zones are across too large of an area, or there are differences in
-#> exposures so much that the bases are quite different. Try limiting the
-#> geo-units passed in to those that are more similar, manually setting a
-#> centering point that you know each geo-unit has, or changing your exposure
-#> variable.
 mx <- do.call(cbind, beta_l) # COEFS NOT THE SAME
 colnames(mx)  = TOWNLIST
 mx
@@ -172,6 +159,7 @@ model is not hierarchical
 m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
                      stan_type = 'mcmc',
                      verbose = 2,
+                     global_cen = 15,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'none')
 #>  STAN TYPE = mcmc 
@@ -219,18 +207,18 @@ m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
 #> Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
 #> Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
-#> Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
 #> Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+#> Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
 #> Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 #> Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 2 finished in 28.4 seconds.
 #> Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-#> Chain 1 finished in 28.7 seconds.
+#> Chain 1 finished in 29.2 seconds.
+#> Chain 2 finished in 29.1 seconds.
 #> 
 #> Both chains finished successfully.
-#> Mean chain execution time: 28.6 seconds.
-#> Total execution time: 28.8 seconds.
+#> Mean chain execution time: 29.2 seconds.
+#> Total execution time: 29.3 seconds.
 #> 
 #>  ...mcmc draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
@@ -282,6 +270,7 @@ using laplace in this case, but you could try mcmc
 m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
                      stan_type = 'laplace',
                      verbose = 2,
+                     global_cen = 15,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'bym2')
 #>  STAN TYPE = laplace 
@@ -329,7 +318,7 @@ m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp,
 #> iteration: 700 
 #> iteration: 800 
 #> iteration: 900 
-#> Finished in  0.9 seconds.
+#> Finished in  0.7 seconds.
 #>  ...laplace draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates
@@ -432,7 +421,7 @@ m_sb3 <- condPois_sb(exposure_mat,
 #>     2152      -6355.97   2.89835e-07       242.602           1           1     2271    
 #> Optimization terminated normally:  
 #>   Convergence detected: relative gradient magnitude is below tolerance 
-#> Finished in  1.0 seconds.
+#> Finished in  1.1 seconds.
 #>  ...laplace sample... 
 #> Calculating Hessian 
 #> Calculating inverse of Cholesky factor 
@@ -447,7 +436,7 @@ m_sb3 <- condPois_sb(exposure_mat,
 #> iteration: 700 
 #> iteration: 800 
 #> iteration: 900 
-#> Finished in  0.8 seconds.
+#> Finished in  0.7 seconds.
 #>  ...laplace draws... 
 #> CHELSEA  EVERETT     MALDEN  REVERE  
 #> -- apply estimates

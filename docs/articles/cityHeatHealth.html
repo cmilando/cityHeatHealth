@@ -99,7 +99,10 @@ provide a number of outputs.</p>
 <span></span>
 <span><span class="co"># load a built-in dataset and get a subset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ma_exposure"</span><span class="op">)</span> </span>
-<span><span class="va">exposure_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_exposure</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span></span>
+<span><span class="va">exposure_sub</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_exposure</span>,</span>
+<span>         <span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>           <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># define columns of ma_exposure</span></span>
@@ -119,20 +122,20 @@ provide a number of outputs.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          date  tmax_C TOWN20  COUNTY20                  strata     match_strata</span></span>
 <span><span class="co">#&gt;        &lt;IDat&gt;   &lt;num&gt; &lt;char&gt;    &lt;char&gt;                  &lt;char&gt;           &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-06</span></span>
-<span><span class="co">#&gt; 2: 2012-05-13 26.2234  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-13</span></span>
-<span><span class="co">#&gt; 3: 2012-05-20 24.7840  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-20</span></span>
-<span><span class="co">#&gt; 4: 2012-05-27 29.9073  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-27</span></span>
-<span><span class="co">#&gt; 5: 2012-05-07 16.1798  ACTON MIDDLESEX ACTON:yr2012:mn05:dow02 ACTON:2012-05-07</span></span>
-<span><span class="co">#&gt; 6: 2012-05-14 28.5869  ACTON MIDDLESEX ACTON:yr2012:mn05:dow02 ACTON:2012-05-14</span></span>
+<span><span class="co">#&gt; 1: 2012-05-01 16.4633  ACTON MIDDLESEX ACTON:yr2012:mn05:dow03 ACTON:2012-05-01</span></span>
+<span><span class="co">#&gt; 2: 2012-05-02  8.6743  ACTON MIDDLESEX ACTON:yr2012:mn05:dow04 ACTON:2012-05-02</span></span>
+<span><span class="co">#&gt; 3: 2012-05-03 11.1778  ACTON MIDDLESEX ACTON:yr2012:mn05:dow05 ACTON:2012-05-03</span></span>
+<span><span class="co">#&gt; 4: 2012-05-04 12.4253  ACTON MIDDLESEX ACTON:yr2012:mn05:dow06 ACTON:2012-05-04</span></span>
+<span><span class="co">#&gt; 5: 2012-05-05 12.8489  ACTON MIDDLESEX ACTON:yr2012:mn05:dow07 ACTON:2012-05-05</span></span>
+<span><span class="co">#&gt; 6: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-06</span></span>
 <span><span class="co">#&gt;    explag1 explag2 explag3 explag4 explag5</span></span>
 <span><span class="co">#&gt;      &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 12.8489 12.4253 11.1778  8.6743 16.4633</span></span>
-<span><span class="co">#&gt; 2: 18.2676 17.8051 17.9041 13.6660 20.2731</span></span>
-<span><span class="co">#&gt; 3: 21.4705 20.3042 22.6773 22.6600 19.8368</span></span>
-<span><span class="co">#&gt; 4: 23.4173 24.4627 25.0704 17.8687 21.3824</span></span>
-<span><span class="co">#&gt; 5: 17.7602 12.8489 12.4253 11.1778  8.6743</span></span>
-<span><span class="co">#&gt; 6: 26.2234 18.2676 17.8051 17.9041 13.6660</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: 14.0179 14.1931 12.7975 17.5538 16.2753</span></span>
+<span><span class="co">#&gt; 2: 16.4633 14.0179 14.1931 12.7975 17.5538</span></span>
+<span><span class="co">#&gt; 3:  8.6743 16.4633 14.0179 14.1931 12.7975</span></span>
+<span><span class="co">#&gt; 4: 11.1778  8.6743 16.4633 14.0179 14.1931</span></span>
+<span><span class="co">#&gt; 5: 12.4253 11.1778  8.6743 16.4633 14.0179</span></span>
+<span><span class="co">#&gt; 6: 12.8489 12.4253 11.1778  8.6743 16.4633</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="outcome">Outcome<a class="anchor" aria-label="anchor" href="#outcome"></a>
@@ -143,7 +146,10 @@ on.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load a built-in dataset, and get a subset, for speed</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ma_deaths"</span><span class="op">)</span> </span>
-<span><span class="va">deaths_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,<span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span></span>
+<span><span class="va">deaths_sub</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">ma_deaths</span>,</span>
+<span>        <span class="va">COUNTY20</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'MIDDLESEX'</span>, <span class="st">'WORCESTER'</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>           <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/IDateTime.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2012</span><span class="op">:</span><span class="fl">2015</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># define columns of ma_deaths</span></span>
@@ -278,15 +284,24 @@ with small outcome numbers.
 <p>We show code for each but just run <code>condPois_2stage</code> in
 this vignette.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_2stage.html">condPois_2stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl</span>,</span>
+<code class="sourceCode R"><span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_2stage.html">condPois_2stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, </span>
+<span>                            <span class="va">ma_outcomes_tbl</span>,</span>
+<span>                            verbose <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                            global_cen <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
-<span><span class="co">#&gt; formula: ~ 1 | COUNTY20/TOWN20</span></span></code></pre></div>
+<span><span class="co">#&gt; -- validation passed</span></span>
+<span><span class="co">#&gt; -- stage 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; -- mixmeta</span></span>
+<span><span class="co">#&gt; formula: ~ 1 | COUNTY20/TOWN20 </span></span>
+<span><span class="co">#&gt; -- stage 2</span></span></code></pre></div>
 <p>For <code>condPois_1stage</code> the call would look like this, where
 you’d need to add the argument <code>multi_zone = T</code> because there
 are multiple <code>geo_units</code> in
 <code>ma_exposure_matrix</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl</span>, multi_zone <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl</span>, </span>
+<span>                            multi_zone <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                            global_cen <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
 <p>See <code><a href="../articles/one_stage_demo.html">vignette("one_stage_demo")</a></code> for more details. Note
 that <code>forest_plot</code> and <code>spatial_plot</code> are not
 implemented for <code>condPois_1stage</code> since you can get all of
@@ -298,7 +313,8 @@ took 20 minutes to complete for the full MA dataset [with maybe some
 additional bugs to work out]):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ma_towns"</span><span class="op">)</span></span>
-<span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_sb.html">condPois_sb</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl</span>, <span class="va">ma_towns</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ma_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_sb.html">condPois_sb</a></span><span class="op">(</span><span class="va">ma_exposure_matrix</span>, <span class="va">ma_outcomes_tbl</span>, </span>
+<span>                        global_cen <span class="op">=</span> <span class="fl">15</span>, <span class="va">ma_towns</span><span class="op">)</span></span></code></pre></div>
 <p>See <code><a href="../articles/bayesian_demo.html">vignette("bayesian_demo")</a></code> for more details.</p>
 </div>
 </div>
@@ -668,8 +684,16 @@ but fine for diagnostics.</p>
 <span><span class="co">#&gt; Warning in plot.calcAN_list(ma_AN_fct, "num", above_MMT = T): plot elements &gt;</span></span>
 <span><span class="co">#&gt; 20, subsetting to top 20</span></span></code></pre></div>
 <p><img src="cityHeatHealth_files/figure-html/calcAN_plot2-1.png" class="r-plt" width="768"></p>
-<p>You can also plot spatially</p>
+<p>You can also make use of some additional arguments to get plot
+subsets, including <code>spatial_sub</code> and
+<code>ordered_levels</code>.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ma_AN_fct</span>, <span class="st">'rate'</span>, above_MMT <span class="op">=</span> <span class="cn">T</span>, </span>
+<span>     spatial_sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'BOSTON'</span>, <span class="st">'CAMBRIDGE'</span><span class="op">)</span>,</span>
+<span>     ordered_levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0-17"</span>, <span class="st">"18-64"</span>, <span class="st">"65+"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cityHeatHealth_files/figure-html/calcAN_plot2z-1.png" class="r-plt" width="768"></p>
+<p>You can also plot spatially</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/spatial_plot.html">spatial_plot</a></span><span class="op">(</span><span class="va">ma_AN_fct</span>, shp <span class="op">=</span> <span class="va">ma_towns</span>, table_type <span class="op">=</span> <span class="st">"num"</span>, above_MMT <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cityHeatHealth_files/figure-html/multi_plot3db-1.png" class="r-plt" width="576"></p>
 </div>

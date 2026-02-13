@@ -11,7 +11,8 @@ make_outcome_table(
   months_subset = 5:9,
   dt_by = "day",
   collapse_to = NULL,
-  grp_level = FALSE
+  grp_level = FALSE,
+  keep_unit_outcomes = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ May through September (5 through 9)}
 \item{collapse_to}{which factors to collapse across}
 
 \item{grp_level}{whether to summarize to the group level or not (default)}
+
+\item{keep_unit_outcomes}{if grp_level is true, whether to keep original unit-level outcomes}
 }
 \description{
 Function to create the outcome table

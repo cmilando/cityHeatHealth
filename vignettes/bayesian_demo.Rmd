@@ -89,7 +89,8 @@ oo_list <- vector("list", 4)
 for(bb in 1:4) {
   m1 <- condPois_1stage(
     subset(exposure_mat, TOWN20 == TOWNLIST[bb]),
-    subset(deaths_tbl, TOWN20 == TOWNLIST[bb]))
+    subset(deaths_tbl, TOWN20 == TOWNLIST[bb]),
+    global_cen = 15)
   
   cb_list[[bb]] <- m1$`_`$out[[1]]$orig_basis
   oo_list[[bb]] <- m1$`_`$out[[1]]$outcomes
@@ -137,6 +138,7 @@ I think this makes for a good candidate because betas are normal and the model i
 m_sb1 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
                      stan_type = 'mcmc',
                      verbose = 2,
+                     global_cen = 15,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'none')
 
@@ -158,6 +160,7 @@ using laplace in this case, but you could try mcmc
 m_sb2 <- condPois_sb(exposure_mat, deaths_tbl, local_shp, 
                      stan_type = 'laplace',
                      verbose = 2,
+                     global_cen = 15,
                      stan_opts = list(refresh = 200),
                      use_spatial_model = 'bym2')
 

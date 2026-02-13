@@ -13,7 +13,8 @@ condPois_1stage(
   min_n = NULL,
   strata_min = 0,
   global_cen = NULL,
-  multi_zone = FALSE
+  multi_zone = FALSE,
+  verbose = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ condPois_1stage(
 \item{global_cen}{global centering point}
 
 \item{multi_zone}{are multiple strata being used.}
+
+\item{verbose}{not used}
 }
 \description{
 Run a conditional poisson model for a single geographic unit

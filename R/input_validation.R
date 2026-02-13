@@ -59,13 +59,17 @@ input_validation <- function(exposure_matrix, outcomes_tbl) {
   )
 
   # check that it worked
-  stopifnot(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])
+  if(!(dim(exposure_matrix)[1] == dim(outcomes_tbl)[1])) {
+    stop("Dim of exposure matrix != dim of outcomes tbl. Usually means
+         there is a bug in the match_strata")
+  }
 
   stopifnot(identical(exposure_matrix[, get(exp_date_col)],
                       outcomes_tbl[, get(outcome_date_col)]))
 
   # they should be line by line equal
   stopifnot(identical(exposure_matrix$strata, outcomes_tbl$strata))
+  stopifnot(identical(exposure_matrix$match_strata, outcomes_tbl$match_strata))
 
   if(!identical(exposure_matrix[, get(exp_geo_unit_col)],
                       outcomes_tbl[, get(out_geo_unit_col)])) {

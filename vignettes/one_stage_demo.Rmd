@@ -296,7 +296,8 @@ middlesex_deaths_tbl <- make_outcome_table(middlesex_deaths,  outcome_columns)
 
 # run the model
 m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
-                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
+                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE,
+                  global_cen = 15)
 
 ```
 
@@ -323,6 +324,7 @@ middlesex_deaths_tbl <- make_outcome_table(
 # run the model
 m3 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
                   outcomes_tbl = middlesex_deaths_tbl, 
+                  global_cen = 15,
                   multi_zone = TRUE)
 
 # plot

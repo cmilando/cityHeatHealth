@@ -9,6 +9,7 @@
 #' @param strata_min an integer describing the minimum number of cases for a single strata
 #' @param global_cen global centering point
 #' @param multi_zone are multiple strata being used.
+#' @param verbose not used
 #'
 #' @import data.table
 #' @importFrom dlnm crossbasis
@@ -24,7 +25,7 @@
 condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                         argvar = NULL, arglag = NULL, maxlag = NULL,
                        min_n = NULL, strata_min = 0, global_cen = NULL,
-                       multi_zone = FALSE) {
+                       multi_zone = FALSE, verbose = NULL) {
 
   ## Check 1 -- that both inputs are the right class of variables
   stopifnot("exposure" %in% class(exposure_matrix))
@@ -347,7 +348,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 }
 
 
-#'@export
+#' @export
 #' print.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -362,7 +363,7 @@ print.condPois_1stage <- function(x) {
 }
 
 
-#'@export
+#' @export
 #' print.condPois_1stage_list
 #'
 #' @param x an object of class condPois_1stage_list
@@ -377,7 +378,7 @@ print.condPois_1stage_list <- function(x) {
 }
 
 
-#'@export
+#' @export
 #' getRR.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -411,7 +412,7 @@ getRR.condPois_1stage <- function(x) {
 
 
 
-#'@export
+#' @export
 #' plot.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -444,7 +445,7 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
     geom_line() + xlab(xlab) + ylab(ylab)
 }
 
-#'@export
+#' @export
 #' getRR.condPois_1stage_list
 #'
 #' @param x an object of class condPois_1stage
@@ -486,7 +487,7 @@ getRR.condPois_1stage_list <- function(x) {
   return(plot_cp)
 }
 
-#'@export
+#' @export
 #' plot.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -544,7 +545,7 @@ plot.condPois_1stage_list <- function(x, xlab = NULL, ylab = NULL, title = NULL)
 
 
 
-#'@export
+#' @export
 #' forest_plot.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -563,7 +564,7 @@ forest_plot.condPois_1stage <- function(x, ...) {
 
 
 
-#'@export
+#' @export
 #' forest_plot.condPois_1stage_list
 #'
 #' @param x an object of class condPois_1stage
@@ -582,7 +583,7 @@ forest_plot.condPois_1stage_list <- function(x, ...) {
 
 
 
-#'@export
+#' @export
 #' spatial_plot.condPois_1stage
 #'
 #' @param x an object of class condPois_1stage
@@ -600,7 +601,7 @@ spatial_plot.condPois_1stage <- function(x, ...) {
 }
 
 
-#'@export
+#' @export
 #' spatial_plot.condPois_1stage_list
 #'
 #' @param x an object of class condPois_1stage

@@ -14,7 +14,8 @@ condPois_1stage(
   min_n = NULL,
   strata_min = 0,
   global_cen = NULL,
-  multi_zone = FALSE
+  multi_zone = FALSE,
+  verbose = NULL
 )
 ```
 
@@ -56,5 +57,9 @@ condPois_1stage(
 - multi_zone:
 
   are multiple strata being used.
+
+- verbose:
+
+  not used
 
 ## Examples

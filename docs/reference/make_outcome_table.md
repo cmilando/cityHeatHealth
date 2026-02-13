@@ -11,7 +11,8 @@ make_outcome_table(
   months_subset = 5:9,
   dt_by = "day",
   collapse_to = NULL,
-  grp_level = FALSE
+  grp_level = FALSE,
+  keep_unit_outcomes = FALSE
 )
 ```
 
@@ -39,5 +40,9 @@ make_outcome_table(
 - grp_level:
 
   whether to summarize to the group level or not (default)
+
+- keep_unit_outcomes:
+
+  if grp_level is true, whether to keep original unit-level outcomes
 
 ## Examples

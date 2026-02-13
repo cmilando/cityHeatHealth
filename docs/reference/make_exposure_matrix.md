@@ -12,7 +12,8 @@ make_exposure_matrix(
   dt_by = "day",
   maxgap = 5,
   maxlag = 5,
-  grp_level = FALSE
+  grp_level = FALSE,
+  keep_unit_exposures = FALSE
 )
 ```
 
@@ -44,6 +45,10 @@ make_exposure_matrix(
 - grp_level:
 
   whether to summarize to the group level or not (default)
+
+- keep_unit_exposures:
+
+  if grp_level is true, whether to keep original unit-level exposures
 
 - maxgaps:
 

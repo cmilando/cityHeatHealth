@@ -25,6 +25,7 @@ condPois_2stage(
   arglag = NULL,
   maxlag = NULL,
   min_n = NULL,
+  rf = NULL,
   strata_min = 0,
   verbose = 0
 )
@@ -60,6 +61,10 @@ condPois_2stage(
 - min_n:
 
   an integer describing the minimum number of cases for a single region
+
+- rf:
+
+  optional character string to use as the random formula in mixmeta
 
 - strata_min:
 

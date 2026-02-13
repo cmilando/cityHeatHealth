@@ -460,7 +460,7 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
 
 }
 
-#'@export
+#' @export
 #' print.calcAN
 #'
 #' @param x
@@ -474,7 +474,7 @@ print.calcAN <- function(x) {
   invisible(x)
 }
 
-#'@export
+#' @export
 #' print.calcAN_list
 #'
 #' @param x
@@ -489,7 +489,7 @@ print.calcAN_list <- function(x) {
   invisible(x)
 }
 
-#'@export
+#' @export
 #' plot.calcAN
 #'
 #' @param x an object of class plot.calcAN
@@ -601,7 +601,7 @@ plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 }
 
 
-#'@export
+#' @export
 #' plot.calcAN_list
 #'
 #' @param x an object of class plot.calcAN_list
@@ -757,7 +757,7 @@ plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL,
 
 }
 
-#'@export
+#' @export
 #' spatial_plot.calcAN
 #'
 #' @param x an object of class condPois_AN
@@ -825,7 +825,7 @@ spatial_plot.calcAN <- function(x, shp, table_type, above_MMT, pal = 'Purples') 
 
 }
 
-#'@export
+#' @export
 #' spatial_plot.calcAN_list
 #'
 #' @param x an object of class condPois_AN

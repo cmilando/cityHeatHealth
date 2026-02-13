@@ -12,6 +12,7 @@ condPois_2stage(
   arglag = NULL,
   maxlag = NULL,
   min_n = NULL,
+  rf = NULL,
   strata_min = 0,
   verbose = 0
 )
@@ -30,6 +31,8 @@ condPois_2stage(
 \item{maxlag}{an integer of the maximum lag}
 
 \item{min_n}{an integer describing the minimum number of cases for a single region}
+
+\item{rf}{optional character string to use as the random formula in mixmeta}
 
 \item{strata_min}{minimum number of cases per strata}
 

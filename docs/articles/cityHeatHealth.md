@@ -24,7 +24,10 @@ library(data.table)
 
 # load a built-in dataset and get a subset
 data("ma_exposure") 
-exposure_sub <- subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+
+exposure_sub <- 
+  subset(ma_exposure,
+         COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015)
 
 # define columns of ma_exposure
@@ -48,20 +51,20 @@ And lets preview this
 head(ma_exposure_matrix)
 #>          date  tmax_C TOWN20  COUNTY20                  strata     match_strata
 #>        <IDat>   <num> <char>    <char>                  <char>           <char>
-#> 1: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-06
-#> 2: 2012-05-13 26.2234  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-13
-#> 3: 2012-05-20 24.7840  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-20
-#> 4: 2012-05-27 29.9073  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-27
-#> 5: 2012-05-07 16.1798  ACTON MIDDLESEX ACTON:yr2012:mn05:dow02 ACTON:2012-05-07
-#> 6: 2012-05-14 28.5869  ACTON MIDDLESEX ACTON:yr2012:mn05:dow02 ACTON:2012-05-14
+#> 1: 2012-05-01 16.4633  ACTON MIDDLESEX ACTON:yr2012:mn05:dow03 ACTON:2012-05-01
+#> 2: 2012-05-02  8.6743  ACTON MIDDLESEX ACTON:yr2012:mn05:dow04 ACTON:2012-05-02
+#> 3: 2012-05-03 11.1778  ACTON MIDDLESEX ACTON:yr2012:mn05:dow05 ACTON:2012-05-03
+#> 4: 2012-05-04 12.4253  ACTON MIDDLESEX ACTON:yr2012:mn05:dow06 ACTON:2012-05-04
+#> 5: 2012-05-05 12.8489  ACTON MIDDLESEX ACTON:yr2012:mn05:dow07 ACTON:2012-05-05
+#> 6: 2012-05-06 17.7602  ACTON MIDDLESEX ACTON:yr2012:mn05:dow01 ACTON:2012-05-06
 #>    explag1 explag2 explag3 explag4 explag5
 #>      <num>   <num>   <num>   <num>   <num>
-#> 1: 12.8489 12.4253 11.1778  8.6743 16.4633
-#> 2: 18.2676 17.8051 17.9041 13.6660 20.2731
-#> 3: 21.4705 20.3042 22.6773 22.6600 19.8368
-#> 4: 23.4173 24.4627 25.0704 17.8687 21.3824
-#> 5: 17.7602 12.8489 12.4253 11.1778  8.6743
-#> 6: 26.2234 18.2676 17.8051 17.9041 13.6660
+#> 1: 14.0179 14.1931 12.7975 17.5538 16.2753
+#> 2: 16.4633 14.0179 14.1931 12.7975 17.5538
+#> 3:  8.6743 16.4633 14.0179 14.1931 12.7975
+#> 4: 11.1778  8.6743 16.4633 14.0179 14.1931
+#> 5: 12.4253 11.1778  8.6743 16.4633 14.0179
+#> 6: 12.8489 12.4253 11.1778  8.6743 16.4633
 ```
 
 ### Outcome
@@ -73,7 +76,10 @@ Next, create the outcome object. As seen in other tutorials, you can
 
 # load a built-in dataset, and get a subset, for speed
 data("ma_deaths") 
-deaths_sub <- subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+
+deaths_sub <- 
+  subset(ma_deaths,
+        COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015)
 
 # define columns of ma_deaths
@@ -149,9 +155,16 @@ We show code for each but just run `condPois_2stage` in this vignette.
 
 ``` r
 
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl,
+ma_model <- condPois_2stage(ma_exposure_matrix, 
+                            ma_outcomes_tbl,
+                            verbose = 1,
                             global_cen = 15)
-#> formula: ~ 1 | COUNTY20/TOWN20
+#> -- validation passed
+#> -- stage 1
+#> 
+#> -- mixmeta
+#> formula: ~ 1 | COUNTY20/TOWN20 
+#> -- stage 2
 ```
 
 For `condPois_1stage` the call would look like this, where you’d need to
@@ -160,7 +173,9 @@ in `ma_exposure_matrix`:
 
 ``` r
 
-ma_model <- condPois_1stage(ma_exposure_matrix, ma_outcomes_tbl, multi_zone = T)
+ma_model <- condPois_1stage(ma_exposure_matrix, ma_outcomes_tbl, 
+                            multi_zone = T,
+                            global_cen = 15)
 ```
 
 See
@@ -177,7 +192,8 @@ full MA dataset \[with maybe some additional bugs to work out\]):
 ``` r
 
 data("ma_towns")
-ma_model <- condPois_sb(ma_exposure_matrix, ma_outcomes_tbl, ma_towns)
+ma_model <- condPois_sb(ma_exposure_matrix, ma_outcomes_tbl, 
+                        global_cen = 15, ma_towns)
 ```
 
 See
@@ -637,6 +653,18 @@ plot(ma_AN_fct, "num", above_MMT = T)
 ```
 
 ![](cityHeatHealth_files/figure-html/calcAN_plot2-1.png)
+
+You can also make use of some additional arguments to get plot subsets,
+including `spatial_sub` and `ordered_levels`.
+
+``` r
+
+plot(ma_AN_fct, 'rate', above_MMT = T, 
+     spatial_sub = c('BOSTON', 'CAMBRIDGE'),
+     ordered_levels = c("0-17", "18-64", "65+"))
+```
+
+![](cityHeatHealth_files/figure-html/calcAN_plot2z-1.png)
 
 You can also plot spatially
 

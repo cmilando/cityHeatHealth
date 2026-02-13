@@ -742,7 +742,7 @@ condPois_sb <- function(exposure_matrix,
 
 }
 
-#'@export
+#' @export
 #' print.condPois_sb
 #'
 #' @param x
@@ -756,7 +756,7 @@ print.condPois_sb <- function(x) {
   invisible(x)
 }
 
-#'@export
+#' @export
 #' print.condPois_sb_list
 #'
 #' @param x
@@ -771,7 +771,7 @@ print.condPois_sb_list <- function(x) {
   invisible(x)
 }
 
-#'@export
+#' @export
 #' plot.condPois_sb
 #'
 #' @param x an object of class condPois_sb
@@ -805,7 +805,7 @@ plot.condPois_sb <- function(x, geo_unit,
 }
 
 
-#'@export
+#' @export
 #' plot.condPois_sb_list
 #'
 #' @param x an object of class condPois_sb_list
@@ -855,7 +855,7 @@ plot.condPois_sb_list <- function(x, geo_unit,
 }
 
 
-#'@export
+#' @export
 #' forest_plot.condPois_sb
 #'
 #' @param x an object of class condPois_sb
@@ -913,7 +913,7 @@ forest_plot.condPois_sb <- function(x, exposure_val) {
 }
 
 
-#'@export
+#' @export
 #' spatial_plot.condPois_sb
 #'
 #' @param x an object of class condPois_sb
@@ -976,7 +976,7 @@ spatial_plot.condPois_sb <- function(x, shp, exposure_val,
 
 }
 
-#'@export
+#' @export
 #' spatial_plot.condPois_sb_list
 #'
 #' @param x an object of class condPois_sb_list
@@ -1040,7 +1040,7 @@ spatial_plot.condPois_sb_list <- function(x, shp, exposure_val) {
 }
 
 
-#'@export
+#' @export
 #' forest_plot.condPois_sb_list
 #'
 #' @param x an object of class condPois_sb_list
@@ -1108,7 +1108,7 @@ forest_plot.condPois_sb_list <- function(x, exposure_val) {
   }
 }
 
-#'@export
+#' @export
 #' getRR.condPois_sb
 #'
 #' @param x
@@ -1124,7 +1124,7 @@ getRR.condPois_sb <- function(x) {
   return(oo)
 }
 
-#'@export
+#' @export
 #' getRR.condPois_sb_list
 #'
 #' @param x

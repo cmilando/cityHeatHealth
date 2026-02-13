@@ -511,7 +511,7 @@ condPois_2stage <- function(exposure_matrix,
 
 }
 
-#'@export
+#' @export
 #' print.condPois_2stage
 #'
 #' @param x
@@ -525,7 +525,7 @@ print.condPois_2stage <- function(x) {
   invisible(x)
 }
 
-#'@export
+#' @export
 #' print.condPois_2stage_list
 #'
 #' @param x
@@ -540,7 +540,7 @@ print.condPois_2stage_list <- function(x) {
   invisible(x)
 }
 
-#'@export
+#' @export
 #' getRR.condPois_2stage
 #'
 #' @param x
@@ -556,7 +556,7 @@ getRR.condPois_2stage <- function(x) {
   return(oo)
 }
 
-#'@export
+#' @export
 #' getRR.condPois_2stage_list
 #'
 #' @param x
@@ -587,7 +587,7 @@ getRR.condPois_2stage_list <- function(x) {
 
 
 
-#'@export
+#' @export
 #' plot.condPois_2stage
 #'
 #' @param x an object of class condPois_2stage
@@ -621,7 +621,7 @@ plot.condPois_2stage <- function(x, geo_unit,
 }
 
 
-#'@export
+#' @export
 #' plot.condPois_2stage_list
 #'
 #' @param x an object of class condPois_2stage_list
@@ -671,7 +671,7 @@ plot.condPois_2stage_list <- function(x, geo_unit,
 }
 
 
-#'@export
+#' @export
 #' forest_plot.condPois_2stage
 #'
 #' @param x an object of class condPois_2stage
@@ -729,7 +729,7 @@ forest_plot.condPois_2stage <- function(x, exposure_val) {
 }
 
 
-#'@export
+#' @export
 #' spatial_plot.condPois_2stage
 #'
 #' @param x an object of class condPois_2stage
@@ -792,7 +792,7 @@ spatial_plot.condPois_2stage <- function(x, shp, exposure_val,
 
 }
 
-#'@export
+#' @export
 #' spatial_plot.condPois_2stage_list
 #'
 #' @param x an object of class condPois_2stage_list
@@ -856,7 +856,7 @@ spatial_plot.condPois_2stage_list <- function(x, shp, exposure_val) {
 }
 
 
-#'@export
+#' @export
 #' forest_plot.condPois_2stage_list
 #'
 #' @param x an object of class condPois_2stage_list

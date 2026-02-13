@@ -37,7 +37,10 @@ library(data.table)
 
 # load a built-in dataset and get a subset
 data("ma_exposure") 
-exposure_sub <- subset(ma_exposure,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+
+exposure_sub <- 
+  subset(ma_exposure,
+         COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015)
 
 # define columns of ma_exposure
@@ -64,7 +67,10 @@ Next, create the outcome object. As seen in other tutorials, you can `collapse_t
 ```{r outcome}
 # load a built-in dataset, and get a subset, for speed
 data("ma_deaths") 
-deaths_sub <- subset(ma_deaths,COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
+
+deaths_sub <- 
+  subset(ma_deaths,
+        COUNTY20 %in% c('MIDDLESEX', 'WORCESTER') &
            year(date) %in% 2012:2015)
 
 # define columns of ma_deaths
@@ -156,14 +162,18 @@ Now you have several options for running the conditional poisson model:
 We show code for each but just run `condPois_2stage` in this vignette.
 
 ```{r runModel, eval=TRUE} 
-ma_model <- condPois_2stage(ma_exposure_matrix, ma_outcomes_tbl,
+ma_model <- condPois_2stage(ma_exposure_matrix, 
+                            ma_outcomes_tbl,
+                            verbose = 1,
                             global_cen = 15)
 ```
 
 For `condPois_1stage` the call would look like this, where you'd need to add the argument `multi_zone = T` because there are multiple `geo_units` in `ma_exposure_matrix`:
 
 ```{r runModel2, eval=FALSE} 
-ma_model <- condPois_1stage(ma_exposure_matrix, ma_outcomes_tbl, multi_zone = T)
+ma_model <- condPois_1stage(ma_exposure_matrix, ma_outcomes_tbl, 
+                            multi_zone = T,
+                            global_cen = 15)
 ```
 
 See `vignette("one_stage_demo")` for more details. Note that `forest_plot` and `spatial_plot` are not implemented for `condPois_1stage` since you can get all of that information from the RR plot.
@@ -172,7 +182,8 @@ And for `condPois_sb`, the only additional information you'd need is a shapefile
 
 ```{r runModel3, eval=FALSE}
 data("ma_towns")
-ma_model <- condPois_sb(ma_exposure_matrix, ma_outcomes_tbl, ma_towns)
+ma_model <- condPois_sb(ma_exposure_matrix, ma_outcomes_tbl, 
+                        global_cen = 15, ma_towns)
 ```
 
 See `vignette("bayesian_demo")` for more details.
@@ -361,6 +372,13 @@ And you can plot either one -- some empty bars not because there are no adults t
 
 ```{r calcAN_plot2, fig.height=5, fig.width=8}
 plot(ma_AN_fct, "num", above_MMT = T)
+```
+
+You can also make use of some additional arguments to get plot subsets, including `spatial_sub` and `ordered_levels`. 
+```{r calcAN_plot2z, fig.height=5, fig.width=8}
+plot(ma_AN_fct, 'rate', above_MMT = T, 
+     spatial_sub = c('BOSTON', 'CAMBRIDGE'),
+     ordered_levels = c("0-17", "18-64", "65+"))
 ```
 
 You can also plot spatially
