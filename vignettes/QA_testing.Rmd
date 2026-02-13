@@ -7,111 +7,60 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
-```{r setup}
-library(cityHeatHealth)
-```
 
 ```{r}
+library(knitr)
+library(kableExtra)
 
-
-# *****
-#slow way to update
-# unloadNamespace("cityHeatHealth")
-# remotes::install_github("cmilando/cityHeatHealth")
-
-# once you update your R version you can just do
-#load locally with devtools::load_all()
-#if you want to actually make changes to the files.
-# *****
-
-library(data.table)
-
-data <- readRDS("../data-raw/weekly_mort_updated_nov17.RDS")
-setDT(data)
-
-# just get a specific subset
-data <- subset(data, region %in% 'Southeast')
-
-# Select only the needed columns
-data <- data[, .(
-  X_week_end_date,
-  X_deaths,
-  mean_temp_C,
-  occurrence_county_code,
-  region
-)]
-
-# Order by county code and week end date
-setorder(data, occurrence_county_code, X_week_end_date)
-```
-
-
-Exposure data
-
-```{r exp}
-exposure_columns <- list(
-  "date" = "X_week_end_date",
-  "exposure" = "mean_temp_C",
-  "geo_unit" = "occurrence_county_code",
-  "geo_unit_grp" = "region"
+df <- data.frame(
+  Analysis_Option = c(
+    "Single ERF",
+    "Single ERF",
+    "Single ERF",
+    "Single ERF",
+    "",
+    "Multiple ERFs (rf = TOWN / ZCTA)",
+    "Multiple ERFs (rf = TOWN / ZCTA)",
+    "Multiple ERFs (rf = TOWN / ZCTA)",
+    "Multiple ERFs (rf = TOWN / ZCTA)"
+  ),
+  Exposure = c(
+    "for 1 ZCTA",
+    "for 1 TOWN\nMaintain ZCTA exposures and outcomes\ngrp_level = TRUE\nkeep_unit_exposures = TRUE",
+    "Average to TOWN\ngrp_level = TRUE\nkeep_unit_exposures = FALSE",
+    "",
+    "",
+    "For ZCTAs",
+    "For TOWNS\nMaintain ZCTA exposures and outcomes\ngrp_level = TRUE\nkeep_unit_exposures = TRUE",
+    "Average to TOWN\ngrp_level = TRUE\nkeep_unit_exposures = FALSE",
+    ""
+  ),
+  Outcome = c(
+    "Subset to ZCTA",
+    "Subset to TOWN",
+    "Subset to TOWN\ngrp_level = TRUE\nkeep_unit_outcomes = FALSE",
+    "",
+    "",
+    "",
+    "Subset to TOWN\ngrp_level = TRUE\nkeep_unit_outcomes = TRUE",
+    "Subset to TOWN\ngrp_level = TRUE\nkeep_unit_outcomes = FALSE",
+    ""
+  ),
+  Model = c(
+    "condPois_1stage",
+    "condPois_1stage",
+    "condPois_1stage",
+    "",
+    "",
+    "condPois_2stage",
+    "condPois_2stage\n(rf = TOWN)",
+    "condPois_2stage\n(rf = TOWN)",
+    ""
+  )
 )
 
-exp_data <- data[, .(
-  X_week_end_date,
-  mean_temp_C,
-  occurrence_county_code,
-  region
-)]
+kable(df, align = "l", escape = FALSE) %>%
+  kable_styling(full_width = FALSE, position = "left")
 
-exposure_matrix <- make_exposure_matrix(
-  exp_data, exposure_columns, dt_by = 'week')
-
-head(exposure_matrix)
 ```
-
-Outcome
-```{r outcome}
-outcome_columns <- list(
-  "date" = "X_week_end_date",
-  "outcome" = "X_deaths",
-  # "factor" = 'age_grp',
-  # "factor" = 'sex',
-  "geo_unit" = "occurrence_county_code",
-  "geo_unit_grp" = "region"
-)
-
-out_data <- data[, .(
-  X_week_end_date,
-  X_deaths,
-  occurrence_county_code,
-  region
-)]
-
-outcomes_tbl <- make_outcome_table(out_data, outcome_columns)
-outcomes_tbl
-```
-
-
-```{r runModel}
-model <- condPois_1stage(exposure_matrix, outcomes_tbl, 
-                         multi_zone = T)
-```
-
-```{r plot v1}
-plot(model, title = 'Southeast')
-```
-
-```{r runModel2}
-model2 <- condPois_2stage(exposure_matrix, outcomes_tbl,
-                          verbose = 1)
-```
-```
-
-
