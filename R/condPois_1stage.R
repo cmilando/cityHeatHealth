@@ -127,7 +127,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   if(is.null(maxlag)) {
     maxlag = 5
   } else {
-    stopifnot(maxlag %in% 2:10)
+    stopifnot(maxlag %in% 1:10)
   }
 
   # argvar
@@ -181,7 +181,11 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   m_vcov <- vcov(m_sub)
 
   # there should be no NAs
-  if(any(is.na(m_coef))) stop("coef has NULL, something went wrong. Usually this happens when strata counts are too low")
+  if(any(is.na(m_coef))) stop("coef has NULL, something went wrong.
+                              Usually this happens when strata counts are too low,
+                              or when maxlag is too low and you haven't adjusted
+                              argvar and arglag")
+
   if(any(is.na(m_vcov))) stop("vcov has NULL, something went wrong")
 
   #' //////////////////////////////////////////////////////////////////////////
