@@ -303,7 +303,9 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                                  global_cen = global_cen,
                                  cen = cen,
                                  this_exp = this_exp,
-                                 x_b = x_b)
+                                 x_b = x_b,
+                      exposure_is_factor = exposure_is_factor
+                        )
     }, error = function(e) {
       warning(sprintf('a check of making the centered basis for a geo-unit %s did not pass. this likely means that the knots for the overall basis are outside the range of exposures in this geographic unit. Consider adjusting either the geo-units you are passing in, or the exposure variable (e.g., switching from absolute to relative measures)', this_geo))
     })
