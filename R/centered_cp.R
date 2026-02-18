@@ -10,6 +10,7 @@
 #' @param x_b
 #' @param global_cen
 #' @param cen
+#' @param exposure_is_factor
 #'
 #' @importFrom dlnm onebasis
 #' @importFrom dlnm crosspred
@@ -18,16 +19,24 @@
 #' @examples
 get_centered_cp <- function(argvar, xcoef, xvcov,
                             this_exp, x_b,
-                            global_cen, cen) {
+                            global_cen, cen,
+                            exposure_is_factor) {
 
   # define grid
   grid <- seq(from =  x_b[1], to = x_b[2], by = 0.1)
 
   # (1) get onebasis
-  basis_x <- do.call("onebasis",
-                     modifyList(argvar,
-                                list(x = this_exp,
-                                     Boundary.knots = x_b)))
+  if(exposure_is_factor) {
+    basis_x <- do.call("onebasis",
+                       modifyList(argvar,
+                                  list(x = this_exp)))
+  } else {
+    basis_x <- do.call("onebasis",
+                       modifyList(argvar,
+                                  list(x = this_exp,
+                                       Boundary.knots = x_b)))
+  }
+
 
   # *********
   # (2) Center basis
@@ -39,9 +48,16 @@ get_centered_cp <- function(argvar, xcoef, xvcov,
 
     cen = global_cen
     stopifnot(global_cen >= x_b[1] & global_cen <= x_b[2])
-    basis_mmt <- do.call("onebasis", modifyList(argvar,
-                                                list(x=global_cen,
-                                                     Boundary.knots = x_b)))
+
+    if(exposure_is_factor) {
+      basis_mmt <- do.call("onebasis", modifyList(argvar,
+                                                  list(x=global_cen)))
+    } else {
+      basis_mmt <- do.call("onebasis", modifyList(argvar,
+                                                  list(x=global_cen,
+                                                       Boundary.knots = x_b)))
+    }
+
   } else {
 
     # if global cen isn't set, re-center to the local minimum
@@ -56,9 +72,16 @@ get_centered_cp <- function(argvar, xcoef, xvcov,
     cen = b2$predvar[which.min(b2$allRRfit)]
 
     # get a basis for the MMT
-    basis_mmt <- do.call("onebasis",
-                         modifyList(argvar,
-                                    list(x=cen, Boundary.knots = x_b)))
+    if(exposure_is_factor) {
+      basis_mmt <- do.call("onebasis",
+                           modifyList(argvar,
+                                      list(x=cen)))
+    } else{
+      basis_mmt <- do.call("onebasis",
+                           modifyList(argvar,
+                                      list(x=cen, Boundary.knots = x_b)))
+    }
+
   }
 
   # *********

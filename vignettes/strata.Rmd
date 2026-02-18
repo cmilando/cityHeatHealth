@@ -1,0 +1,90 @@
+---
+title: "Using Stratified Exposures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using Stratified Exposures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(cityHeatHealth)
+```
+
+# EXPOSURE
+
+Set up a stratified exposure
+
+```{r exposure}
+
+boston_exposure <- subset(ma_exposure, TOWN20 == 'BOSTON')
+
+head(boston_exposure)
+
+# convert tmax_C into a factor
+boston_exposure$tmax_C_fct <- as.numeric(cut(boston_exposure$tmax_C, 
+                                  breaks = c(-50, 25, 30, 50),
+                                  include.lowest = T))
+
+boston_exposure$tmax_C_fct
+
+# remove old exposure column
+boston_exposure$tmax_C <- NULL
+
+# create exposure matrix
+exposure_columns <- list(
+  "date" = "date",
+  "exposure" = "tmax_C_fct",
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+boston_exposure_mat <- make_exposure_matrix(boston_exposure, exposure_columns)
+```
+
+# OUTCOME
+
+Outcome processing should be the same
+```{r outcome}
+boston_deaths   <- subset(ma_deaths, TOWN20 == 'BOSTON')
+head(boston_deaths)
+
+outcome_columns <- list(
+  "date" = "date",
+  "outcome" = "daily_deaths",
+  "factor" = 'age_grp',
+  "factor" = 'sex',
+  "geo_unit" = "TOWN20",
+  "geo_unit_grp" = "COUNTY20"
+)
+
+boston_deaths_tbl <- make_outcome_table(boston_deaths,  outcome_columns)
+head(boston_deaths_tbl)
+```
+
+# MODEL
+
+You need to take care in setting breaks. 
+if factor is 1,2,3 breaks should be 1.5, 2.5
+
+
+```{r model}
+
+# run the model
+m1 <- condPois_1stage(
+  exposure_matrix = boston_exposure_mat, 
+  outcomes_tbl = boston_deaths_tbl,
+  argvar = list(fun = 'strata', breaks = c(1.5, 2.5))
+  )
+
+plot(m1)
+
+```
+

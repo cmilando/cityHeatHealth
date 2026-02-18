@@ -10,6 +10,7 @@
 #' @param grp_level whether to summarize to the group level or not (default)
 #' @param keep_unit_exposures if grp_level is true, whether to keep original unit-level exposures
 #' @param dt_by is it daily data, or weekly or ...
+#' @param exposure_is_factor exposure is a factor
 #'
 #' @import data.table
 #' @importFrom zoo na.approx
@@ -25,7 +26,8 @@ make_exposure_matrix <- function(data,
                                  maxgap = 5,
                                  maxlag = 5,
                                  grp_level = FALSE,
-                                 keep_unit_exposures = FALSE) {
+                                 keep_unit_exposures = FALSE,
+                                 exposure_is_factor = FALSE) {
 
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
@@ -66,6 +68,11 @@ make_exposure_matrix <- function(data,
   if(any(is.na(data))) {
     warning("check about any NA, some corrections for this later,
             but only in certain columns")
+  }
+
+  if(exposure_is_factor) {
+    warning("if exposure is a factor, the code expects it to be numeric and ordered,
+            e.g., 1, 2, 3, ...")
   }
 
   # type checks
@@ -219,6 +226,12 @@ make_exposure_matrix <- function(data,
     #   stop(paste0("zoo::na.approx() was not able to remove all NAs in ",
     #               x[1, get(join_col)]))
 
+    # if its a factor round
+    if(exposure_is_factor) {
+      x[, (exposure_col) := round(get(exposure_col))]
+    }
+
+
     exposure2_l[[i]] <- x
   }
 
@@ -259,6 +272,10 @@ make_exposure_matrix <- function(data,
                            by = .(get(geo_col), get(geo_grp_col),
                                   get(date_col), strata, match_strata),
                            .SDcols = exposure_col]
+
+    if(exposure_is_factor) {
+      exposure2avg[, (exposure_col) := round(get(exposure_col))]
+    }
 
     names(exposure2avg)[1:3] <- c(geo_col, geo_grp_col, column_mapping$date)
 
@@ -320,7 +337,7 @@ make_exposure_matrix <- function(data,
   # rbind them all together
   exposure2 <- do.call(rbind, exposure2_l)
 
-  # get just the warm season months
+  # get just the months subset
   rr <- month(exposure2[, get(column_mapping$date)]) %in% months_subset
   stopifnot(length(rr) > 1)
   exposure_subset <- exposure2[rr, ]

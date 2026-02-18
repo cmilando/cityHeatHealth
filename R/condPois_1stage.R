@@ -133,6 +133,7 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   # argvar
   this_exp = exposure_matrix[, get(exposure_col)]
   argvar <- check_argvar(argvar, this_exp)
+  exposure_is_factor <- argvar$fun == 'strata'
 
   # arglag
   if(is.null(arglag)) {
@@ -182,9 +183,10 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 
   # there should be no NAs
   if(any(is.na(m_coef))) stop("coef has NULL, something went wrong.
-                              Usually this happens when strata counts are too low,
-                              or when maxlag is too low and you haven't adjusted
-                              argvar and arglag")
+                              Usually this happens (1) when strata counts are too low,
+                              or (2) when maxlag is low (< 3) and you haven't adjusted
+                              argvar and arglag or (3) if exposure_is_factor then
+                              you need to make sure that `breaks` is set correctly")
 
   if(any(is.na(m_vcov))) stop("vcov has NULL, something went wrong")
 
@@ -198,8 +200,18 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   geo_unit_col <- attributes(outcomes_tbl)$column_mapping$geo_unit
   geo_unit_grp_col <- attributes(outcomes_tbl)$column_mapping$geo_unit_grp
 
-  exp_mean = mean(exposure_matrix[, get(exposure_col)])
-  exp_IQR = IQR(exposure_matrix[, get(exposure_col)])
+  if(exposure_is_factor) {
+    xmode <- function(x) {
+      ux <- unique(x)
+      ux[which.max(tabulate(match(x, ux)))]
+    }
+    exp_mean = xmode(exposure_matrix[, get(exposure_col)])
+    exp_IQR = range(exposure_matrix[, get(exposure_col)])
+  } else {
+    exp_mean = mean(exposure_matrix[, get(exposure_col)])
+    exp_IQR = IQR(exposure_matrix[, get(exposure_col)])
+  }
+
 
   # the crossreduce coefficients are not affected by the centering point
   # but it does make a message if you dont put something there
@@ -241,7 +253,8 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                                     global_cen = global_cen,
                                     cen = cen,
                                     this_exp = this_exp,
-                                    x_b = x_b)
+                                    x_b = x_b,
+                                    exposure_is_factor = exposure_is_factor)
 
   overall_centered_basis <- centered_basis$basis_cen
 
