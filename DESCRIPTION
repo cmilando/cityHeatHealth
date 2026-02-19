@@ -6,6 +6,7 @@ Authors@R: c(
     person("Emma", "Gause", , "egause@bu.edu", role = c("aut")),
     person("Quinn", "Adams", , "qadams@bu.edu", role = c("aut")),
     person("Zachary", "Popp", , "zpopp@bu.edu", role = c("aut")),
+    person("Alexis", "Arlak", , "aarlak@bu.edu", role = c("aut")),
     person("Gregory", "Wellenius", , "wellenius@bu.edu", role = c("aut"))
     )
 Description: 
