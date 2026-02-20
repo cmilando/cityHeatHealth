@@ -205,6 +205,7 @@ condPois_2stage <- function(exposure_matrix,
   coef_list   <- vector("list", n_geos);
   outc_list   <- vector("list", n_geos);
   match_strata   <- vector("list", n_geos);
+  exposure_is_factor <- vector("logical", n_geos);
   names(vcov_model) <- unique_geos[, get(out_geo_unit_col)]
   names(coef_list) <- unique_geos[, get(out_geo_unit_col)]
 
@@ -257,7 +258,14 @@ condPois_2stage <- function(exposure_matrix,
     # other things for mixmeta scaling
     exp_mean[[i]]   <- cp_list[[i]]$exp_mean
     exp_IQR[[i]]    <- cp_list[[i]]$exp_IQR
+
+    # and
+    exposure_is_factor[i] = cp_list[[i]]$exposure_is_factor
+
   }
+
+  exposure_is_factor  <- unique(exposure_is_factor)
+  stopifnot(length(exposure_is_factor) == 1)
 
   if(verbose > 0) {
     cat("\n")
@@ -367,7 +375,8 @@ condPois_2stage <- function(exposure_matrix,
                               xcoef = pred$fit,
                               xvcov = pred$vcov,
                               global_cen = global_cen,
-                              cen = datapred[grp_i, cen])
+                              cen = datapred[grp_i, cen],
+                              exposure_is_factor = exposure_is_factor)
 
     grp_l[[grp_i]] <- list(
       cp = grp_cp$cp,
@@ -446,7 +455,8 @@ condPois_2stage <- function(exposure_matrix,
                                global_cen = global_cen,
                                cen = cp_list[[i]]$cen,
                                this_exp = this_exp,
-                               x_b = x_b)
+                               x_b = x_b,
+                               exposure_is_factor = exposure_is_factor)
 
     ## make the out
     RRdf <- data.frame(

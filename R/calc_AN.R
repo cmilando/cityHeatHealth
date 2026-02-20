@@ -496,7 +496,7 @@ print.calcAN_list <- function(x) {
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
 #' @param spatial_sub an option argument to subset the geo_units investigated
-#' @param ordered_labels an optional argument to order the factor labels
+#' @param override_limit override the built-in plot limit
 #' @importFrom ggplot2 ggplot
 #' @importFrom scales number
 #' @import data.table
@@ -504,7 +504,8 @@ print.calcAN_list <- function(x) {
 #' @export
 #'
 #' @examples
-plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
+plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL,
+                        override_limit = FALSE) {
 
   stopifnot(table_type %in% c('rate', 'num'))
   stopifnot(above_MMT %in% c(T, F))
@@ -523,7 +524,7 @@ plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
       byX_df <- byX_df[rr, ]
     }
 
-    if(nrow(byX_df) > 20) {
+    if(nrow(byX_df) > 20 & !override_limit) {
       warning("plot elements > 20, subsetting to top 20")
       setorder(byX_df, -mean_annual_attr_num_est)
       byX_df <- byX_df[1:20]
@@ -565,7 +566,7 @@ plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
       byX_df <- byX_df[rr, ]
     }
 
-    if(nrow(byX_df) > 20) {
+    if(nrow(byX_df) > 20 & !override_limit) {
       warning("plot elements > 20, subsetting to top 20")
       setorder(byX_df, -mean_annual_attr_rate_est)
       byX_df <- byX_df[1:20]
@@ -607,8 +608,9 @@ plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 #' @param x an object of class plot.calcAN_list
 #' @param table_type showing the rate table "rate" or number table "num"
 #' @param above_MMT plot attributable numbers above or below the MMT
-#' @param spatial_sub
-#' @param ordered_levels
+#' @param spatial_sub an option argument to subset the geo_units investigated
+#' @param ordered_levels factor levels
+#' @param override_limit override the built-in plot limit
 #' @importFrom ggplot2 ggplot
 #' @import data.table
 #' @returns
@@ -616,7 +618,7 @@ plot.calcAN <- function(x, table_type, above_MMT, spatial_sub = NULL) {
 #'
 #' @examples
 plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL,
-                             ordered_levels = NULL) {
+                             ordered_levels = NULL, override_limit = FALSE) {
 
   stopifnot(table_type %in% c('rate', 'num'))
   ylab_flag <- if(above_MMT) 'Above MMT' else 'Below MMT'
@@ -638,7 +640,7 @@ plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL,
         byX_df[[i]] <- byX_df[[i]][rr, ]
       }
 
-      if(nrow(byX_df[[i]]) > 20) {
+      if(nrow(byX_df[[i]]) > 20 & !override_limit) {
         warning("plot elements > 20, subsetting to top 20")
         setorder(byX_df[[i]], -mean_annual_attr_num_est)
         byX_df[[i]] <- byX_df[[i]][1:20]
@@ -702,7 +704,7 @@ plot.calcAN_list <- function(x, table_type, above_MMT, spatial_sub = NULL,
         byX_df[[i]] <- byX_df[[i]][rr, ]
       }
 
-      if(nrow(byX_df[[i]]) > 20) {
+      if(nrow(byX_df[[i]]) > 20 & !override_limit) {
         warning("plot elements > 20, subsetting to top 20")
         setorder(byX_df[[i]], -mean_annual_attr_rate_est)
         byX_df[[i]] <- byX_df[[i]][1:20]
