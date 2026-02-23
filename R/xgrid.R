@@ -4,6 +4,7 @@
 #' @param column_mapping
 #' @param months_subset
 #' @param dt_by either by day or by week
+#' @param collapse_is_spatial
 #' @import data.table
 #' @importFrom lubridate make_date
 #' @importFrom tidyr expand_grid
@@ -11,7 +12,7 @@
 #'
 #' @examples
 make_xgrid <- function(data, column_mapping, months_subset = 1:12,
-                       dt_by = 'day') {
+                       dt_by = 'day', collapse_is_spatial = F) {
 
   #
   setDT(data)
@@ -87,13 +88,28 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
                                 geo_unit = unique_areas,
                                 fct = unique_fcts)
 
+    # if collapse is spatial, reduce this
+    if(collapse_is_spatial) {
+
+      xcols = c(geo_col, factor_col)
+      uq <- unique(data[, ..xcols])
+      names(uq) = c('geo_unit', 'fct')
+
+      xg <- as.data.table(xgrid)
+
+      join_cols <- c('geo_unit', 'fct')
+      xgrid <- xg[uq, ,on = join_cols]
+
+    }
+
     names(xgrid) = c(column_mapping$date,
                      column_mapping$geo_unit,
                      column_mapping$factor)
 
   } else {
 
-    xgrid <- tidyr::expand_grid(date = all_dt, geo_unit = unique_areas)
+    xgrid <- tidyr::expand_grid(date = all_dt,
+                                geo_unit = unique_areas)
 
     names(xgrid) = c(column_mapping$date, column_mapping$geo_unit)
 

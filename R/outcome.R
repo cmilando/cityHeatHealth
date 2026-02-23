@@ -6,6 +6,7 @@
 #' @param months_subset the warm season months for this region, default is Northern Hemisphere's
 #' May through September (5 through 9)
 #' @param collapse_to which factors to collapse across
+#' @param collapse_is_spatial is collapse a spatial variable
 #' @param grp_level whether to summarize to the group level or not (default)
 #' @param keep_unit_outcomes if grp_level is true, whether to keep original unit-level outcomes
 #' @param dt_by is it daily data, or weekly or ...
@@ -22,6 +23,7 @@ make_outcome_table <- function(data,
                                months_subset = 5:9,
                                dt_by = 'day',
                                collapse_to = NULL,
+                               collapse_is_spatial = FALSE,
                                grp_level = FALSE,
                                keep_unit_outcomes = FALSE) {
 
@@ -268,7 +270,8 @@ make_outcome_table <- function(data,
 
   ## fill in the blanks with 0s
   ## so make xgrid again
-  xgrid <- make_xgrid(data, column_mapping, months_subset, dt_by)
+  xgrid <- make_xgrid(data, column_mapping, months_subset,
+                      dt_by, collapse_is_spatial)
 
   # **************
   ## remove missing values
