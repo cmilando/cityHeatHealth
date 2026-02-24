@@ -28,6 +28,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   stopifnot('population' %in% names(pop_data))
   stopifnot(all(spatial_join_col %in% names(pop_data)))
 
+  stopifnot(is.data.table(pop_data))
+
   #' //////////////////////////////////////////////////////////////////////////
   #' ==========================================================================
   #' RECURSIVE CALL IF FACTOR
