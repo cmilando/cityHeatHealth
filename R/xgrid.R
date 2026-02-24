@@ -5,6 +5,7 @@
 #' @param months_subset
 #' @param dt_by either by day or by week
 #' @param collapse_is_spatial
+#' @param collapse_is_temporal
 #' @import data.table
 #' @importFrom lubridate make_date
 #' @importFrom tidyr expand_grid
@@ -12,7 +13,8 @@
 #'
 #' @examples
 make_xgrid <- function(data, column_mapping, months_subset = 1:12,
-                       dt_by = 'day', collapse_is_spatial = F) {
+                       dt_by = 'day', collapse_is_spatial = FALSE,
+                       collapse_is_temporal = FALSE) {
 
   #
   setDT(data)
@@ -23,8 +25,10 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
   date_col <- column_mapping$date
   date_vec <- data[, get(date_col)]
   dow_vec <- data.table::wday(date_vec)
+
   if(dt_by == 'week' & length(unique(dow_vec)) > 1) {
-    stop('`dt_by` == "week" but there are more than 1 day-of-week')
+    stop('`dt_by` == "week" but there are more than 1 day-of-week in the
+         dataset, so the strata will not work as desired.')
   }
 
 
@@ -89,6 +93,9 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
                                 fct = unique_fcts)
 
     # if collapse is spatial, reduce this
+    # so what this means is that
+    # not every _geo_unit_ exists in every fct
+    # so you need to subset xgrid
     if(collapse_is_spatial) {
 
       xcols = c(geo_col, factor_col)
@@ -98,6 +105,23 @@ make_xgrid <- function(data, column_mapping, months_subset = 1:12,
       xg <- as.data.table(xgrid)
 
       join_cols <- c('geo_unit', 'fct')
+      xgrid <- xg[uq, ,on = join_cols]
+
+    }
+
+    # if collapse is temporal, reduce this
+    # so what this means is that not every
+    # not every _date_ exists in every fct
+    # so you
+    if(collapse_is_temporal) {
+
+      xcols = c(date_col, factor_col)
+      uq <- unique(data[, ..xcols])
+      names(uq) = c('date', 'fct')
+
+      xg <- as.data.table(xgrid)
+
+      join_cols <- c('date', 'fct')
       xgrid <- xg[uq, ,on = join_cols]
 
     }

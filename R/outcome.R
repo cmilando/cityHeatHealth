@@ -7,6 +7,7 @@
 #' May through September (5 through 9)
 #' @param collapse_to which factors to collapse across
 #' @param collapse_is_spatial is collapse a spatial variable
+#' @param collapse_is_temporal is collapse a spatial variable
 #' @param grp_level whether to summarize to the group level or not (default)
 #' @param keep_unit_outcomes if grp_level is true, whether to keep original unit-level outcomes
 #' @param dt_by is it daily data, or weekly or ...
@@ -24,6 +25,7 @@ make_outcome_table <- function(data,
                                dt_by = 'day',
                                collapse_to = NULL,
                                collapse_is_spatial = FALSE,
+                               collapse_is_temporal = FALSE,
                                grp_level = FALSE,
                                keep_unit_outcomes = FALSE) {
 
@@ -250,9 +252,6 @@ make_outcome_table <- function(data,
 
       }
 
-
-
-
     }
   }
 
@@ -270,8 +269,12 @@ make_outcome_table <- function(data,
 
   ## fill in the blanks with 0s
   ## so make xgrid again
-  xgrid <- make_xgrid(data, column_mapping, months_subset,
-                      dt_by, collapse_is_spatial)
+  xgrid <- make_xgrid(data = data,
+                      column_mapping = column_mapping,
+                      months_subset = months_subset,
+                      dt_by = dt_by,
+                      collapse_is_spatial = collapse_is_spatial,
+                      collapse_is_temporal = collapse_is_temporal)
 
   # **************
   ## remove missing values
