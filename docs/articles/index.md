@@ -17,6 +17,8 @@
 Vignettes aimed at advanced users
 
 - [faq](http://chadmilando.com/cityHeatHealth/articles/faq.md):
+- [Using Stratified
+  Exposures](http://chadmilando.com/cityHeatHealth/articles/strata.md):
 - [Obtaining population estimates from
   \`tidycensus\`](http://chadmilando.com/cityHeatHealth/articles/get_pop_estimates.md):
 - [Validation of spatial methods in

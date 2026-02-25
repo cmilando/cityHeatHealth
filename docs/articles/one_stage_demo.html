@@ -570,7 +570,11 @@ population offset if you were doing a time-series design).</p>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span>exposure_matrix <span class="op">=</span> <span class="va">middlesex_exposure_mat</span>, </span>
 <span>                  outcomes_tbl <span class="op">=</span> <span class="va">middlesex_deaths_tbl</span>, </span>
 <span>                  global_cen <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>                  multi_zone <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                  multi_zone <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                  verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>
+<span><span class="co">#&gt; &lt; age_grp : 18-64 &gt;</span></span>
+<span><span class="co">#&gt; &lt; age_grp : 65+ &gt;</span></span>
 <span></span>
 <span><span class="co"># plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div>
@@ -598,8 +602,10 @@ population offset if you were doing a time-series design).</p>
 <p>You can change the global_cen and view the impact</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the model</span></span>
-<span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span>exposure_matrix <span class="op">=</span> <span class="va">middlesex_exposure_mat</span>, global_cen <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>                  outcomes_tbl <span class="op">=</span> <span class="va">middlesex_deaths_tbl</span>, multi_zone <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span>exposure_matrix <span class="op">=</span> <span class="va">middlesex_exposure_mat</span>, global_cen <span class="op">=</span> <span class="fl">20</span>, outcomes_tbl <span class="op">=</span> <span class="va">middlesex_deaths_tbl</span>, multi_zone <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt; age_grp : 0-17 &gt;</span></span>
+<span><span class="co">#&gt; &lt; age_grp : 18-64 &gt;</span></span>
+<span><span class="co">#&gt; &lt; age_grp : 65+ &gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="one_stage_demo_files/figure-html/globalCenMod-1.png" class="r-plt" width="700"></p>
 </div>
@@ -610,7 +616,7 @@ population offset if you were doing a time-series design).</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, Alexis Arlak, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

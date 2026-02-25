@@ -12,10 +12,11 @@ articles:
   non_daily_data: non_daily_data.html
   one_stage_demo: one_stage_demo.html
   QA_testing: QA_testing.html
+  strata: strata.html
   TODO: TODO.html
   two_stage_demo: two_stage_demo.html
   validation: validation.html
-last_built: 2026-02-13T13:08Z
+last_built: 2026-02-25T04:54Z
 urls:
   reference: http://chadmilando.com/cityHeatHealth/reference
   article: http://chadmilando.com/cityHeatHealth/articles

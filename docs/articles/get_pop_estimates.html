@@ -168,7 +168,7 @@ get you started.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">GEOID</span>, <span class="va">NAME</span>, <span class="va">variable</span>, <span class="va">estimate</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^male_"</span>, <span class="va">variable</span><span class="op">)</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span>,</span>
-<span>    age_group <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>    age_group <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span>      <span class="va">variable</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"male_under5"</span>, <span class="st">"male_5_9"</span>, <span class="st">"male_10_14"</span>, <span class="st">"male_15_17"</span>,</span>
 <span>        <span class="st">"female_under5"</span>, <span class="st">"female_5_9"</span>, <span class="st">"female_10_14"</span>, <span class="st">"female_15_17"</span></span>
@@ -235,7 +235,7 @@ get you started.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, Alexis Arlak, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

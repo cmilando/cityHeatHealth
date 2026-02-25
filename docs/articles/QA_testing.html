@@ -64,7 +64,7 @@
 
 
 
-
+<script src="QA_testing_files/kePrint-0.0.1/kePrint.js"></script><link href="QA_testing_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
@@ -78,214 +78,199 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://chadmilando.com/cityHeatHealth/">cityHeatHealth</a></span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># *****</span></span>
-<span><span class="co">#slow way to update</span></span>
-<span><span class="co"># unloadNamespace("cityHeatHealth")</span></span>
-<span><span class="co"># remotes::install_github("cmilando/cityHeatHealth")</span></span>
-<span></span>
-<span><span class="co"># once you update your R version you can just do</span></span>
-<span><span class="co">#load locally with devtools::load_all()</span></span>
-<span><span class="co">#if you want to actually make changes to the files.</span></span>
-<span><span class="co"># *****</span></span>
-<span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"../data-raw/weekly_mort_updated_nov17.RDS"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># just get a specific subset</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">region</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="st">'Southeast'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Select only the needed columns</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span></span>
-<span>  <span class="va">X_week_end_date</span>,</span>
-<span>  <span class="va">X_deaths</span>,</span>
-<span>  <span class="va">mean_temp_C</span>,</span>
-<span>  <span class="va">occurrence_county_code</span>,</span>
-<span>  <span class="va">region</span></span>
-<span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Order by county code and week end date</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorder</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">occurrence_county_code</span>, <span class="va">X_week_end_date</span><span class="op">)</span></span></code></pre></div>
-<p>Exposure data</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exposure_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"date"</span> <span class="op">=</span> <span class="st">"X_week_end_date"</span>,</span>
-<span>  <span class="st">"exposure"</span> <span class="op">=</span> <span class="st">"mean_temp_C"</span>,</span>
-<span>  <span class="st">"geo_unit"</span> <span class="op">=</span> <span class="st">"occurrence_county_code"</span>,</span>
-<span>  <span class="st">"geo_unit_grp"</span> <span class="op">=</span> <span class="st">"region"</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  Analysis_Option <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Single ERF"</span>,</span>
+<span>    <span class="st">"Single ERF"</span>,</span>
+<span>    <span class="st">"Single ERF"</span>,</span>
+<span>    <span class="st">"Single ERF"</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">"Multiple ERFs (rf = TOWN / ZCTA)"</span>,</span>
+<span>    <span class="st">"Multiple ERFs (rf = TOWN / ZCTA)"</span>,</span>
+<span>    <span class="st">"Multiple ERFs (rf = TOWN / ZCTA)"</span>,</span>
+<span>    <span class="st">"Multiple ERFs (rf = TOWN / ZCTA)"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  Exposure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"for 1 ZCTA"</span>,</span>
+<span>    <span class="st">"for 1 TOWN\nMaintain ZCTA exposures and outcomes\ngrp_level = TRUE\nkeep_unit_exposures = TRUE"</span>,</span>
+<span>    <span class="st">"Average to TOWN\ngrp_level = TRUE\nkeep_unit_exposures = FALSE"</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">"For ZCTAs"</span>,</span>
+<span>    <span class="st">"For TOWNS\nMaintain ZCTA exposures and outcomes\ngrp_level = TRUE\nkeep_unit_exposures = TRUE"</span>,</span>
+<span>    <span class="st">"Average to TOWN\ngrp_level = TRUE\nkeep_unit_exposures = FALSE"</span>,</span>
+<span>    <span class="st">""</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  Outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Subset to ZCTA"</span>,</span>
+<span>    <span class="st">"Subset to TOWN"</span>,</span>
+<span>    <span class="st">"Subset to TOWN\ngrp_level = TRUE\nkeep_unit_outcomes = FALSE"</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">"Subset to TOWN\ngrp_level = TRUE\nkeep_unit_outcomes = TRUE"</span>,</span>
+<span>    <span class="st">"Subset to TOWN\ngrp_level = TRUE\nkeep_unit_outcomes = FALSE"</span>,</span>
+<span>    <span class="st">""</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  Model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"condPois_1stage"</span>,</span>
+<span>    <span class="st">"condPois_1stage"</span>,</span>
+<span>    <span class="st">"condPois_1stage"</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">""</span>,</span>
+<span>    <span class="st">"condPois_2stage"</span>,</span>
+<span>    <span class="st">"condPois_2stage\n(rf = TOWN)"</span>,</span>
+<span>    <span class="st">"condPois_2stage\n(rf = TOWN)"</span>,</span>
+<span>    <span class="st">""</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">exp_data</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span></span>
-<span>  <span class="va">X_week_end_date</span>,</span>
-<span>  <span class="va">mean_temp_C</span>,</span>
-<span>  <span class="va">occurrence_county_code</span>,</span>
-<span>  <span class="va">region</span></span>
-<span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">exposure_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_exposure_matrix.html">make_exposure_matrix</a></span><span class="op">(</span></span>
-<span>  <span class="va">exp_data</span>, <span class="va">exposure_columns</span>, dt_by <span class="op">=</span> <span class="st">'week'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">exposure_matrix</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    X_week_end_date mean_temp_C occurrence_county_code    region</span></span>
-<span><span class="co">#&gt;             &lt;IDat&gt;       &lt;num&gt;                 &lt;char&gt;    &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:      2018-05-05    25.03714                  01073 Southeast</span></span>
-<span><span class="co">#&gt; 2:      2018-05-12    28.61286                  01073 Southeast</span></span>
-<span><span class="co">#&gt; 3:      2018-05-19    29.71857                  01073 Southeast</span></span>
-<span><span class="co">#&gt; 4:      2018-05-26    28.69714                  01073 Southeast</span></span>
-<span><span class="co">#&gt; 5:      2018-06-02    28.35000                  01073 Southeast</span></span>
-<span><span class="co">#&gt; 6:      2018-06-09    30.47857                  01073 Southeast</span></span>
-<span><span class="co">#&gt;                     strata     match_strata  explag1  explag2  explag3  explag4</span></span>
-<span><span class="co">#&gt;                     &lt;char&gt;           &lt;char&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 01073:yr2018:mn05:dow07 01073:2018-05-05 20.02857 19.90857 21.19714 20.80714</span></span>
-<span><span class="co">#&gt; 2: 01073:yr2018:mn05:dow07 01073:2018-05-12 25.03714 20.02857 19.90857 21.19714</span></span>
-<span><span class="co">#&gt; 3: 01073:yr2018:mn05:dow07 01073:2018-05-19 28.61286 25.03714 20.02857 19.90857</span></span>
-<span><span class="co">#&gt; 4: 01073:yr2018:mn05:dow07 01073:2018-05-26 29.71857 28.61286 25.03714 20.02857</span></span>
-<span><span class="co">#&gt; 5: 01073:yr2018:mn06:dow07 01073:2018-06-02 28.69714 29.71857 28.61286 25.03714</span></span>
-<span><span class="co">#&gt; 6: 01073:yr2018:mn06:dow07 01073:2018-06-09 28.35000 28.69714 29.71857 28.61286</span></span>
-<span><span class="co">#&gt;     explag5</span></span>
-<span><span class="co">#&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 19.44286</span></span>
-<span><span class="co">#&gt; 2: 20.80714</span></span>
-<span><span class="co">#&gt; 3: 21.19714</span></span>
-<span><span class="co">#&gt; 4: 19.90857</span></span>
-<span><span class="co">#&gt; 5: 20.02857</span></span>
-<span><span class="co">#&gt; 6: 25.03714</span></span></code></pre></div>
-<p>Outcome</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outcome_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="st">"date"</span> <span class="op">=</span> <span class="st">"X_week_end_date"</span>,</span>
-<span>  <span class="st">"outcome"</span> <span class="op">=</span> <span class="st">"X_deaths"</span>,</span>
-<span>  <span class="co"># "factor" = 'age_grp',</span></span>
-<span>  <span class="co"># "factor" = 'sex',</span></span>
-<span>  <span class="st">"geo_unit"</span> <span class="op">=</span> <span class="st">"occurrence_county_code"</span>,</span>
-<span>  <span class="st">"geo_unit_grp"</span> <span class="op">=</span> <span class="st">"region"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">out_data</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span></span>
-<span>  <span class="va">X_week_end_date</span>,</span>
-<span>  <span class="va">X_deaths</span>,</span>
-<span>  <span class="va">occurrence_county_code</span>,</span>
-<span>  <span class="va">region</span></span>
-<span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">outcomes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_outcome_table.html">make_outcome_table</a></span><span class="op">(</span><span class="va">out_data</span>, <span class="va">outcome_columns</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Missing values in outcome xgrid were set to 0</span></span>
-<span><span class="va">outcomes_tbl</span></span>
-<span><span class="co">#&gt;       X_week_end_date occurrence_county_code    region X_deaths</span></span>
-<span><span class="co">#&gt;                &lt;IDat&gt;                 &lt;char&gt;    &lt;char&gt;    &lt;int&gt;</span></span>
-<span><span class="co">#&gt;    1:      2018-05-05                  01073 Southeast      205</span></span>
-<span><span class="co">#&gt;    2:      2018-05-12                  01073 Southeast      186</span></span>
-<span><span class="co">#&gt;    3:      2018-05-19                  01073 Southeast      174</span></span>
-<span><span class="co">#&gt;    4:      2018-05-26                  01073 Southeast      176</span></span>
-<span><span class="co">#&gt;    5:      2018-06-02                  01073 Southeast      167</span></span>
-<span><span class="co">#&gt;   ---                                                          </span></span>
-<span><span class="co">#&gt; 9297:      2024-08-31                  51810 Southeast       58</span></span>
-<span><span class="co">#&gt; 9298:      2024-09-07                  51810 Southeast       72</span></span>
-<span><span class="co">#&gt; 9299:      2024-09-14                  51810 Southeast       54</span></span>
-<span><span class="co">#&gt; 9300:      2024-09-21                  51810 Southeast       58</span></span>
-<span><span class="co">#&gt; 9301:      2024-09-28                  51810 Southeast       59</span></span>
-<span><span class="co">#&gt;                        strata strata_total     match_strata</span></span>
-<span><span class="co">#&gt;                        &lt;char&gt;        &lt;num&gt;           &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: 01073:yr2018:mn05:dow07          741 01073:2018-05-05</span></span>
-<span><span class="co">#&gt;    2: 01073:yr2018:mn05:dow07          741 01073:2018-05-12</span></span>
-<span><span class="co">#&gt;    3: 01073:yr2018:mn05:dow07          741 01073:2018-05-19</span></span>
-<span><span class="co">#&gt;    4: 01073:yr2018:mn05:dow07          741 01073:2018-05-26</span></span>
-<span><span class="co">#&gt;    5: 01073:yr2018:mn06:dow07          893 01073:2018-06-02</span></span>
-<span><span class="co">#&gt;   ---                                                      </span></span>
-<span><span class="co">#&gt; 9297: 51810:yr2024:mn08:dow07          312 51810:2024-08-31</span></span>
-<span><span class="co">#&gt; 9298: 51810:yr2024:mn09:dow07          243 51810:2024-09-07</span></span>
-<span><span class="co">#&gt; 9299: 51810:yr2024:mn09:dow07          243 51810:2024-09-14</span></span>
-<span><span class="co">#&gt; 9300: 51810:yr2024:mn09:dow07          243 51810:2024-09-21</span></span>
-<span><span class="co">#&gt; 9301: 51810:yr2024:mn09:dow07          243 51810:2024-09-28</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_1stage.html">condPois_1stage</a></span><span class="op">(</span><span class="va">exposure_matrix</span>, <span class="va">outcomes_tbl</span>, </span>
-<span>                         multi_zone <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in value[[3L]](cond): a check of making the centered basis for a</span></span>
-<span><span class="co">#&gt; geo-unit 37021 did not pass. this likely means that the knots for the overall</span></span>
-<span><span class="co">#&gt; basis are outside the range of exposures in this geographic unit. Consider</span></span>
-<span><span class="co">#&gt; adjusting either the geo-units you are passing in, or the exposure variable</span></span>
-<span><span class="co">#&gt; (e.g., switching from absolute to relative measures)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model</span>, title <span class="op">=</span> <span class="st">'Southeast'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="QA_testing_files/figure-html/plot%20v1-1.png" class="r-plt" width="700"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condPois_2stage.html">condPois_2stage</a></span><span class="op">(</span><span class="va">exposure_matrix</span>, <span class="va">outcomes_tbl</span>,</span>
-<span>                          verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; -- validation passed</span></span>
-<span><span class="co">#&gt; -- stage 1</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 12009. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 12031. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 12057. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 12073. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 12099. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 12109. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 22051. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; Warning in condPois_1stage(exposure_matrix = single_exposure_matrix,</span></span>
-<span><span class="co">#&gt; outcomes_tbl = single_outcomes_tbl, : Centering point is outside the range of</span></span>
-<span><span class="co">#&gt; exposures in geo-unit 45019. This means your zones are across too large of an</span></span>
-<span><span class="co">#&gt; area, or there are differences in exposures so much that the bases are quite</span></span>
-<span><span class="co">#&gt; different. Try limiting the geo-units passed in to those that are more similar,</span></span>
-<span><span class="co">#&gt; manually setting a centering point that you know each geo-unit has, or changing</span></span>
-<span><span class="co">#&gt; your exposure variable.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; -- mixmeta</span></span>
-<span><span class="co">#&gt; formula: ~ 1 | region/occurrence_county_code </span></span>
-<span><span class="co">#&gt; -- stage 2</span></span></code></pre></div>
-<p>```</p>
-  </main>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">df</span>, align <span class="op">=</span> <span class="st">"l"</span>, escape <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>full_width <span class="op">=</span> <span class="cn">FALSE</span>, position <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span></code></pre></div>
+<table class="table table" style="width: auto !important; ">
+<thead><tr>
+<th style="text-align:left;">
+Analysis_Option
+</th>
+<th style="text-align:left;">
+Exposure
+</th>
+<th style="text-align:left;">
+Outcome
+</th>
+<th style="text-align:left;">
+Model
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Single ERF
+</td>
+<td style="text-align:left;">
+for 1 ZCTA
+</td>
+<td style="text-align:left;">
+Subset to ZCTA
+</td>
+<td style="text-align:left;">
+condPois_1stage
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Single ERF
+</td>
+<td style="text-align:left;">
+for 1 TOWN Maintain ZCTA exposures and outcomes grp_level = TRUE
+keep_unit_exposures = TR
+</td>
+<td style="text-align:left;">
+E |Subset to TOWN
+</td>
+<td style="text-align:left;">
+|condPois_1stage
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Single ERF
+</td>
+<td style="text-align:left;">
+Average to TOWN grp_level = TRUE keep_unit_exposures = FALSE
+</td>
+<td style="text-align:left;">
+|Subset to TOWN grp_level = TRUE keep_unit_outcomes = FA
+</td>
+<td style="text-align:left;">
+SE |condPois_1stage
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Single ERF
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Multiple ERFs (rf = TOWN / ZCTA)
+</td>
+<td style="text-align:left;">
+For ZCTAs
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+condPois_2stage
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Multiple ERFs (rf = TOWN / ZCTA)
+</td>
+<td style="text-align:left;">
+For TOWNS Maintain ZCTA exposures and outcomes grp_level = TRUE
+keep_unit_exposures = TRU
+</td>
+<td style="text-align:left;">
+|Subset to TOWN grp_level = TRUE keep_unit_outcomes = T
+</td>
+<td style="text-align:left;">
+UE |condPois_2stage (rf =
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Multiple ERFs (rf = TOWN / ZCTA)
+</td>
+<td style="text-align:left;">
+Average to TOWN grp_level = TRUE keep_unit_exposures = FALSE
+</td>
+<td style="text-align:left;">
+|Subset to TOWN grp_level = TRUE keep_unit_outcomes = FA
+</td>
+<td style="text-align:left;">
+SE |condPois_2stage (rf = T
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Multiple ERFs (rf = TOWN / ZCTA)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table></main>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
+  <p>Developed by <a href="https://chadmilando.com" class="external-link">Chad Milando</a>, <a href="https://www.bu.edu/sph/profile/emma-gause/" class="external-link">Emma Gause</a>, <a href="https://www.colorado.edu/oclab/quinn-adams" class="external-link">Quinn Adams</a>, <a href="https://www.bu.edu/sph/profile/zachary-popp/" class="external-link">Zachary Popp</a>, Alexis Arlak, <a href="https://www.bu.edu/sph/profile/gregory-wellenius/" class="external-link">Gregory Wellenius</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

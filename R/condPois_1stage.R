@@ -46,6 +46,10 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 
     for(fct_i in seq_along(fct_outlist)) {
 
+      if(verbose > 0) {
+        cat("<",factor_col,":", unique_fcts[fct_i], ">\n")
+      }
+
       # cat("<",factor_col,":", unique_fcts[fct_i], ">\n")
       rr <- which(outcomes_tbl[, get(factor_col)] == unique_fcts[fct_i])
       subset_outcomes_tbl <- outcomes_tbl[rr, , drop = FALSE]

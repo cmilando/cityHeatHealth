@@ -215,6 +215,7 @@ condPois_sb <- function(exposure_matrix,
   cen_list    <- vector("list", n_geos);
   argvar_list <- vector("list", n_geos);
   coef_list   <- vector("list", n_geos);
+  expisfct_list   <- vector("list", n_geos);
 
   # loop through geos
   for(i in 1:n_geos) {
@@ -246,7 +247,8 @@ condPois_sb <- function(exposure_matrix,
                                     maxlag = maxlag, min_n = 1,
                                     strata_min = 0)
 
-    local_cp <- local_cp$`_`$out[[1]]
+    local_cp <- local_cp$`_`$out[[this_geo]]
+    expisfct_list[[i]] <- local_cp$exposure_is_factor
 
     blup_cp <- get_centered_cp(argvar = local_cp$argvar,
                                xcoef = local_cp$coef,
@@ -254,7 +256,8 @@ condPois_sb <- function(exposure_matrix,
                                global_cen = global_cen,
                                cen = local_cp$cen,
                                this_exp = this_exp,
-                               x_b = x_b)
+                               x_b = x_b,
+                               exposure_is_factor = expisfct_list[[i]])
 
     # get cb and outcomes lists
     orig_basis[[i]]  <- local_cp$orig_basis
@@ -679,7 +682,8 @@ condPois_sb <- function(exposure_matrix,
                                global_cen = global_cen,
                                cen = cen_list_updated[[i]],
                                this_exp = this_exp,
-                               x_b = x_b)
+                               x_b = x_b,
+                               exposure_is_factor = expisfct_list[[i]])
     ## make the out
     RRdf <- data.frame(
       geo_unit = this_geo,

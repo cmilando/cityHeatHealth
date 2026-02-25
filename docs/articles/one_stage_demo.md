@@ -590,7 +590,11 @@ middlesex_deaths_tbl <- make_outcome_table(
 m3 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, 
                   outcomes_tbl = middlesex_deaths_tbl, 
                   global_cen = 15,
-                  multi_zone = TRUE)
+                  multi_zone = TRUE,
+                  verbose = 1)
+#> < age_grp : 0-17 >
+#> < age_grp : 18-64 >
+#> < age_grp : 65+ >
 
 # plot
 plot(m3)
@@ -625,8 +629,10 @@ You can change the global_cen and view the impact
 ``` r
 
 # run the model
-m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, global_cen = 20,
-                  outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE)
+m2 <- condPois_1stage(exposure_matrix = middlesex_exposure_mat, global_cen = 20, outcomes_tbl = middlesex_deaths_tbl, multi_zone = TRUE, verbose = 1)
+#> < age_grp : 0-17 >
+#> < age_grp : 18-64 >
+#> < age_grp : 65+ >
 plot(m2)
 ```
 
