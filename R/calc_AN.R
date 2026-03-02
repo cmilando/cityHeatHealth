@@ -447,7 +447,12 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   }
 
   # rate eCI
-  g2_cols <- c(names(AN_ANNUAL)[c1], "population", 'above_MMT')
+  if(by_year == TRUE) {
+    g2_cols <- c(names(AN_ANNUAL)[c1], "year", "population", 'above_MMT')
+  } else {
+    g2_cols <- c(names(AN_ANNUAL)[c1], "population", 'above_MMT')
+  }
+
   rate_table <- x1[,.(
     mean_annual_attr_rate_est = quantile(mean_annual_AN_rate, 0.50),
     mean_annual_attr_rate_lb = quantile(mean_annual_AN_rate, 0.025),
