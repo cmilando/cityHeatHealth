@@ -7,6 +7,7 @@
 #' @param spatial_join_col how should you join population data to the outcome table
 #' @param nsim number of simulations required for calculation of empirical CI (default = 300)
 #' @param verbose 0 = no printing, 1 = headers, 2 = detailed
+#' @param by_year Export annual counts
 #' @import data.table
 #' @importFrom tidyr expand_grid
 #' @returns
@@ -14,7 +15,9 @@
 #'
 #' @examples
 calc_AN <- function(model, outcomes_tbl, pop_data,
-                    spatial_agg_type, spatial_join_col, nsim = 300, verbose = 0) {
+                    spatial_agg_type, spatial_join_col,
+                    by_year = FALSE,
+                    nsim = 300, verbose = 0) {
 
 
   ## Check 1 -- that both inputs are the right class of variables
@@ -407,9 +410,16 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   g1_cols <- c(names(AN_ANNUAL)[c1], "population", "nsim", 'above_MMT')
 
   # mean annual
-  x1 <- AN_ANNUAL[,.(
-    mean_annual_AN = mean(annual_AN)
-  ), by = g1_cols]
+  if(by_year == TRUE) {
+    x1 <- AN_ANNUAL[,.(
+      mean_annual_AN = mean(annual_AN)
+    ), by = c(g1_cols, 'year')]
+  } else {
+    x1 <- AN_ANNUAL[,.(
+      mean_annual_AN = mean(annual_AN)
+    ), by = g1_cols]
+  }
+
 
   # final checks
   if(any(is.na(x1$mean_annual_AN))) {
