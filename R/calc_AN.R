@@ -161,7 +161,8 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
   # get the blup object
   n_geo_units <- length(x$out)
   if(!(n_geo_units >= 1)) {
-    stop("the model object is empty, check that model and outcomes are the same type (e.g., that one is not a `_list` type while the other is a standard.")
+    stop("the model object is empty, check that model and outcomes are the same type
+         (e.g., that one is not a `_list` type while the other is a standard.")
   }
   stopifnot(n_geo_units >= 1)
 
@@ -199,12 +200,17 @@ calc_AN <- function(model, outcomes_tbl, pop_data,
     date_fmt <- single_outcomes_tbl[, get(date_col)]
 
     if(!identical(single_outcomes_tbl[, get(outcomes_col)], outcomes)) {
-      print(this_geo)
+      cat("This geo:\n")
+      cat(this_geo, '\n')
+      cat("Outcomes table being passed in:\n")
       print(head(single_outcomes_tbl))
-      print(nrow(single_outcomes_tbl))
+      cat("Outcomes vector associated with the model object for this geo:\n")
       print(head(outcomes))
-      print(length(outcomes))
-      stop('Outcomes not the same')
+      stop("Outcomes not the same - usually this means there is a spatial
+           mismatch somewhere in one of the other datasets - in this case
+           either outcomes_tbl or the model doesn't have the spatial resolution
+           that you are asking for. Check that each one has the spatial units
+           and each level that are required for matching.")
     }
 
     # convert to matrix
