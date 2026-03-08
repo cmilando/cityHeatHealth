@@ -9,7 +9,7 @@
 #' @param strata_min an integer describing the minimum number of cases for a single strata
 #' @param global_cen global centering point
 #' @param multi_zone are multiple strata being used.
-#' @param verbose not used
+#' @param verbose used to print crossbasis args the first time
 #'
 #' @import data.table
 #' @importFrom dlnm crossbasis
@@ -25,7 +25,7 @@
 condPois_1stage <- function(exposure_matrix, outcomes_tbl,
                         argvar = NULL, arglag = NULL, maxlag = NULL,
                        min_n = NULL, strata_min = 0, global_cen = NULL,
-                       multi_zone = FALSE, verbose = NULL) {
+                       multi_zone = FALSE, verbose = TRUE) {
 
   ## Check 1 -- that both inputs are the right class of variables
   stopifnot("exposure" %in% class(exposure_matrix))
@@ -113,7 +113,11 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
 
   # CHECK 8 check if multizone
   out_geo_unit <- sort(unlist(unique(outcomes_tbl[, get(out_geo_unit_col)])))
-  if(!multi_zone) stopifnot(length(out_geo_unit) == 1)
+  if(!multi_zone) {
+    if(length(out_geo_unit) != 1)
+    stop("geo_units passed in > 1, if you are running a 1stage model this means
+         you need to set multi_zone = T")
+  }
 
   # CHECK5
   if(!is.null(global_cen)) {
@@ -127,23 +131,56 @@ condPois_1stage <- function(exposure_matrix, outcomes_tbl,
   #' //////////////////////////////////////////////////////////////////////////
   exposure_col <- attributes(exposure_matrix)$column_mapping$exposure
 
+  if(verbose) {
+    cat("\n")
+    cat("crossbasis args:\n")
+    cat("\n")
+  }
+
   # maxlag
   if(is.null(maxlag)) {
     maxlag = 5
   } else {
     stopifnot(maxlag %in% 1:10)
   }
+  if(verbose) {
+    cat("maxlag:",maxlag,"\n")
+    cat("\n")
+  }
 
   # argvar
   this_exp = exposure_matrix[, get(exposure_col)]
   argvar <- check_argvar(argvar, this_exp)
   exposure_is_factor <- argvar$fun == 'strata'
+  if(verbose) {
+    cat("argvar:\n")
+    str(argvar)
+    cat("\n")
+  }
 
   # arglag
   if(is.null(arglag)) {
     arglag <- list(fun = 'ns', knots = logknots(maxlag, nk = 2))
   } else {
-    warning("check that arglag is valid")
+    if(verbose) {
+      warning("check that arglag is valid")
+    }
+  }
+  if(verbose) {
+    cat("arglag:\n")
+    str(arglag)
+    cat("\n")
+  }
+
+  if(verbose) {
+    cat("strata:\n")
+    cat(paste(outcomes_tbl$strata[1]))
+    cat("\n")
+  }
+
+  if(verbose) {
+    cat("strata_min:",strata_min, "\n")
+    cat("\n")
   }
 
   ## get the columns you need
@@ -421,8 +458,8 @@ getRR.condPois_1stage <- function(x) {
   plot_cp = data.frame(
     x = x$`_`$out[[1]]$cr$predvar,
     RR = x$`_`$out[[1]]$cr$RRfit,
-    RRlow = x$`_`$out[[1]]$cr$RRlow,
-    RRhigh = x$`_`$out[[1]]$cr$RRhigh,
+    RRlb = x$`_`$out[[1]]$cr$RRlow,
+    RRub = x$`_`$out[[1]]$cr$RRhigh,
     n_geo_names = n_geo_names,
     model_class = class(x)
   )
@@ -460,7 +497,7 @@ plot.condPois_1stage <- function(x, xlab = NULL, ylab = NULL, title = NULL) {
   if(is.null(title)) title = n_geo_names
 
   ggplot(plot_cp, aes(x = !!sym(names(plot_cp)[1]),
-                      y = RR, ymin = RRlow, ymax = RRhigh)) +
+                      y = RR, ymin = RRlb, ymax = RRub)) +
     geom_hline(yintercept = 1, linetype = '11') +
     theme_classic() +
     ggtitle(title) +
@@ -491,8 +528,8 @@ getRR.condPois_1stage_list <- function(x) {
       x = x[[names(x)[i]]]$`_`$out[[1]]$cr$predvar,
       fct = names(x)[i],
       RR = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRfit,
-      RRlow = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRlow,
-      RRhigh = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRhigh
+      RRlb = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRlow,
+      RRub = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRhigh
     )
 
     factor_col <- x[[names(x)[i]]]$factor_col
@@ -536,8 +573,8 @@ plot.condPois_1stage_list <- function(x, xlab = NULL, ylab = NULL, title = NULL)
       x = x[[names(x)[i]]]$`_`$out[[1]]$cr$predvar,
       fct = names(x)[i],
       RR = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRfit,
-      RRlow = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRlow,
-      RRhigh = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRhigh
+      RRlb = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRlow,
+      RRub = x[[names(x)[i]]]$`_`$out[[1]]$cr$RRhigh
     )
 
     n_geo_names <- paste0(names(x[[names(x)[i]]]$`_`$out), collapse = ":")
@@ -554,7 +591,7 @@ plot.condPois_1stage_list <- function(x, xlab = NULL, ylab = NULL, title = NULL)
 
   ggplot(plot_cp,
          aes(x = !!sym(names(plot_cp)[1]), y = RR,
-             ymin = RRlow, ymax = RRhigh)) +
+             ymin = RRlb, ymax = RRub)) +
     geom_hline(yintercept = 1, linetype = '11') +
     scale_fill_viridis_d() +
     scale_color_viridis_d() +

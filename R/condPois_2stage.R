@@ -235,7 +235,8 @@ condPois_2stage <- function(exposure_matrix,
                           maxlag = maxlag,
                           global_cen = global_cen,
                           min_n = min_n,
-                          strata_min = strata_min)
+                          strata_min = strata_min,
+                          verbose = i == 1)
 
     # get the named list object
     cp_list[[i]] <- d1$`_`$out[[this_geo]]
@@ -390,8 +391,8 @@ condPois_2stage <- function(exposure_matrix,
     # x = PLOT_l[[1]]
     o <- data.frame(x = x$cp$predvar,
                     RR  =  x$cp$allRRfit,
-                    RRlow = x$cp$allRRlow,
-                    RRhigh = x$cp$allRRhigh,
+                    RRlb = x$cp$allRRlow,
+                    RRub = x$cp$allRRhigh,
                     geo_unit_grp = x$geo_unit_grp)
     return(o)
   }
@@ -404,8 +405,8 @@ condPois_2stage <- function(exposure_matrix,
     geom_hline(yintercept = 1, linetype = '11') +
     ##
     geom_ribbon(aes(x = x,
-                    ymin = RRlow,
-                    ymax = RRhigh),
+                    ymin = RRlb,
+                    ymax = RRub),
                 fill = 'lightblue', alpha = 0.5) +
 
     geom_line(aes(x = x,

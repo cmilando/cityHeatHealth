@@ -181,11 +181,11 @@ And plot
 plot_cp = data.frame(
     x = cp$predvar,
     RR = cp$allRRfit,
-    RRlow = cp$allRRlow,
+    RRlb = cp$allRRlb,
     RRhigh = cp$allRRhigh
 )
 
-ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlow, ymax = RRhigh)) +
+ggplot(plot_cp, aes(x = x, y = RR, ymin = RRlb, ymax = RRhigh)) +
   geom_hline(yintercept = 1, linetype = '11') +
   theme_classic() +
   geom_ribbon(fill = 'grey75', alpha = 0.2) +

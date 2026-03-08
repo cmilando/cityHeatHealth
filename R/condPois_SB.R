@@ -242,10 +242,13 @@ condPois_sb <- function(exposure_matrix,
     # min_n is set to 0 because you want every region
     # same with strata_min
     local_cp <- condPois_1stage(exposure_matrix = single_exposure_matrix,
-                                    outcomes_tbl = single_outcomes_tbl,
-                                    argvar = argvar, arglag = arglag,
-                                    maxlag = maxlag, min_n = 1,
-                                    strata_min = 0)
+                                outcomes_tbl = single_outcomes_tbl,
+                                argvar = argvar,
+                                arglag = arglag,
+                                maxlag = maxlag,
+                                min_n = 1,
+                                strata_min = 0,
+                                verbose = i == 1)
 
     local_cp <- local_cp$`_`$out[[this_geo]]
     expisfct_list[[i]] <- local_cp$exposure_is_factor
