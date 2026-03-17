@@ -1,22 +1,8 @@
 pandoc: 3.8.2.1
 pkgdown: 2.2.0
 pkgdown_sha: ~
-articles:
-  attributable_number: attributable_number.html
-  bayesian_demo: bayesian_demo.html
-  cityHeatHealth: cityHeatHealth.html
-  comparison: comparison.html
-  dlnm_sensitivity: dlnm_sensitivity.html
-  faq: faq.html
-  get_pop_estimates: get_pop_estimates.html
-  non_daily_data: non_daily_data.html
-  one_stage_demo: one_stage_demo.html
-  QA_testing: QA_testing.html
-  strata: strata.html
-  TODO: TODO.html
-  two_stage_demo: two_stage_demo.html
-  validation: validation.html
-last_built: 2026-02-25T04:54Z
+articles: {}
+last_built: 2026-03-17T21:40Z
 urls:
   reference: http://chadmilando.com/cityHeatHealth/reference
   article: http://chadmilando.com/cityHeatHealth/articles

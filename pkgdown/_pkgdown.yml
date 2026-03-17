@@ -29,25 +29,5 @@ authors:
   Gregory Wellenius:
     href: https://www.bu.edu/sph/profile/gregory-wellenius/
 
-articles:
-- title: Main vignettes
-  navbar: ~
-  contents:
-  - one_stage_demo
-  - two_stage_demo
-  - bayesian_demo
-  - attributable_number
 
-- title: Additional vignettes
-  desc: Vignettes aimed at advanced users
-  contents:
-  - faq
-  - strata
-  - get_pop_estimates
-  - validation
-  - dlnm_sensitivity
-  - comparison
-  - TODO
-  - QA_testing
-  - non_daily_data
 
